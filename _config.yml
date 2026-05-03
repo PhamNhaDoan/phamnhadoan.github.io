@@ -4,3 +4,5 @@ plugins:
 # Các nút bấm mặc định của Cayman (nếu có)
 show_downloads: true
 google_analytics:
+# Nếu theme hỗ trợ khai báo favicon trực tiếp
+favicon: /favicon.ico
