@@ -5,35 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tính giá truyện VIP Tấn Giang</title>
     <style>
-        body { font-family: sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; padding: 20px; }
-        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-        h2 { color: #d32f2f; text-align: center; }
-        label { display: block; margin: 10px 0 5px; font-weight: bold; }
-        input { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background: #d32f2f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
-        .result { margin-top: 20px; padding: 15px; background: #fff3e0; border-left: 5px solid #ff9800; display: none; }
+        body { font-family: sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 350px; }
+        h2 { color: #d32f2f; text-align: center; margin-top: 0; }
+        label { display: block; margin: 15px 0 8px; font-weight: bold; color: #444; }
+        input { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 12px; background: #d32f2f; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; }
+        button:hover { background: #b71c1c; }
+        .result { margin-top: 25px; padding: 15px; background: #fff8e1; border-left: 5px solid #ffca28; display: none; border-radius: 4px; }
+        .highlight { color: #d32f2f; font-weight: bold; font-size: 18px; }
+        small { display: block; margin-top: 10px; color: #777; font-style: italic; }
     </style>
 </head>
 <body>
 <div class="container">
     <h2>Tấn Giang Tool</h2>
-    <label>Nhập số vạn chữ (VD: 50):</label>
-    <input type="number" id="wordCount">
+    <label>Tổng số chữ (vạn chữ):</label>
+    <input type="number" id="wordCount" placeholder="Ví dụ: 50">
     <button onclick="calculatePrice()">Tính tiền ngay</button>
     <div id="resultBox" class="result">
-        <p id="tệ"></p>
-        <p id="vnd"></p>
-        <small>* Tỷ giá: 1 tệ = 3.600 VND</small>
+        <p>Số tệ: <span id="tệ" class="highlight"></span></p>
+        <p>Số tiền: <span id="vnd" class="highlight"></span></p>
+        <small>* Tỷ giá: 1 tệ = 50 VND</small>
     </div>
 </div>
 <script>
     function calculatePrice() {
         const vạnChữ = document.getElementById('wordCount').value;
-        if (!vạnChữ || vạnChữ <= 0) { alert("Bà nhập số vạn chữ vào đã!"); return; }
-        const giaTệ = vạnChữ * 30;
-        const giaVND = giaTệ * 3600;
-        document.getElementById('tệ').innerHTML = "Tổng cộng: " + giaTệ.toLocaleString() + " tệ";
-        document.getElementById('vnd').innerHTML = "Khoảng: " + giaVND.toLocaleString() + " VND";
+        if (!vạnChữ || vạnChữ <= 0) { alert("Bà nhập số vạn chữ vào đã nhé!"); return; }
+        const giaTệ = vạnChữ * 30; // 1 vạn = 30 tệ
+        const giaVND = giaTệ * 50; // 1 tệ = 50 VND
+        document.getElementById('tệ').innerHTML = giaTệ.toLocaleString() + " tệ";
+        document.getElementById('vnd').innerHTML = giaVND.toLocaleString() + " VND";
         document.getElementById('resultBox').style.display = 'block';
     }
 </script>
