@@ -27,7 +27,7 @@
             border-radius: 12px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             width: 100%;
-            max-width: 600px;
+            max-width: 700px;
         }
 
         .header {
@@ -168,6 +168,13 @@
             display: block;
         }
 
+        .message.info {
+            background-color: #e7f3ff;
+            color: #004085;
+            border-left: 4px solid #004085;
+            display: block;
+        }
+
         .result-section {
             margin-top: 30px;
             padding-top: 25px;
@@ -178,7 +185,7 @@
         .result-title {
             font-weight: 700;
             color: #333;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             font-size: 16px;
         }
 
@@ -201,10 +208,61 @@
             margin-bottom: 0;
         }
 
+        .story-info-row strong {
+            color: #333;
+            word-break: break-all;
+        }
+
+        .tools-section {
+            background-color: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .tools-section h3 {
+            color: #856404;
+            font-size: 14px;
+            margin-bottom: 12px;
+            margin-top: 0;
+        }
+
+        .tool-item {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .tool-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .tool-item strong {
+            color: #333;
+            min-width: 80px;
+        }
+
+        .tool-item span {
+            color: #555;
+            font-size: 13px;
+        }
+
+        .tool-link {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .tool-link:hover {
+            text-decoration: underline;
+        }
+
         .download-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 12px;
+            margin-bottom: 20px;
         }
 
         .download-btn {
@@ -247,6 +305,7 @@
             background-color: #6c757d;
             font-size: 12px;
             padding: 8px 12px;
+            margin-top: 10px;
         }
 
         .copy-btn:hover {
@@ -281,7 +340,7 @@
 <div class="container">
     <div class="header">
         <h1>📚 Tải Truyện Wattpad</h1>
-        <p class="subtitle">Dán hoặc nhập link truyện Wattpad để tải xuống định dạng EPUB hoặc DOCX</p>
+        <p class="subtitle">Nhập link truyện Wattpad để lấy Story ID, sau đó dùng công cụ bên dưới để tải</p>
     </div>
 
     <div class="input-section">
@@ -300,7 +359,7 @@
     </div>
 
     <button class="btn-action" id="submitBtn" onclick="analyzeWattpadUrl()">
-        ✨ Kiểm Tra & Xuất Nút Tải
+        ✨ Kiểm Tra & Lấy Story ID
     </button>
 
     <div id="message" class="message"></div>
@@ -313,20 +372,68 @@
                 <span>Story ID:</span>
                 <strong id="storyId">-</strong>
             </div>
+            <div class="story-info-row">
+                <span>Link Wattpad:</span>
+                <strong id="storyLink">-</strong>
+            </div>
+        </div>
+
+        <div class="tools-section">
+            <h3>📥 Công cụ tải xuống (Chọn 1 trong các công cụ sau):</h3>
+            
+            <div class="tool-item">
+                <strong>1. Stary:</strong>
+                <span>
+                    Nhập Story ID vào 
+                    <a href="https://stary.live/" target="_blank" class="tool-link">stary.live</a>
+                    để tải EPUB/DOCX
+                </span>
+            </div>
+
+            <div class="tool-item">
+                <strong>2. Watt2Read:</strong>
+                <span>
+                    Sử dụng 
+                    <a href="https://watt2read.com/" target="_blank" class="tool-link">watt2read.com</a>
+                    - paste link để tải
+                </span>
+            </div>
+
+            <div class="tool-item">
+                <strong>3. Wattpad2Pdf:</strong>
+                <span>
+                    Truy cập 
+                    <a href="https://wattpad2pdf.com/" target="_blank" class="tool-link">wattpad2pdf.com</a>
+                    để convert PDF/EPUB
+                </span>
+            </div>
+
+            <div class="tool-item">
+                <strong>4. Webnovel:</strong>
+                <span>
+                    Dùng 
+                    <a href="https://webnovel-downloader.com/" target="_blank" class="tool-link">webnovel-downloader.com</a>
+                    cho DOCX
+                </span>
+            </div>
+
+            <button class="copy-btn download-btn" onclick="copyToClipboard(document.getElementById('storyId').textContent)">
+                📋 Copy Story ID
+            </button>
         </div>
 
         <div style="text-align: center; margin-bottom: 15px; color: #666; font-size: 14px;">
-            Chọn định dạng tải xuống:
+            <strong>Hoặc dùng các công cụ trực tiếp (nếu còn hoạt động):</strong>
         </div>
 
         <div class="download-grid">
-            <a id="epubLink" class="download-btn btn-epub" target="_blank" download>
-                📕 EPUB
-            </a>
+            <button class="download-btn btn-epub" onclick="directDownload('epub')">
+                📕 Tải EPUB
+            </button>
             
-            <a id="docxLink" class="download-btn btn-docx" target="_blank" download>
-                📄 DOCX
-            </a>
+            <button class="download-btn btn-docx" onclick="directDownload('docx')">
+                📄 Tải DOCX
+            </button>
         </div>
     </div>
 </div>
@@ -336,9 +443,8 @@
     const submitBtn = document.getElementById('submitBtn');
     const messageDiv = document.getElementById('message');
     const resultSection = document.getElementById('resultSection');
-    const epubLink = document.getElementById('epubLink');
-    const docxLink = document.getElementById('docxLink');
     const storyIdDisplay = document.getElementById('storyId');
+    const storyLinkDisplay = document.getElementById('storyLink');
 
     // Cho phép gửi form bằng phím Enter
     urlInput.addEventListener('keypress', function(event) {
@@ -347,16 +453,9 @@
         }
     });
 
-    function showMessage(text, type) {
+    function showMessage(text, type = 'error') {
         messageDiv.textContent = text;
         messageDiv.className = `message ${type}`;
-        
-        // Tự động ẩn thông báo thành công sau 5 giây
-        if (type === 'success') {
-            setTimeout(() => {
-                messageDiv.style.display = 'none';
-            }, 5000);
-        }
     }
 
     function validateWattpadUrl(url) {
@@ -384,7 +483,8 @@
 
             return {
                 valid: true,
-                storyId: match[1]
+                storyId: match[1],
+                originalUrl: url
             };
         } catch (error) {
             return {
@@ -395,9 +495,9 @@
     }
 
     function analyzeWattpadUrl() {
-        const urlInput = document.getElementById('wattpadUrl').value.trim();
+        const url = document.getElementById('wattpadUrl').value.trim();
 
-        if (!urlInput) {
+        if (!url) {
             showMessage('❌ Vui lòng nhập link Wattpad', 'error');
             return;
         }
@@ -407,9 +507,8 @@
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<span class="spinner"></span>Đang kiểm tra...';
 
-        // Mô phỏng độ trễ xử lý (có thể xóa nếu không cần)
         setTimeout(() => {
-            const validation = validateWattpadUrl(urlInput);
+            const validation = validateWattpadUrl(url);
 
             if (!validation.valid) {
                 showMessage(validation.error, 'error');
@@ -417,24 +516,18 @@
             } else {
                 const storyId = validation.storyId;
                 
-                // Cập nhật hiển thị Story ID
+                // Cập nhật hiển thị
                 storyIdDisplay.textContent = storyId;
-
-                // Tạo các link tải xuống
-                // EPUB: Sử dụng API chính thức của Wattpad
-                epubLink.href = `https://www.wattpad.com/v4/stories/${storyId}/download?format=epub`;
-                
-                // DOCX: Sử dụng dịch vụ chuyển đổi bên thứ ba
-                docxLink.href = `https://wattpad2epub.com/download?id=${storyId}&format=docx`;
+                storyLinkDisplay.innerHTML = `<a href="${validation.originalUrl}" target="_blank">${validation.originalUrl}</a>`;
 
                 resultSection.style.display = 'block';
-                showMessage('✅ Tìm thấy story! Nhấn nút bên dưới để tải xuống', 'success');
+                showMessage('✅ Lấy Story ID thành công! Chọn công cụ bên dưới để tải', 'success');
             }
 
             // Khôi phục nút bấm
             submitBtn.classList.remove('loading');
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '✨ Kiểm Tra & Xuất Nút Tải';
+            submitBtn.innerHTML = '✨ Kiểm Tra & Lấy Story ID';
         }, 500);
     }
 
@@ -445,7 +538,46 @@
             urlInput.focus();
             showMessage('✅ Dán link thành công!', 'success');
         } catch (error) {
-            showMessage('❌ Không thể dán từ clipboard. Vui lòng thử lại hoặc nhập thủ công', 'error');
+            showMessage('❌ Không thể dán từ clipboard. Vui lòng nhập thủ công', 'error');
+        }
+    }
+
+    function copyToClipboard(text) {
+        if (!text || text === '-') {
+            showMessage('❌ Không có Story ID để copy', 'error');
+            return;
+        }
+
+        navigator.clipboard.writeText(text).then(() => {
+            showMessage('✅ Đã copy Story ID vào clipboard!', 'success');
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
+        }).catch(() => {
+            showMessage('❌ Không thể copy, vui lòng thử lại', 'error');
+        });
+    }
+
+    function directDownload(format) {
+        const storyId = document.getElementById('storyId').textContent;
+        
+        if (!storyId || storyId === '-') {
+            showMessage('❌ Vui lòng nhập link Wattpad trước', 'error');
+            return;
+        }
+
+        // Cố gắng sử dụng các API download
+        let downloadUrl = '';
+        
+        if (format === 'epub') {
+            downloadUrl = `https://www.wattpad.com/v4/stories/${storyId}/download?format=epub`;
+        } else if (format === 'docx') {
+            downloadUrl = `https://www.wattpad.com/v4/stories/${storyId}/download?format=pdf`;
+        }
+
+        if (downloadUrl) {
+            window.open(downloadUrl, '_blank');
+            showMessage('💡 Nếu không tải được, hãy dùng các công cụ bên trên', 'info');
         }
     }
 </script>
