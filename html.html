@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bộ Chuyển Văn Bản To Mã HTML EPUB</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 800px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        label {
+            font-weight: bold;
+            color: #555;
+            display: block;
+            margin-bottom: 8px;
+        }
+        textarea {
+            width: 100%;
+            height: 220px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+            box-sizing: border-box;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        textarea:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        #outputHtml {
+            background-color: #fafafa;
+            font-family: "Courier New", Courier, monospace;
+            color: #222;
+        }
+        .btn-container {
+            text-align: right;
+            margin-top: -5px;
+            margin-bottom: 15px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+        .btn-convert {
+            background-color: #007bff;
+            color: #white;
+            color: white;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+        }
+        .btn-convert:hover { background-color: #0056b3; }
+        .btn-copy {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-copy:hover { background-color: #218838; }
+        .toast {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: #fff;
+            padding: 12px 25px;
+            border-radius: 4px;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Công Cụ Clean Text To HTML EPUB</h2>
+    
+    <div class="section">
+        <label for="inputText">1. Paste đoạn văn bản thô vào đây:</label>
+        <textarea id="inputText" placeholder="Dán nội dung truyện chữ thô vào đây..."></textarea>
+    </div>
+
+    <div class="section">
+        <button class="btn-convert" onclick="processTextToHtml()">BẮT ĐẦU CHUYỂN ĐỔI</button>
+    </div>
+
+    <div class="section">
+        <label for="outputHtml">2. Kết quả mã định dạng HTML để sửa EPUB:</label>
+        <div class="btn-container">
+            <button class="btn-copy" onclick="copyToClipboard()">Sao chép mã HTML</button>
+        </div>
+        <textarea id="outputHtml" readonly placeholder="Mã HTML bọc thẻ <p> sẽ xuất hiện ở đây..."></textarea>
+    </div>
+</div>
+
+<div id="toast" class="toast">📋 Đã copy mã HTML vào bộ nhớ tạm!</div>
+
+<script>
+    function processTextToHtml() {
+        const inputText = document.getElementById('inputText').value;
+        const outputHtml = document.getElementById('outputHtml');
+        
+        if (!inputText.trim()) {
+            outputHtml.value = "";
+            return;
+        }
+
+        // Tách chuỗi văn bản dựa trên các ký tự xuống dòng (\n hoặc \r)
+        const lines = inputText.split(/\r?\n/);
+        let finalHtml = "";
+
+        for (let i = 0; i < lines.length; i++) {
+            const cleanLine = lines[i].trim();
+            
+            if (cleanLine !== "") {
+                // Bọc từng dòng chữ vào trong cặp thẻ <p>...</p> theo chuẩn EPUB
+                finalHtml += `<p>${cleanLine}</p>\n`;
+            }
+        }
+
+        // Đổ dữ liệu mã HTML vào khung dưới
+        outputHtml.value = finalHtml;
+    }
+
+    function copyToClipboard() {
+        const outputHtml = document.getElementById('outputHtml');
+        if (!outputHtml.value) return;
+
+        // Lệnh copy nội dung ô textarea vào bộ nhớ máy
+        outputHtml.select();
+        outputHtml.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(outputHtml.value);
+
+        // Hiển thị thông báo toast trong 2 giây rồi ẩn
+        const toast = document.getElementById('toast');
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 2000);
+    }
+</script>
+
+</body>
+</html>
