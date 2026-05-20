@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bộ Tải Truyện Wattpad To EPUB/DOCX</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h2 {
+            color: #ff6600; /* Màu đặc trưng Wattpad */
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            font-weight: bold;
+            color: #333;
+            display: block;
+            margin-bottom: 8px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        input[type="text"]:focus {
+            border-color: #ff6600;
+            outline: none;
+        }
+        .btn-action {
+            width: 100%;
+            padding: 14px;
+            background-color: #ff6600;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-action:hover {
+            background-color: #e65c00;
+        }
+        .result-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            display: none;
+            text-align: left;
+        }
+        .result-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .download-btn {
+            padding: 12px;
+            text-align: center;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            color: white;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .btn-epub {
+            background-color: #007bff;
+        }
+        .btn-epub:hover {
+            background-color: #0056b3;
+        }
+        .btn-docx {
+            background-color: #28a745;
+        }
+        .btn-docx:hover {
+            background-color: #218838;
+        }
+        .error-msg {
+            color: #dc3545;
+            font-weight: bold;
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Bộ Tải Truyện Wattpad To EPUB/DOCX</h2>
+    <div class="subtitle">Dán link truyện Wattpad vào dưới để lấy link tải dữ liệu sách</div>
+
+    <div class="input-group">
+        <label for="wattpadUrl">Chép đường dẫn link truyện Wattpad tại đây:</label>
+        <input type="text" id="wattpadUrl" placeholder="Ví dụ: https://www.wattpad.com/story/123456789-ten-truyen-dam-my">
+    </div>
+
+    <!-- Đổi sang type="button" để tránh hiện tượng kích hoạt submit form ẩn của trình duyệt -->
+    <button type="button" class="btn-action" onclick="analyzeWattpadUrl(event)">KIỂM TRA & XUẤT NÚT TẢI</button>
+    
+    <div id="errorMsg" class="error-msg">❌ Đường dẫn link Wattpad không hợp lệ hoặc không tìm thấy Story ID!</div>
+
+    <div id="resultSection" class="result-section">
+        <div class="result-title">🎉 Hệ thống nhận diện thành công! Chọn định dạng bạn muốn tải xuống:</div>
+        <div class="download-grid">
+            <a id="epubLink" class="download-btn btn-epub" target="_blank" rel="noopener noreferrer">Tải file .EPUB</a>
+            <a id="docxLink" class="download-btn btn-docx" target="_blank" rel="noopener noreferrer">Tải file .DOCX</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function analyzeWattpadUrl(event) {
+        // Chặn hoàn toàn mọi hành vi tự động tải hay reload trang ngoài ý muốn
+        if (event) event.preventDefault();
+
+        const urlInput = document.getElementById('wattpadUrl').value.trim();
+        const resultSection = document.getElementById('resultSection');
+        const errorMsg = document.getElementById('errorMsg');
+        const epubLink = document.getElementById('epubLink');
+        const docxLink = document.getElementById('docxLink');
+
+        if (!urlInput) {
+            resultSection.style.display = 'none';
+            errorMsg.style.display = 'none';
+            return;
+        }
+
+        // Regex bóc tách Story ID
+        const regex = /\/story\/(\d+)/;
+        const match = urlInput.match(regex);
+
+        if (match && match[1]) {
+            const storyId = match[1];
+            errorMsg.style.display = 'none';
+
+            // Cập nhật thuộc tính href cho các nút tải một cách chính xác
+            epubLink.href = `https://www.wattpad.com/v4/stories/${storyId}/download?format=epub`;
+            docxLink.href = `https://wattpad2epub.com/download?id=${storyId}&format=docx`;
+
+            // Chỉ hiển thị khu vực chọn định dạng chứ KHÔNG tự động click tải dữ liệu
+            resultSection.style.display = 'block';
+        } else {
+            // Reset và báo lỗi nếu link không hợp lệ
+            resultSection.style.display = 'none';
+            errorMsg.style.display = 'block';
+        }
+    }
+</script>
+
+</body>
+</html>
