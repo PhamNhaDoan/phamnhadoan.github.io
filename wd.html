@@ -3,177 +3,449 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bộ Tải Truyện Wattpad To EPUB/DOCX</title>
+    <title>Tải Truyện Wattpad - EPUB/DOCX</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            box-sizing: border-box;
+            padding: 20px;
         }
+
         .container {
             background: #ffffff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             width: 100%;
             max-width: 600px;
-            text-align: center;
         }
-        h2 {
-            color: #ff6600; /* Màu đặc trưng Wattpad */
-            margin-top: 0;
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #ff6600;
+            font-size: 28px;
             margin-bottom: 10px;
         }
+
         .subtitle {
             color: #666;
             font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .input-section {
             margin-bottom: 25px;
         }
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
+
         label {
-            font-weight: bold;
-            color: #333;
             display: block;
-            margin-bottom: 8px;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
             font-size: 14px;
         }
-        input[type="text"]:focus {
-            border-color: #ff6600;
-            outline: none;
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            gap: 10px;
         }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ff6600;
+            box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
+        }
+
+        input[type="text"]::placeholder {
+            color: #999;
+        }
+
+        .btn-paste {
+            padding: 14px 20px;
+            background-color: #f0f0f0;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #333;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-paste:hover {
+            background-color: #e8e8e8;
+            border-color: #ff6600;
+        }
+
         .btn-action {
             width: 100%;
-            padding: 14px;
+            padding: 16px;
             background-color: #ff6600;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.3s;
+            margin-top: 15px;
         }
+
         .btn-action:hover {
             background-color: #e65c00;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 102, 0, 0.3);
         }
+
+        .btn-action:active {
+            transform: translateY(0);
+        }
+
+        .btn-action.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #ffffff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .message {
+            margin-top: 15px;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.error {
+            background-color: #fee;
+            color: #c33;
+            border-left: 4px solid #c33;
+            display: block;
+        }
+
+        .message.success {
+            background-color: #efe;
+            color: #3c3;
+            border-left: 4px solid #3c3;
+            display: block;
+        }
+
         .result-section {
             margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
+            padding-top: 25px;
+            border-top: 2px solid #f0f0f0;
             display: none;
-            text-align: left;
         }
+
         .result-title {
-            font-weight: bold;
+            font-weight: 700;
             color: #333;
             margin-bottom: 15px;
+            font-size: 16px;
         }
+
+        .story-info {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .story-info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .story-info-row:last-child {
+            margin-bottom: 0;
+        }
+
         .download-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
         }
+
         .download-btn {
-            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
             text-align: center;
-            border-radius: 4px;
+            border-radius: 8px;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 700;
             color: white;
-            transition: 0.2s;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
         }
+
         .btn-epub {
             background-color: #007bff;
         }
+
         .btn-epub:hover {
             background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
         }
+
         .btn-docx {
             background-color: #28a745;
         }
+
         .btn-docx:hover {
             background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
         }
-        .error-msg {
-            color: #dc3545;
-            font-weight: bold;
-            margin-top: 15px;
-            display: none;
+
+        .copy-btn {
+            background-color: #6c757d;
+            font-size: 12px;
+            padding: 8px 12px;
+        }
+
+        .copy-btn:hover {
+            background-color: #5a6268;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .input-wrapper {
+                flex-direction: column;
+            }
+
+            .btn-paste {
+                width: 100%;
+            }
+
+            .download-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Bộ Tải Truyện Wattpad To EPUB/DOCX</h2>
-    <div class="subtitle">Dán link truyện Wattpad vào dưới để lấy link tải dữ liệu sách</div>
-
-    <div class="input-group">
-        <label for="wattpadUrl">Chép đường dẫn link truyện Wattpad tại đây:</label>
-        <input type="text" id="wattpadUrl" placeholder="Ví dụ: https://www.wattpad.com/story/123456789-ten-truyen-dam-my">
+    <div class="header">
+        <h1>📚 Tải Truyện Wattpad</h1>
+        <p class="subtitle">Dán hoặc nhập link truyện Wattpad để tải xuống định dạng EPUB hoặc DOCX</p>
     </div>
 
-    <button class="btn-action" onclick="analyzeWattpadUrl()">KIỂM TRA & XUẤT NÚT TẢI</button>
-    
-    <div id="errorMsg" class="error-msg">❌ Đường dẫn link Wattpad không hợp lệ hoặc không tìm thấy Story ID!</div>
+    <div class="input-section">
+        <label for="wattpadUrl">Đường dẫn Wattpad:</label>
+        <div class="input-wrapper">
+            <input 
+                type="text" 
+                id="wattpadUrl" 
+                placeholder="Ví dụ: https://www.wattpad.com/story/123456789-ten-truyen"
+                aria-label="Nhập hoặc dán link Wattpad"
+            >
+            <button class="btn-paste" onclick="pasteFromClipboard()" title="Dán từ clipboard">
+                📋 Dán
+            </button>
+        </div>
+    </div>
+
+    <button class="btn-action" id="submitBtn" onclick="analyzeWattpadUrl()">
+        ✨ Kiểm Tra & Xuất Nút Tải
+    </button>
+
+    <div id="message" class="message"></div>
 
     <div id="resultSection" class="result-section">
-        <div class="result-title">🎉 Hệ thống nhận diện thành công! Chọn định dạng bà muốn tải xuống:</div>
+        <div class="result-title">✅ Nhận diện thành công!</div>
+        
+        <div class="story-info">
+            <div class="story-info-row">
+                <span>Story ID:</span>
+                <strong id="storyId">-</strong>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 15px; color: #666; font-size: 14px;">
+            Chọn định dạng tải xuống:
+        </div>
+
         <div class="download-grid">
-            <a id="epubLink" class="download-btn btn-epub" target="_blank" href="#">Tải file .EPUB</a>
+            <a id="epubLink" class="download-btn btn-epub" target="_blank" download>
+                📕 EPUB
+            </a>
             
-            <a id="docxLink" class="download-btn btn-docx" target="_blank" href="#">Tải file .DOCX</a>
+            <a id="docxLink" class="download-btn btn-docx" target="_blank" download>
+                📄 DOCX
+            </a>
         </div>
     </div>
 </div>
 
 <script>
+    const urlInput = document.getElementById('wattpadUrl');
+    const submitBtn = document.getElementById('submitBtn');
+    const messageDiv = document.getElementById('message');
+    const resultSection = document.getElementById('resultSection');
+    const epubLink = document.getElementById('epubLink');
+    const docxLink = document.getElementById('docxLink');
+    const storyIdDisplay = document.getElementById('storyId');
+
+    // Cho phép gửi form bằng phím Enter
+    urlInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            analyzeWattpadUrl();
+        }
+    });
+
+    function showMessage(text, type) {
+        messageDiv.textContent = text;
+        messageDiv.className = `message ${type}`;
+        
+        // Tự động ẩn thông báo thành công sau 5 giây
+        if (type === 'success') {
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+    }
+
+    function validateWattpadUrl(url) {
+        try {
+            const urlObj = new URL(url);
+            
+            // Kiểm tra xem domain có phải wattpad.com không
+            if (!urlObj.hostname.includes('wattpad.com')) {
+                return {
+                    valid: false,
+                    error: '❌ Vui lòng nhập link từ wattpad.com'
+                };
+            }
+
+            // Bốc tách Story ID từ pathname
+            const regex = /\/story\/(\d+)/;
+            const match = urlObj.pathname.match(regex);
+
+            if (!match || !match[1]) {
+                return {
+                    valid: false,
+                    error: '❌ Không tìm thấy Story ID. Vui lòng kiểm tra lại link'
+                };
+            }
+
+            return {
+                valid: true,
+                storyId: match[1]
+            };
+        } catch (error) {
+            return {
+                valid: false,
+                error: '❌ Link không hợp lệ. Vui lòng nhập đường dẫn đầy đủ'
+            };
+        }
+    }
+
     function analyzeWattpadUrl() {
         const urlInput = document.getElementById('wattpadUrl').value.trim();
-        const resultSection = document.getElementById('resultSection');
-        const errorMsg = document.getElementById('errorMsg');
-        const epubLink = document.getElementById('epubLink');
-        const docxLink = document.getElementById('docxLink');
 
-        if (!urlInput) return;
+        if (!urlInput) {
+            showMessage('❌ Vui lòng nhập link Wattpad', 'error');
+            return;
+        }
 
-        // Sử dụng Regex để bốc tách dãy số Story ID nằm sau cụm "/story/" trong link của Wattpad
-        const regex = /\/story\/(\d+)/;
-        const match = urlInput.match(regex);
+        // Đặt nút thành trạng thái loading
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner"></span>Đang kiểm tra...';
 
-        if (match && match[1]) {
-            const storyId = match[1];
-            errorMsg.style.display = 'none';
+        // Mô phỏng độ trễ xử lý (có thể xóa nếu không cần)
+        setTimeout(() => {
+            const validation = validateWattpadUrl(urlInput);
 
-            // Nạp link trực tiếp vào hai cổng API xuất dữ liệu sách miễn phí phổ biến hiện nay:
-            // Cổng 1: Sử dụng cấu trúc dịch vụ gom file trả về định dạng epub công cộng
-            epubLink.href = `https://www.wattpad.com/v4/stories/${storyId}/download?format=epub`;
-            
-            // Cổng 2: Chuyển hướng qua hệ thống convert văn bản của các trang dịch vụ trung gian công cộng (.docx)
-            docxLink.href = `https://wattpad2epub.com/download?id=${storyId}&format=docx`;
+            if (!validation.valid) {
+                showMessage(validation.error, 'error');
+                resultSection.style.display = 'none';
+            } else {
+                const storyId = validation.storyId;
+                
+                // Cập nhật hiển thị Story ID
+                storyIdDisplay.textContent = storyId;
 
-            // Hiện khung chứa nút bấm
-            resultSection.style.display = 'block';
-        } else {
-            // Nếu link gõ tào lao không có số ID, báo lỗi lập tức
-            resultSection.style.display = 'none';
-            errorMsg.style.display = 'block';
+                // Tạo các link tải xuống
+                // EPUB: Sử dụng API chính thức của Wattpad
+                epubLink.href = `https://www.wattpad.com/v4/stories/${storyId}/download?format=epub`;
+                
+                // DOCX: Sử dụng dịch vụ chuyển đổi bên thứ ba
+                docxLink.href = `https://wattpad2epub.com/download?id=${storyId}&format=docx`;
+
+                resultSection.style.display = 'block';
+                showMessage('✅ Tìm thấy story! Nhấn nút bên dưới để tải xuống', 'success');
+            }
+
+            // Khôi phục nút bấm
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '✨ Kiểm Tra & Xuất Nút Tải';
+        }, 500);
+    }
+
+    async function pasteFromClipboard() {
+        try {
+            const text = await navigator.clipboard.readText();
+            urlInput.value = text;
+            urlInput.focus();
+            showMessage('✅ Dán link thành công!', 'success');
+        } catch (error) {
+            showMessage('❌ Không thể dán từ clipboard. Vui lòng thử lại hoặc nhập thủ công', 'error');
         }
     }
 </script>
