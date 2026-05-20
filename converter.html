@@ -250,6 +250,15 @@
 </div>
 
 <script>
+    // Ngăn chặn trình duyệt mở file hoặc tải về tự động khi kéo thả trượt ra ngoài vùng upload Area
+    window.addEventListener("dragover", function(e) {
+        e.preventDefault();
+    }, false);
+    
+    window.addEventListener("drop", function(e) {
+        e.preventDefault();
+    }, false);
+
     // Set up PDF.js worker
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -309,7 +318,6 @@
             return;
         }
 
-        // Kiểm tra định dạng gốc có thuộc danh sách hỗ trợ không (cho phép thêm cấu trúc đọc mở rộng như epub)
         const checkFormats = [...SUPPORTED_FORMATS, 'epub', 'azw'];
         if (!checkFormats.includes(fileExtension)) {
             showStatus(`❌ Định dạng .${fileExtension.toUpperCase()} đầu vào chưa được hỗ trợ`, 'error');
@@ -320,7 +328,6 @@
         uploadText.innerHTML = `<strong>✓ Đã nhận diện:</strong> ${fileName}`;
         showStatus(`✅ Đã tải file lên thành công. Vui lòng chọn định dạng muốn xuất ra bên dưới:`, 'success');
         
-        // Ẩn khung download cũ nếu có và hiển thị danh sách các nút chọn lựa định dạng mục tiêu
         downloadBox.style.display = 'none';
         showFormatOptionsImmediate();
     }
@@ -330,7 +337,6 @@
         formatButtons.innerHTML = '';
         
         SUPPORTED_FORMATS.forEach(format => {
-            // Không hiển thị định dạng trùng với file gốc để tránh convert thừa
             if (format === fileExtension) return;
 
             const btn = document.createElement('button');
@@ -340,7 +346,6 @@
         });
     }
 
-    // Luồng xử lý mới: Bấm nút -> Đọc dữ liệu -> Thực hiện Convert xuất file
     function startConversionWorkflow(targetFormat) {
         showStatus(`<span class="loading-spinner"></span>Đang chuẩn bị đọc cấu trúc file văn bản...`, 'info');
         document.querySelectorAll('#formatButtons button').forEach(btn => btn.disabled = true);
@@ -366,7 +371,6 @@
                 } else if (fileExtension === 'pdf') {
                     readPDFAndConvert(e.target.result, targetFormat);
                 } else {
-                    // mobi, epub, azw...
                     fileContent = new TextDecoder().decode(new Uint8Array(e.target.result));
                     executeConversion(targetFormat);
                 }
@@ -381,7 +385,6 @@
             resetButtons();
         };
 
-        // Kích hoạt cơ chế đọc nhị phân dựa trên phần mở rộng file
         if (['pdf', 'docx', 'mobi', 'azw3', 'azw', 'epub'].includes(fileExtension)) {
             reader.readAsArrayBuffer(uploadedFile);
         } else {
