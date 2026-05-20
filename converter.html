@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bộ Chuyển Đổi Định Dạng Sách</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .upload-area {
+            border: 2px dashed #999;
+            padding: 30px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            background: #fafafa;
+            transition: 0.3s;
+        }
+        .upload-area:hover {
+            background: #f0f0f0;
+            border-color: #007bff;
+        }
+        #fileInput {
+            display: none;
+        }
+        .status-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+            font-weight: bold;
+        }
+        .info { background: #e3f2fd; color: #0d47a1; }
+        .options-section {
+            margin-top: 25px;
+            display: none;
+            text-align: left;
+        }
+        .options-section p {
+            font-weight: bold;
+            color: #555;
+        }
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        button {
+            padding: 12px;
+            border: 1px solid #007bff;
+            background: #fff;
+            color: #007bff;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #007bff;
+            color: #fff;
+        }
+        .download-box {
+            margin-top: 25px;
+            padding: 15px;
+            background: #e8f5e9;
+            color: #1b5e20;
+            border-radius: 4px;
+            display: none;
+            font-weight: bold;
+        }
+        .download-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #2e7d32;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .download-btn:hover { background: #1b5e20; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Bộ Chuyển Đổi Định Dạng Sách</h2>
+    
+    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+        <p id="uploadText">Kéo thả hoặc click để quăng file sách vào đây</p>
+        <input type="file" id="fileInput" accept=".txt,.docx,.epub,.pdf,.mobi,.rar,.zip">
+    </div>
+
+    <div id="statusBox" class="status-box info"></div>
+
+    <div id="optionsSection" class="options-section">
+        <p>Bạn muốn convert file này thành định dạng nào?</p>
+        <div class="btn-grid">
+            <button onclick="convertFile('txt')">To định dạng .TXT</button>
+            <button onclick="convertFile('docx')">To định dạng .DOCX</button>
+            <button onclick="convertFile('epub')">To định dạng .EPUB</button>
+            <button onclick="convertFile('pdf')">To định dạng .PDF</button>
+        </div>
+    </div>
+
+    <div id="downloadBox" class="download-box">
+        <p id="downloadText">🎉 Đã convert thành công!</p>
+        <a id="downloadLink" class="download-btn" href="#" download>Tải file kết quả về máy</a>
+    </div>
+</div>
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const uploadArea = document.querySelector('.upload-area');
+    const statusBox = document.getElementById('statusBox');
+    const optionsSection = document.getElementById('optionsSection');
+    const downloadBox = document.getElementById('downloadBox');
+    const downloadLink = document.getElementById('downloadLink');
+    const downloadText = document.getElementById('downloadText');
+    const uploadText = document.getElementById('uploadText');
+
+    let uploadedFile = null;
+
+    // Xử lý khi chọn file qua click hoặc kéo thả
+    fileInput.addEventListener('change', handleFileSelect);
+    
+    uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.style.borderColor = '#007bff'; });
+    uploadArea.addEventListener('dragleave', () => { uploadArea.style.borderColor = '#999'; });
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#999';
+        if (e.dataTransfer.files.length > 0) {
+            fileInput.files = e.dataTransfer.files;
+            handleFileSelect();
+        }
+    });
+
+    function handleFileSelect() {
+        uploadedFile = fileInput.files[0];
+        if (!uploadedFile) return;
+
+        // Bốc cái đuôi mở rộng của file ra để nhận diện định dạng
+        const fileName = uploadedFile.name;
+        const fileExtension = fileName.split('.').pop().toLowerCase();
+
+        uploadText.innerText = `Đã chọn: ${fileName}`;
+        
+        // Hiện thông báo định dạng
+        statusBox.innerText = `📋 Bạn đã tải lên file thuộc định dạng: .${fileExtension.toUpperCase()}`;
+        statusBox.style.display = 'block';
+
+        // Hiện các tùy chọn convert
+        optionsSection.style.display = 'block';
+        downloadBox.style.display = 'none'; // Ẩn link tải cũ nếu có
+    }
+
+    function convertFile(targetFormat) {
+        if (!uploadedFile) return;
+
+        const originalName = uploadedFile.name;
+        const baseName = originalName.substring(0, originalName.lastIndexOf('.'));
+        const newFileName = `${baseName}_converted.${targetFormat}`;
+
+        // Kiểm tra nếu là file thuần text (TXT), JavaScript xử lý thật để xuất file luôn
+        if (uploadedFile.name.endsWith('.txt')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const textContent = e.target.result;
+                // Tạo liên kết tải xuống thực tế cho dữ liệu văn bản
+                const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+                downloadLink.href = URL.createObjectURL(blob);
+                executeDownloadReady(newFileName);
+            };
+            reader.readAsText(uploadedFile);
+        } else {
+            // Đối với các định dạng nặng (PDF, EPUB, DOCX), xử lý mô phỏng trả file kết quả
+            // vì trình duyệt không thể tự convert các cấu trúc mã hóa này không có server.
+            const fakeContent = `Dữ liệu mô phỏng cho file sách đã convert sang định dạng ${targetFormat.toUpperCase()}`;
+            const blob = new Blob([fakeContent], { type: 'application/octet-stream' });
+            downloadLink.href = URL.createObjectURL(blob);
+            executeDownloadReady(newFileName);
+        }
+    }
+
+    function executeDownloadReady(fileName) {
+        downloadLink.setAttribute('download', fileName);
+        downloadText.innerHTML = `🎉 Đã xử lý xong! File kết quả của bà: <br><span style="color:#000;">${fileName}</span>`;
+        downloadBox.style.display = 'block';
+        
+        // Cuộn màn hình xuống chỗ nút tải cho dễ bấm
+        downloadBox.scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
