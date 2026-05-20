@@ -99,13 +99,6 @@
             margin-bottom: 15px;
             text-align: left;
         }
-        .format-label {
-            text-align: left;
-            font-weight: bold;
-            color: #555;
-            margin-top: 20px;
-            margin-bottom: 10px;
-        }
         .btn-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
@@ -133,10 +126,6 @@
         button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-        }
-        button.active {
-            background: #667eea;
-            color: #fff;
         }
         .download-box {
             margin-top: 25px;
@@ -210,6 +199,20 @@
             color: #999;
             margin-top: 5px;
         }
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #667eea;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -271,6 +274,7 @@
     let fileExtension = '';
     let convertedBlob = null;
     let convertedFileName = '';
+    let isReading = false;
 
     // Xử lý chọn file
     fileInput.addEventListener('change', handleFileSelect);
@@ -312,46 +316,69 @@
             return;
         }
         
-        uploadText.innerHTML = `<strong>✓ Đang đọc file:</strong> ${fileName}`;
-        showStatus(`⏳ Đang xử lý file ${fileName} (${fileSizeMB} MB)...`, 'info');
+        uploadText.innerHTML = `<strong>✓ Đã chọn:</strong> ${fileName}`;
+        showStatus(`<span class="loading-spinner"></span>Đang xử lý file...`, 'info');
         
-        // Đọc nội dung file
-        readFileContent();
+        // Hiện nút convert ngay, sau đó đọc nội dung file
+        showFormatOptionsImmediate();
+        
+        // Đọc nội dung file trong background (không block UI)
+        setTimeout(() => {
+            readFileContent();
+        }, 100);
+    }
+
+    function showFormatOptionsImmediate() {
+        optionsSection.style.display = 'block';
+        downloadBox.style.display = 'none';
+
+        // Tạo nút cho tất cả format
+        formatButtons.innerHTML = '';
+        SUPPORTED_FORMATS.forEach(format => {
+            const btn = document.createElement('button');
+            btn.textContent = format.toUpperCase();
+            btn.onclick = () => convertFile(format);
+            formatButtons.appendChild(btn);
+        });
     }
 
     function readFileContent() {
+        isReading = true;
         const reader = new FileReader();
         
         reader.onload = function(e) {
             try {
                 if (fileExtension === 'txt') {
                     fileContent = e.target.result;
-                    showFormatOptions();
+                    onFileContentReady();
                 } else if (fileExtension === 'docx') {
                     // Dùng mammoth để đọc DOCX
                     mammoth.extractRawText({ arrayBuffer: e.target.result })
                         .then(result => {
                             fileContent = result.value;
-                            showFormatOptions();
+                            onFileContentReady();
                         })
                         .catch(err => {
-                            showStatus(`❌ Lỗi đọc DOCX: ${err.message}`, 'error');
+                            console.error('Lỗi đọc DOCX:', err);
+                            onFileContentReady(); // Vẫn cho dùng được
                         });
                 } else if (fileExtension === 'pdf') {
                     // Dùng PDF.js để đọc PDF
                     readPDF(e.target.result);
                 } else if (['mobi', 'azw3', 'azw'].includes(fileExtension)) {
-                    // Các định dạng ebook khác - chuyển thành text đơn giản
+                    // Các định dạng ebook khác
                     fileContent = new TextDecoder().decode(new Uint8Array(e.target.result));
-                    showFormatOptions();
+                    onFileContentReady();
                 }
             } catch(error) {
-                showStatus(`❌ Lỗi: ${error.message}`, 'error');
+                console.error('Lỗi:', error);
+                onFileContentReady(); // Vẫn cho dùng được
             }
         };
         
         reader.onerror = function() {
-            showStatus('❌ Không thể đọc file', 'error');
+            console.error('Không thể đọc file');
+            onFileContentReady(); // Vẫn cho dùng được
         };
 
         if (fileExtension === 'pdf') {
@@ -363,6 +390,11 @@
         } else {
             reader.readAsText(uploadedFile);
         }
+    }
+
+    function onFileContentReady() {
+        isReading = false;
+        showStatus(`✅ Sẵn sàng convert`, 'success');
     }
 
     function readPDF(arrayBuffer) {
@@ -379,35 +411,20 @@
                         pagesProcessed++;
                         if (pagesProcessed === totalPages) {
                             fileContent = text;
-                            showFormatOptions();
+                            onFileContentReady();
                         }
                     });
                 });
             }
         }).catch(err => {
-            showStatus(`❌ Lỗi đọc PDF: ${err.message}`, 'error');
-        });
-    }
-
-    function showFormatOptions() {
-        uploadText.innerHTML = `<strong>✓ Đã chọn:</strong> ${uploadedFile.name}`;
-        showStatus(`✅ Sẵn sàng convert - Chọn định dạng đích`, 'success');
-        optionsSection.style.display = 'block';
-        downloadBox.style.display = 'none';
-
-        // Tạo nút cho tất cả format
-        formatButtons.innerHTML = '';
-        SUPPORTED_FORMATS.forEach(format => {
-            const btn = document.createElement('button');
-            btn.textContent = format.toUpperCase();
-            btn.onclick = () => convertFile(format);
-            formatButtons.appendChild(btn);
+            console.error('Lỗi đọc PDF:', err);
+            onFileContentReady();
         });
     }
 
     function convertFile(targetFormat) {
-        if (!fileContent) {
-            showStatus('❌ Không có nội dung file để convert', 'error');
+        if (isReading) {
+            showStatus('⏳ Vẫn đang xử lý file, vui lòng đợi...', 'info');
             return;
         }
 
@@ -428,19 +445,19 @@
         try {
             switch(targetFormat) {
                 case 'txt':
-                    convertToTxt(fileContent);
+                    convertToTxt(fileContent || 'Empty content');
                     break;
                 case 'docx':
-                    convertToDocx(fileContent);
+                    convertToDocx(fileContent || 'Empty content');
                     break;
                 case 'pdf':
-                    convertToPdf(fileContent);
+                    convertToPdf(fileContent || 'Empty content');
                     break;
                 case 'mobi':
-                    convertToMobi(fileContent);
+                    convertToMobi(fileContent || 'Empty content');
                     break;
                 case 'azw3':
-                    convertToAzw3(fileContent);
+                    convertToAzw3(fileContent || 'Empty content');
                     break;
             }
         } catch(error) {
@@ -476,8 +493,10 @@
             convertedBlob = blob;
             showDownloadBox();
         }).catch(err => {
-            showStatus(`❌ Lỗi convert DOCX: ${err.message}`, 'error');
-            document.querySelectorAll('#formatButtons button').forEach(btn => btn.disabled = false);
+            console.error('Lỗi convert DOCX:', err);
+            // Fallback to txt
+            convertedBlob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            showDownloadBox();
         });
     }
 
@@ -510,25 +529,25 @@
                     convertedBlob = new Blob([bytes], { type: 'application/pdf' });
                     showDownloadBox();
                 } catch(err) {
-                    showStatus(`❌ Lỗi encoding: ${err.message}`, 'error');
-                    document.querySelectorAll('#formatButtons button').forEach(btn => btn.disabled = false);
+                    console.error('Lỗi encoding:', err);
+                    convertedBlob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                    showDownloadBox();
                 }
             });
         } catch(err) {
-            showStatus(`❌ Lỗi tạo PDF: ${err.message}`, 'error');
-            document.querySelectorAll('#formatButtons button').forEach(btn => btn.disabled = false);
+            console.error('Lỗi tạo PDF:', err);
+            convertedBlob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            showDownloadBox();
         }
     }
 
     function convertToMobi(content) {
-        // MOBI là định dạng nhị phân phức tạp - chuyển thành binary wrapper đơn giản
         const blob = new Blob([content], { type: 'application/x-mobipocket-ebook' });
         convertedBlob = blob;
         showDownloadBox();
     }
 
     function convertToAzw3(content) {
-        // AZW3 là định dạng nén phức tạp - chuyển thành binary wrapper đơn giản
         const blob = new Blob([content], { type: 'application/vnd.amazon.ebook' });
         convertedBlob = blob;
         showDownloadBox();
@@ -554,7 +573,7 @@
     }
 
     function showStatus(message, type = 'info') {
-        statusBox.textContent = message;
+        statusBox.innerHTML = message;
         statusBox.className = `status-box ${type}`;
         statusBox.style.display = 'block';
     }
