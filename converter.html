@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bộ Chuyển Đổi Định Dạng Sách</title>
+    <!-- Thư viện convert -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.0/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.0/vfs_fonts.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             margin: 0;
             padding: 20px;
             display: flex;
@@ -17,138 +22,248 @@
         }
         .container {
             background: #ffffff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
             text-align: center;
         }
         h2 {
             color: #333;
-            margin-bottom: 20px;
+            margin: 0 0 10px 0;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
         }
         .upload-area {
-            border: 2px dashed #999;
-            padding: 30px 20px;
-            border-radius: 6px;
+            border: 3px dashed #667eea;
+            padding: 50px 20px;
+            border-radius: 8px;
             cursor: pointer;
-            background: #fafafa;
-            transition: 0.3s;
+            background: #f8f9ff;
+            transition: all 0.3s;
+            margin-bottom: 20px;
         }
         .upload-area:hover {
-            background: #f0f0f0;
-            border-color: #007bff;
+            background: #eef0ff;
+            border-color: #764ba2;
+            transform: scale(1.02);
+        }
+        .upload-area.dragover {
+            background: #e0e7ff;
+            border-color: #764ba2;
         }
         #fileInput {
             display: none;
         }
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
         .status-box {
             margin-top: 20px;
             padding: 15px;
-            border-radius: 4px;
+            border-radius: 6px;
             display: none;
-            font-weight: bold;
+            font-weight: 500;
+            animation: slideIn 0.3s ease-out;
         }
-        .info { background: #e3f2fd; color: #0d47a1; }
+        .info { 
+            background: #e3f2fd; 
+            color: #0d47a1;
+            border-left: 4px solid #0d47a1;
+        }
+        .success { 
+            background: #e8f5e9; 
+            color: #1b5e20;
+            border-left: 4px solid #1b5e20;
+        }
+        .error { 
+            background: #ffebee; 
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
         .options-section {
             margin-top: 25px;
             display: none;
-            text-align: left;
+            animation: slideIn 0.3s ease-out;
         }
         .options-section p {
             font-weight: bold;
             color: #555;
+            margin-bottom: 15px;
         }
         .btn-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            gap: 12px;
             margin-top: 10px;
         }
         button {
             padding: 12px;
-            border: 1px solid #007bff;
+            border: 2px solid #667eea;
             background: #fff;
-            color: #007bff;
-            border-radius: 4px;
+            color: #667eea;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            transition: 0.2s;
+            transition: all 0.2s;
+            font-size: 14px;
         }
-        button:hover {
-            background: #007bff;
+        button:hover:not(:disabled) {
+            background: #667eea;
             color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
         .download-box {
             margin-top: 25px;
-            padding: 15px;
-            background: #e8f5e9;
+            padding: 20px;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
             color: #1b5e20;
-            border-radius: 4px;
+            border-radius: 8px;
             display: none;
             font-weight: bold;
+            animation: slideIn 0.3s ease-out;
+            border-left: 4px solid #2e7d32;
         }
         .download-btn {
             display: inline-block;
-            margin-top: 10px;
-            padding: 10px 20px;
-            background: #2e7d32;
+            margin-top: 15px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: #fff;
-            text-decoration: none;
-            border-radius: 4px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            font-size: 14px;
         }
-        .download-btn:hover { background: #1b5e20; }
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.4);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-top: 15px;
+            display: none;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+            border-radius: 3px;
+        }
+        .file-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #666;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .file-size {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #999;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Bộ Chuyển Đổi Định Dạng Sách</h2>
+    <h2>📚 Bộ Chuyển Đổi Định Dạng Sách</h2>
+    <p class="subtitle">Convert file sách sang các định dạng khác nhau</p>
     
-    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-        <p id="uploadText">Kéo thả hoặc click để quăng file sách vào đây</p>
-        <input type="file" id="fileInput" accept=".txt,.docx,.epub,.pdf,.mobi,.rar,.zip">
+    <div class="upload-area" onclick="document.getElementById('fileInput').click()" id="uploadArea">
+        <div class="upload-icon">📖</div>
+        <p id="uploadText" style="margin: 0; font-size: 16px;"><strong>Kéo thả hoặc click để tải file</strong></p>
+        <p style="margin: 5px 0 0 0; font-size: 12px; color: #999;">Hỗ trợ: .txt, .docx, .pdf (tối đa 50MB)</p>
+        <input type="file" id="fileInput" accept=".txt,.docx,.pdf">
     </div>
 
     <div id="statusBox" class="status-box info"></div>
 
     <div id="optionsSection" class="options-section">
-        <p>Bạn muốn convert file này thành định dạng nào?</p>
+        <p>Chuyển đổi sang định dạng nào?</p>
         <div class="btn-grid">
-            <button onclick="convertFile('txt')">To định dạng .TXT</button>
-            <button onclick="convertFile('docx')">To định dạng .DOCX</button>
-            <button onclick="convertFile('epub')">To định dạng .EPUB</button>
-            <button onclick="convertFile('pdf')">To định dạng .PDF</button>
+            <button onclick="convertFile('txt')" id="btnTxt">📄 TXT</button>
+            <button onclick="convertFile('docx')" id="btnDocx">📝 DOCX</button>
+            <button onclick="convertFile('pdf')" id="btnPdf">📕 PDF</button>
         </div>
+    </div>
+
+    <div class="progress-bar" id="progressBar">
+        <div class="progress-fill" id="progressFill"></div>
     </div>
 
     <div id="downloadBox" class="download-box">
         <p id="downloadText">🎉 Đã convert thành công!</p>
-        <a id="downloadLink" class="download-btn" href="#" download>Tải file kết quả về máy</a>
+        <div class="file-info">
+            <strong>File:</strong> <span id="resultFileName"></span>
+            <div class="file-size" id="resultFileSize"></div>
+        </div>
+        <button class="download-btn" onclick="triggerDownload()">⬇️ Tải file kết quả</button>
     </div>
 </div>
 
 <script>
+    const { Document, Packer, Paragraph, TextRun } = docx;
+    
     const fileInput = document.getElementById('fileInput');
-    const uploadArea = document.querySelector('.upload-area');
+    const uploadArea = document.getElementById('uploadArea');
     const statusBox = document.getElementById('statusBox');
     const optionsSection = document.getElementById('optionsSection');
     const downloadBox = document.getElementById('downloadBox');
-    const downloadLink = document.getElementById('downloadLink');
-    const downloadText = document.getElementById('downloadText');
+    const progressBar = document.getElementById('progressBar');
+    const progressFill = document.getElementById('progressFill');
     const uploadText = document.getElementById('uploadText');
+    const resultFileName = document.getElementById('resultFileName');
+    const resultFileSize = document.getElementById('resultFileSize');
 
     let uploadedFile = null;
+    let convertedBlob = null;
+    let convertedFileName = '';
 
-    // Xử lý khi chọn file qua click hoặc kéo thả
+    // Xử lý chọn file
     fileInput.addEventListener('change', handleFileSelect);
     
-    uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.style.borderColor = '#007bff'; });
-    uploadArea.addEventListener('dragleave', () => { uploadArea.style.borderColor = '#999'; });
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+    });
+    
     uploadArea.addEventListener('drop', (e) => {
         e.preventDefault();
-        uploadArea.style.borderColor = '#999';
+        uploadArea.classList.remove('dragover');
         if (e.dataTransfer.files.length > 0) {
             fileInput.files = e.dataTransfer.files;
             handleFileSelect();
@@ -159,19 +274,19 @@
         uploadedFile = fileInput.files[0];
         if (!uploadedFile) return;
 
-        // Bốc cái đuôi mở rộng của file ra để nhận diện định dạng
         const fileName = uploadedFile.name;
         const fileExtension = fileName.split('.').pop().toLowerCase();
-
-        uploadText.innerText = `Đã chọn: ${fileName}`;
+        const fileSizeMB = (uploadedFile.size / (1024 * 1024)).toFixed(2);
         
-        // Hiện thông báo định dạng
-        statusBox.innerText = `📋 Bạn đã tải lên file thuộc định dạng: .${fileExtension.toUpperCase()}`;
-        statusBox.style.display = 'block';
-
-        // Hiện các tùy chọn convert
+        if (uploadedFile.size > 50 * 1024 * 1024) {
+            showStatus('❌ File quá lớn (tối đa 50MB)', 'error');
+            return;
+        }
+        
+        uploadText.innerHTML = `<strong>✓ Đã chọn:</strong> ${fileName}`;
+        showStatus(`📋 File: ${fileName} (${fileSizeMB} MB) - Sẵn sàng convert`, 'success');
         optionsSection.style.display = 'block';
-        downloadBox.style.display = 'none'; // Ẩn link tải cũ nếu có
+        downloadBox.style.display = 'none';
     }
 
     function convertFile(targetFormat) {
@@ -179,36 +294,149 @@
 
         const originalName = uploadedFile.name;
         const baseName = originalName.substring(0, originalName.lastIndexOf('.'));
-        const newFileName = `${baseName}_converted.${targetFormat}`;
+        convertedFileName = `${baseName}_converted.${targetFormat}`;
 
-        // Kiểm tra nếu là file thuần text (TXT), JavaScript xử lý thật để xuất file luôn
-        if (uploadedFile.name.endsWith('.txt')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
+        // Disable buttons
+        document.querySelectorAll('.btn-grid button').forEach(btn => btn.disabled = true);
+        
+        showProgress();
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            try {
                 const textContent = e.target.result;
-                // Tạo liên kết tải xuống thực tế cho dữ liệu văn bản
-                const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
-                downloadLink.href = URL.createObjectURL(blob);
-                executeDownloadReady(newFileName);
+                
+                switch(targetFormat) {
+                    case 'txt':
+                        convertToTxt(textContent);
+                        break;
+                    case 'docx':
+                        convertToDocx(textContent);
+                        break;
+                    case 'pdf':
+                        convertToPdf(textContent);
+                        break;
+                }
+            } catch(error) {
+                showStatus(`❌ Lỗi: ${error.message}`, 'error');
+                document.querySelectorAll('.btn-grid button').forEach(btn => btn.disabled = false);
+            }
+        };
+        
+        reader.onerror = function() {
+            showStatus('❌ Không thể đọc file', 'error');
+            document.querySelectorAll('.btn-grid button').forEach(btn => btn.disabled = false);
+        };
+        
+        reader.readAsText(uploadedFile);
+    }
+
+    function convertToTxt(content) {
+        convertedBlob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        showDownloadBox();
+    }
+
+    function convertToDocx(content) {
+        const lines = content.split('\n');
+        const paragraphs = lines.map((line, idx) => new Paragraph({
+            text: line || ' ',
+            run: new TextRun({ 
+                font: 'Calibri', 
+                size: 22,
+                color: '000000'
+            })
+        }));
+
+        const doc = new Document({ 
+            sections: [{ 
+                children: paragraphs,
+                properties: {}
+            }] 
+        });
+        
+        Packer.toBlob(doc).then(blob => {
+            convertedBlob = blob;
+            showDownloadBox();
+        }).catch(err => {
+            showStatus(`❌ Lỗi convert DOCX: ${err.message}`, 'error');
+            document.querySelectorAll('.btn-grid button').forEach(btn => btn.disabled = false);
+        });
+    }
+
+    function convertToPdf(content) {
+        try {
+            const lines = content.split('\n');
+            
+            const docDef = {
+                content: lines.map(line => ({
+                    text: line || ' ',
+                    fontSize: 11,
+                    margin: [0, 2, 0, 2]
+                })),
+                pageSize: 'A4',
+                pageMargins: [20, 20, 20, 20],
+                defaultStyle: {
+                    font: 'Roboto',
+                    fontSize: 11,
+                    lineHeight: 1.5
+                }
             };
-            reader.readAsText(uploadedFile);
-        } else {
-            // Đối với các định dạng nặng (PDF, EPUB, DOCX), xử lý mô phỏng trả file kết quả
-            // vì trình duyệt không thể tự convert các cấu trúc mã hóa này không có server.
-            const fakeContent = `Dữ liệu mô phỏng cho file sách đã convert sang định dạng ${targetFormat.toUpperCase()}`;
-            const blob = new Blob([fakeContent], { type: 'application/octet-stream' });
-            downloadLink.href = URL.createObjectURL(blob);
-            executeDownloadReady(newFileName);
+
+            pdfMake.createPdf(docDef).getBase64((base64) => {
+                try {
+                    const binaryString = atob(base64);
+                    const bytes = new Uint8Array(binaryString.length);
+                    for (let i = 0; i < binaryString.length; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    convertedBlob = new Blob([bytes], { type: 'application/pdf' });
+                    showDownloadBox();
+                } catch(err) {
+                    showStatus(`❌ Lỗi encoding: ${err.message}`, 'error');
+                    document.querySelectorAll('.btn-grid button').forEach(btn => btn.disabled = false);
+                }
+            });
+        } catch(err) {
+            showStatus(`❌ Lỗi tạo PDF: ${err.message}`, 'error');
+            document.querySelectorAll('.btn-grid button').forEach(btn => btn.disabled = false);
         }
     }
 
-    function executeDownloadReady(fileName) {
-        downloadLink.setAttribute('download', fileName);
-        downloadText.innerHTML = `🎉 Đã xử lý xong! File kết quả của bà: <br><span style="color:#000;">${fileName}</span>`;
-        downloadBox.style.display = 'block';
-        
-        // Cuộn màn hình xuống chỗ nút tải cho dễ bấm
-        downloadBox.scrollIntoView({ behavior: 'smooth' });
+    function showProgress() {
+        progressBar.style.display = 'block';
+        progressFill.style.width = '30%';
+        setTimeout(() => { progressFill.style.width = '70%'; }, 200);
+    }
+
+    function showDownloadBox() {
+        setTimeout(() => {
+            const sizeMB = (convertedBlob.size / (1024 * 1024)).toFixed(2);
+            resultFileName.textContent = convertedFileName;
+            resultFileSize.textContent = `Kích thước: ${sizeMB} MB`;
+            downloadBox.style.display = 'block';
+            downloadBox.scrollIntoView({ behavior: 'smooth' });
+            progressBar.style.display = 'none';
+            progressFill.style.width = '0%';
+            document.querySelectorAll('.btn-grid button').forEach(btn => btn.disabled = false);
+        }, 800);
+    }
+
+    function showStatus(message, type = 'info') {
+        statusBox.textContent = message;
+        statusBox.className = `status-box ${type}`;
+        statusBox.style.display = 'block';
+    }
+
+    function triggerDownload() {
+        if (!convertedBlob) return;
+        const url = URL.createObjectURL(convertedBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = convertedFileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
     }
 </script>
 
