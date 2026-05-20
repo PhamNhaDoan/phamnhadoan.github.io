@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tải Truyện Wattpad - EPUB/DOCX</title>
+    <title>Tải Truyện Wattpad - Auto Download</title>
     <style>
         * {
             margin: 0;
@@ -175,6 +175,13 @@
             display: block;
         }
 
+        .message.warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+            display: block;
+        }
+
         .result-section {
             margin-top: 30px;
             padding-top: 25px;
@@ -213,56 +220,11 @@
             word-break: break-all;
         }
 
-        .tools-section {
-            background-color: #fff3cd;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 4px solid #ffc107;
-        }
-
-        .tools-section h3 {
-            color: #856404;
-            font-size: 14px;
-            margin-bottom: 12px;
-            margin-top: 0;
-        }
-
-        .tool-item {
-            margin-bottom: 12px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .tool-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .tool-item strong {
-            color: #333;
-            min-width: 80px;
-        }
-
-        .tool-item span {
-            color: #555;
-            font-size: 13px;
-        }
-
-        .tool-link {
-            color: #0066cc;
-            text-decoration: none;
-        }
-
-        .tool-link:hover {
-            text-decoration: underline;
-        }
-
         .download-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .download-btn {
@@ -279,6 +241,8 @@
             border: none;
             cursor: pointer;
             font-size: 14px;
+            flex-direction: column;
+            gap: 5px;
         }
 
         .btn-epub {
@@ -301,15 +265,56 @@
             box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
         }
 
-        .copy-btn {
-            background-color: #6c757d;
-            font-size: 12px;
-            padding: 8px 12px;
-            margin-top: 10px;
+        .btn-auto {
+            background-color: #17a2b8;
         }
 
-        .copy-btn:hover {
-            background-color: #5a6268;
+        .btn-auto:hover {
+            background-color: #138496;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(23, 162, 184, 0.3);
+        }
+
+        .tools-status {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 13px;
+        }
+
+        .tool-status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            padding: 8px;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+
+        .tool-status-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .status-icon {
+            font-size: 16px;
+            min-width: 20px;
+        }
+
+        .status-icon.checking {
+            animation: spin 0.6s linear infinite;
+        }
+
+        .tool-name {
+            font-weight: 600;
+            color: #333;
+            min-width: 80px;
+        }
+
+        .tool-message {
+            color: #666;
+            flex: 1;
         }
 
         @media (max-width: 600px) {
@@ -340,7 +345,7 @@
 <div class="container">
     <div class="header">
         <h1>📚 Tải Truyện Wattpad</h1>
-        <p class="subtitle">Nhập link truyện Wattpad để lấy Story ID, sau đó dùng công cụ bên dưới để tải</p>
+        <p class="subtitle">Tự động tìm công cụ hoạt động và tải xuống</p>
     </div>
 
     <div class="input-section">
@@ -359,81 +364,36 @@
     </div>
 
     <button class="btn-action" id="submitBtn" onclick="analyzeWattpadUrl()">
-        ✨ Kiểm Tra & Lấy Story ID
+        ✨ Tải Xuống (Auto Find)
     </button>
 
     <div id="message" class="message"></div>
 
     <div id="resultSection" class="result-section">
-        <div class="result-title">✅ Nhận diện thành công!</div>
+        <div class="result-title">✅ Đang tìm công cụ hoạt động...</div>
         
         <div class="story-info">
             <div class="story-info-row">
                 <span>Story ID:</span>
                 <strong id="storyId">-</strong>
             </div>
-            <div class="story-info-row">
-                <span>Link Wattpad:</span>
-                <strong id="storyLink">-</strong>
-            </div>
-        </div>
-
-        <div class="tools-section">
-            <h3>📥 Công cụ tải xuống (Chọn 1 trong các công cụ sau):</h3>
-            
-            <div class="tool-item">
-                <strong>1. Stary:</strong>
-                <span>
-                    Nhập Story ID vào 
-                    <a href="https://stary.live/" target="_blank" class="tool-link">stary.live</a>
-                    để tải EPUB/DOCX
-                </span>
-            </div>
-
-            <div class="tool-item">
-                <strong>2. Watt2Read:</strong>
-                <span>
-                    Sử dụng 
-                    <a href="https://watt2read.com/" target="_blank" class="tool-link">watt2read.com</a>
-                    - paste link để tải
-                </span>
-            </div>
-
-            <div class="tool-item">
-                <strong>3. Wattpad2Pdf:</strong>
-                <span>
-                    Truy cập 
-                    <a href="https://wattpad2pdf.com/" target="_blank" class="tool-link">wattpad2pdf.com</a>
-                    để convert PDF/EPUB
-                </span>
-            </div>
-
-            <div class="tool-item">
-                <strong>4. Webnovel:</strong>
-                <span>
-                    Dùng 
-                    <a href="https://webnovel-downloader.com/" target="_blank" class="tool-link">webnovel-downloader.com</a>
-                    cho DOCX
-                </span>
-            </div>
-
-            <button class="copy-btn download-btn" onclick="copyToClipboard(document.getElementById('storyId').textContent)">
-                📋 Copy Story ID
-            </button>
-        </div>
-
-        <div style="text-align: center; margin-bottom: 15px; color: #666; font-size: 14px;">
-            <strong>Hoặc dùng các công cụ trực tiếp (nếu còn hoạt động):</strong>
         </div>
 
         <div class="download-grid">
-            <button class="download-btn btn-epub" onclick="directDownload('epub')">
-                📕 Tải EPUB
+            <button class="download-btn btn-auto" onclick="autoDownload('epub')">
+                <span>🤖 Auto EPUB</span>
+                <span style="font-size: 12px; font-weight: normal;">(Tự động)</span>
             </button>
             
-            <button class="download-btn btn-docx" onclick="directDownload('docx')">
-                📄 Tải DOCX
+            <button class="download-btn btn-auto" onclick="autoDownload('docx')">
+                <span>🤖 Auto DOCX</span>
+                <span style="font-size: 12px; font-weight: normal;">(Tự động)</span>
             </button>
+        </div>
+
+        <div id="toolsStatus" class="tools-status">
+            <div style="margin-bottom: 10px; font-weight: 600; color: #333;">🔍 Trạng thái công cụ:</div>
+            <div id="toolsList"></div>
         </div>
     </div>
 </div>
@@ -444,7 +404,32 @@
     const messageDiv = document.getElementById('message');
     const resultSection = document.getElementById('resultSection');
     const storyIdDisplay = document.getElementById('storyId');
-    const storyLinkDisplay = document.getElementById('storyLink');
+    const toolsStatusDiv = document.getElementById('toolsList');
+
+    // Danh sách công cụ download
+    const TOOLS = [
+        {
+            name: 'Stary',
+            url: 'https://stary.live/',
+            formats: ['epub', 'docx'],
+            buildUrl: (storyId) => `https://stary.live/?story=${storyId}`,
+            testUrl: 'https://stary.live/api/health' // Endpoint test
+        },
+        {
+            name: 'Watt2Read',
+            url: 'https://watt2read.com/',
+            formats: ['all'],
+            buildUrl: (storyId) => `https://watt2read.com/?story=${storyId}`,
+            testUrl: 'https://watt2read.com/api/check'
+        },
+        {
+            name: 'Wattpad2Pdf',
+            url: 'https://wattpad2pdf.com/',
+            formats: ['pdf', 'epub'],
+            buildUrl: (storyId) => `https://wattpad2pdf.com/?id=${storyId}`,
+            testUrl: 'https://wattpad2pdf.com/api/status'
+        }
+    ];
 
     // Cho phép gửi form bằng phím Enter
     urlInput.addEventListener('keypress', function(event) {
@@ -462,7 +447,6 @@
         try {
             const urlObj = new URL(url);
             
-            // Kiểm tra xem domain có phải wattpad.com không
             if (!urlObj.hostname.includes('wattpad.com')) {
                 return {
                     valid: false,
@@ -470,7 +454,6 @@
                 };
             }
 
-            // Bốc tách Story ID từ pathname
             const regex = /\/story\/(\d+)/;
             const match = urlObj.pathname.match(regex);
 
@@ -483,8 +466,7 @@
 
             return {
                 valid: true,
-                storyId: match[1],
-                originalUrl: url
+                storyId: match[1]
             };
         } catch (error) {
             return {
@@ -502,33 +484,152 @@
             return;
         }
 
-        // Đặt nút thành trạng thái loading
+        const validation = validateWattpadUrl(url);
+
+        if (!validation.valid) {
+            showMessage(validation.error, 'error');
+            resultSection.style.display = 'none';
+            return;
+        }
+
+        const storyId = validation.storyId;
+        storyIdDisplay.textContent = storyId;
+        
         submitBtn.classList.add('loading');
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span class="spinner"></span>Đang kiểm tra...';
+        submitBtn.innerHTML = '<span class="spinner"></span>Đang kiểm tra công cụ...';
+
+        // Hiển thị result section
+        resultSection.style.display = 'block';
+        document.querySelector('.result-title').textContent = '🔍 Đang tìm công cụ hoạt động...';
+        
+        // Kiểm tra tất cả công cụ
+        checkAllTools();
 
         setTimeout(() => {
-            const validation = validateWattpadUrl(url);
-
-            if (!validation.valid) {
-                showMessage(validation.error, 'error');
-                resultSection.style.display = 'none';
-            } else {
-                const storyId = validation.storyId;
-                
-                // Cập nhật hiển thị
-                storyIdDisplay.textContent = storyId;
-                storyLinkDisplay.innerHTML = `<a href="${validation.originalUrl}" target="_blank">${validation.originalUrl}</a>`;
-
-                resultSection.style.display = 'block';
-                showMessage('✅ Lấy Story ID thành công! Chọn công cụ bên dưới để tải', 'success');
-            }
-
-            // Khôi phục nút bấm
             submitBtn.classList.remove('loading');
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '✨ Kiểm Tra & Lấy Story ID';
-        }, 500);
+            submitBtn.innerHTML = '✨ Tải Xuống (Auto Find)';
+        }, 2000);
+    }
+
+    async function checkAllTools() {
+        const results = [];
+        
+        for (const tool of TOOLS) {
+            addToolStatus(tool.name, 'checking', '⏳ Kiểm tra...');
+            
+            try {
+                // Thử fetch với timeout 5 giây
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                const response = await fetch(tool.url, {
+                    method: 'HEAD',
+                    signal: controller.signal,
+                    mode: 'no-cors'
+                });
+                
+                clearTimeout(timeoutId);
+                
+                results.push({
+                    ...tool,
+                    status: 'working',
+                    statusText: '✅ Hoạt động'
+                });
+                
+                addToolStatus(tool.name, 'working', '✅ Hoạt động');
+            } catch (error) {
+                results.push({
+                    ...tool,
+                    status: 'failed',
+                    statusText: '❌ Lỗi'
+                });
+                
+                addToolStatus(tool.name, 'failed', '❌ Lỗi');
+            }
+        }
+
+        // Lưu kết quả kiểm tra
+        window.toolResults = results;
+        
+        if (results.some(t => t.status === 'working')) {
+            document.querySelector('.result-title').textContent = '✅ Tìm thấy công cụ hoạt động!';
+            showMessage('✅ Tìm thấy công cụ! Nhấn "Auto EPUB/DOCX" để tải', 'success');
+        } else {
+            document.querySelector('.result-title').textContent = '⚠️ Không có công cụ nào hoạt động';
+            showMessage('⚠️ Tất cả công cụ đều lỗi. Vui lòng thử lại sau', 'warning');
+        }
+    }
+
+    function addToolStatus(toolName, status, message) {
+        let statusIcon = '';
+        if (status === 'checking') {
+            statusIcon = '⏳';
+        } else if (status === 'working') {
+            statusIcon = '✅';
+        } else {
+            statusIcon = '❌';
+        }
+
+        const existingItem = document.querySelector(`[data-tool="${toolName}"]`);
+        if (existingItem) {
+            existingItem.innerHTML = `
+                <span class="status-icon">${statusIcon}</span>
+                <span class="tool-name">${toolName}</span>
+                <span class="tool-message">${message}</span>
+            `;
+        } else {
+            const item = document.createElement('div');
+            item.className = 'tool-status-item';
+            item.setAttribute('data-tool', toolName);
+            item.innerHTML = `
+                <span class="status-icon">${statusIcon}</span>
+                <span class="tool-name">${toolName}</span>
+                <span class="tool-message">${message}</span>
+            `;
+            toolsStatusDiv.appendChild(item);
+        }
+    }
+
+    async function autoDownload(format) {
+        const storyId = document.getElementById('storyId').textContent;
+        
+        if (!storyId || storyId === '-') {
+            showMessage('❌ Vui lòng nhập link Wattpad trước', 'error');
+            return;
+        }
+
+        const results = window.toolResults || [];
+        const workingTools = results.filter(t => t.status === 'working');
+
+        if (workingTools.length === 0) {
+            showMessage('❌ Không có công cụ nào hoạt động. Vui lòng thử lại', 'error');
+            return;
+        }
+
+        // Lọc công cụ hỗ trợ format
+        const suitableTools = workingTools.filter(tool => 
+            tool.formats.includes('all') || tool.formats.includes(format)
+        );
+
+        if (suitableTools.length === 0) {
+            showMessage(`❌ Không có công cụ hỗ trợ ${format.toUpperCase()}`, 'error');
+            return;
+        }
+
+        // Sử dụng công cụ đầu tiên hoạt động
+        const selectedTool = suitableTools[0];
+        const downloadUrl = selectedTool.buildUrl(storyId);
+
+        showMessage(`⏳ Đang mở ${selectedTool.name}...`, 'info');
+        
+        // Mở link trong tab mới
+        window.open(downloadUrl, '_blank');
+        
+        setTimeout(() => {
+            showMessage(`✅ Đã mở ${selectedTool.name} để tải ${format.toUpperCase()}`, 'success');
+        }, 1000);
     }
 
     async function pasteFromClipboard() {
@@ -539,45 +640,6 @@
             showMessage('✅ Dán link thành công!', 'success');
         } catch (error) {
             showMessage('❌ Không thể dán từ clipboard. Vui lòng nhập thủ công', 'error');
-        }
-    }
-
-    function copyToClipboard(text) {
-        if (!text || text === '-') {
-            showMessage('❌ Không có Story ID để copy', 'error');
-            return;
-        }
-
-        navigator.clipboard.writeText(text).then(() => {
-            showMessage('✅ Đã copy Story ID vào clipboard!', 'success');
-            setTimeout(() => {
-                messageDiv.style.display = 'none';
-            }, 3000);
-        }).catch(() => {
-            showMessage('❌ Không thể copy, vui lòng thử lại', 'error');
-        });
-    }
-
-    function directDownload(format) {
-        const storyId = document.getElementById('storyId').textContent;
-        
-        if (!storyId || storyId === '-') {
-            showMessage('❌ Vui lòng nhập link Wattpad trước', 'error');
-            return;
-        }
-
-        // Cố gắng sử dụng các API download
-        let downloadUrl = '';
-        
-        if (format === 'epub') {
-            downloadUrl = `https://www.wattpad.com/v4/stories/${storyId}/download?format=epub`;
-        } else if (format === 'docx') {
-            downloadUrl = `https://www.wattpad.com/v4/stories/${storyId}/download?format=pdf`;
-        }
-
-        if (downloadUrl) {
-            window.open(downloadUrl, '_blank');
-            showMessage('💡 Nếu không tải được, hãy dùng các công cụ bên trên', 'info');
         }
     }
 </script>
