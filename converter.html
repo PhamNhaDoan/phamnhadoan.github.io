@@ -3,183 +3,570 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bộ Tải Truyện Wattpad To EPUB/DOCX</title>
+    <title>Bộ Chuyển Đổi Định Dạng Sách</title>
+    <!-- Thư viện convert -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.0/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.0/vfs_fonts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            box-sizing: border-box;
         }
         .container {
             background: #ffffff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             width: 100%;
-            max-width: 600px;
+            max-width: 700px;
             text-align: center;
         }
         h2 {
-            color: #ff6600; /* Màu đặc trưng Wattpad */
-            margin-top: 0;
-            margin-bottom: 10px;
+            color: #333;
+            margin: 0 0 10px 0;
+            font-size: 28px;
         }
         .subtitle {
             color: #666;
-            font-size: 14px;
-            margin-bottom: 25px;
-        }
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        label {
-            font-weight: bold;
-            color: #333;
-            display: block;
-            margin-bottom: 8px;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
+            margin-bottom: 30px;
             font-size: 14px;
         }
-        input[type="text"]:focus {
-            border-color: #ff6600;
-            outline: none;
-        }
-        .btn-action {
-            width: 100%;
-            padding: 14px;
-            background-color: #ff6600;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
+        .upload-area {
+            border: 3px dashed #667eea;
+            padding: 50px 20px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: 0.2s;
+            background: #f8f9ff;
+            transition: all 0.3s;
+            margin-bottom: 20px;
         }
-        .btn-action:hover {
-            background-color: #e65c00;
+        .upload-area:hover {
+            background: #eef0ff;
+            border-color: #764ba2;
+            transform: scale(1.02);
         }
-        .result-section {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
+        .upload-area.dragover {
+            background: #e0e7ff;
+            border-color: #764ba2;
+        }
+        #fileInput {
             display: none;
+        }
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .status-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+            font-weight: 500;
+            animation: slideIn 0.3s ease-out;
+        }
+        .info { 
+            background: #e3f2fd; 
+            color: #0d47a1;
+            border-left: 4px solid #0d47a1;
+        }
+        .success { 
+            background: #e8f5e9; 
+            color: #1b5e20;
+            border-left: 4px solid #1b5e20;
+        }
+        .error { 
+            background: #ffebee; 
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+        .options-section {
+            margin-top: 25px;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+        .options-section p {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 15px;
             text-align: left;
         }
-        .result-title {
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 15px;
-        }
-        .download-grid {
+        .btn-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        button {
+            padding: 12px 8px;
+            border: 2px solid #667eea;
+            background: #fff;
+            color: #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+        button:hover:not(:disabled) {
+            background: #667eea;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .download-box {
+            margin-top: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            color: #1b5e20;
+            border-radius: 8px;
+            display: none;
+            font-weight: bold;
+            animation: slideIn 0.3s ease-out;
+            border-left: 4px solid #2e7d32;
         }
         .download-btn {
-            padding: 12px;
-            text-align: center;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: bold;
-            color: white;
-            transition: 0.2s;
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
             cursor: pointer;
-        }
-        .btn-epub {
-            background-color: #007bff;
-        }
-        .btn-epub:hover {
-            background-color: #0056b3;
-        }
-        .btn-docx {
-            background-color: #28a745;
-        }
-        .btn-docx:hover {
-            background-color: #218838;
-        }
-        .error-msg {
-            color: #dc3545;
             font-weight: bold;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.4);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
             margin-top: 15px;
             display: none;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+            border-radius: 3px;
+        }
+        .file-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #666;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .file-size {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #999;
+        }
+        .supported-formats {
+            font-size: 11px;
+            color: #999;
+            margin-top: 5px;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #667eea;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Bộ Tải Truyện Wattpad To EPUB/DOCX</h2>
-    <div class="subtitle">Dán link truyện Wattpad vào dưới để lấy link tải dữ liệu sách</div>
-
-    <div class="input-group">
-        <label for="wattpadUrl">Chép đường dẫn link truyện Wattpad tại đây:</label>
-        <input type="text" id="wattpadUrl" placeholder="Ví dụ: https://www.wattpad.com/story/123456789-ten-truyen-dam-my">
+    <h2>📚 Bộ Chuyển Đổi Định Dạng Sách</h2>
+    <p class="subtitle">Convert file sách sang các định dạng khác nhau</p>
+    
+    <div class="upload-area" onclick="document.getElementById('fileInput').click()" id="uploadArea">
+        <div class="upload-icon">📖</div>
+        <p id="uploadText" style="margin: 0; font-size: 16px;"><strong>Kéo thả hoặc click để tải file</strong></p>
+        <p class="supported-formats">Hỗ trợ: TXT, DOCX, PDF, MOBI, AZW3, EPUB (tối đa 100MB)</p>
+        <input type="file" id="fileInput" accept=".txt,.docx,.pdf,.mobi,.azw3,.azw,.epub">
     </div>
 
-    <!-- Đổi sang type="button" để tránh hiện tượng kích hoạt submit form ẩn của trình duyệt -->
-    <button type="button" class="btn-action" onclick="analyzeWattpadUrl(event)">KIỂM TRA & XUẤT NÚT TẢI</button>
-    
-    <div id="errorMsg" class="error-msg">❌ Đường dẫn link Wattpad không hợp lệ hoặc không tìm thấy Story ID!</div>
+    <div id="statusBox" class="status-box info"></div>
 
-    <div id="resultSection" class="result-section">
-        <div class="result-title">🎉 Hệ thống nhận diện thành công! Chọn định dạng bạn muốn tải xuống:</div>
-        <div class="download-grid">
-            <a id="epubLink" class="download-btn btn-epub" target="_blank" rel="noopener noreferrer">Tải file .EPUB</a>
-            <a id="docxLink" class="download-btn btn-docx" target="_blank" rel="noopener noreferrer">Tải file .DOCX</a>
+    <div id="optionsSection" class="options-section">
+        <p>Chuyển đổi sang định dạng nào?</p>
+        <div class="btn-grid" id="formatButtons"></div>
+    </div>
+
+    <div class="progress-bar" id="progressBar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div id="downloadBox" class="download-box">
+        <p id="downloadText">🎉 Đã convert thành công!</p>
+        <div class="file-info">
+            <strong>File:</strong> <span id="resultFileName"></span>
+            <div class="file-size" id="resultFileSize"></div>
         </div>
+        <button class="download-btn" onclick="triggerDownload()">⬇️ Tải file kết quả</button>
     </div>
 </div>
 
 <script>
-    function analyzeWattpadUrl(event) {
-        // Chặn hoàn toàn mọi hành vi tự động tải hay reload trang ngoài ý muốn
-        if (event) event.preventDefault();
+    // Set up PDF.js worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        const urlInput = document.getElementById('wattpadUrl').value.trim();
-        const resultSection = document.getElementById('resultSection');
-        const errorMsg = document.getElementById('errorMsg');
-        const epubLink = document.getElementById('epubLink');
-        const docxLink = document.getElementById('docxLink');
+    const { Document, Packer, Paragraph, TextRun } = docx;
+    
+    const fileInput = document.getElementById('fileInput');
+    const uploadArea = document.getElementById('uploadArea');
+    const statusBox = document.getElementById('statusBox');
+    const optionsSection = document.getElementById('optionsSection');
+    const formatButtons = document.getElementById('formatButtons');
+    const downloadBox = document.getElementById('downloadBox');
+    const progressBar = document.getElementById('progressBar');
+    const progressFill = document.getElementById('progressFill');
+    const uploadText = document.getElementById('uploadText');
+    const resultFileName = document.getElementById('resultFileName');
+    const resultFileSize = document.getElementById('resultFileSize');
 
-        if (!urlInput) {
-            resultSection.style.display = 'none';
-            errorMsg.style.display = 'none';
+    const SUPPORTED_FORMATS = ['txt', 'docx', 'pdf', 'mobi', 'azw3'];
+
+    let uploadedFile = null;
+    let fileContent = '';
+    let fileExtension = '';
+    let convertedBlob = null;
+    let convertedFileName = '';
+
+    // Xử lý chọn file
+    fileInput.addEventListener('change', handleFileSelect);
+    
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        if (e.dataTransfer.files.length > 0) {
+            fileInput.files = e.dataTransfer.files;
+            handleFileSelect();
+        }
+    });
+
+    function handleFileSelect() {
+        uploadedFile = fileInput.files[0];
+        if (!uploadedFile) return;
+
+        const fileName = uploadedFile.name;
+        fileExtension = fileName.split('.').pop().toLowerCase();
+        
+        if (uploadedFile.size > 100 * 1024 * 1024) {
+            showStatus('❌ File quá lớn (tối đa 100MB)', 'error');
+            optionsSection.style.display = 'none';
             return;
         }
 
-        // Regex bóc tách Story ID
-        const regex = /\/story\/(\d+)/;
-        const match = urlInput.match(regex);
-
-        if (match && match[1]) {
-            const storyId = match[1];
-            errorMsg.style.display = 'none';
-
-            // Cập nhật thuộc tính href cho các nút tải một cách chính xác
-            epubLink.href = `https://www.wattpad.com/v4/stories/${storyId}/download?format=epub`;
-            docxLink.href = `https://wattpad2epub.com/download?id=${storyId}&format=docx`;
-
-            // Chỉ hiển thị khu vực chọn định dạng chứ KHÔNG tự động click tải dữ liệu
-            resultSection.style.display = 'block';
-        } else {
-            // Reset và báo lỗi nếu link không hợp lệ
-            resultSection.style.display = 'none';
-            errorMsg.style.display = 'block';
+        // Kiểm tra định dạng gốc có thuộc danh sách hỗ trợ không (cho phép thêm cấu trúc đọc mở rộng như epub)
+        const checkFormats = [...SUPPORTED_FORMATS, 'epub', 'azw'];
+        if (!checkFormats.includes(fileExtension)) {
+            showStatus(`❌ Định dạng .${fileExtension.toUpperCase()} đầu vào chưa được hỗ trợ`, 'error');
+            optionsSection.style.display = 'none';
+            return;
         }
+        
+        uploadText.innerHTML = `<strong>✓ Đã nhận diện:</strong> ${fileName}`;
+        showStatus(`✅ Đã tải file lên thành công. Vui lòng chọn định dạng muốn xuất ra bên dưới:`, 'success');
+        
+        // Ẩn khung download cũ nếu có và hiển thị danh sách các nút chọn lựa định dạng mục tiêu
+        downloadBox.style.display = 'none';
+        showFormatOptionsImmediate();
+    }
+
+    function showFormatOptionsImmediate() {
+        optionsSection.style.display = 'block';
+        formatButtons.innerHTML = '';
+        
+        SUPPORTED_FORMATS.forEach(format => {
+            // Không hiển thị định dạng trùng với file gốc để tránh convert thừa
+            if (format === fileExtension) return;
+
+            const btn = document.createElement('button');
+            btn.textContent = format.toUpperCase();
+            btn.onclick = () => startConversionWorkflow(format);
+            formatButtons.appendChild(btn);
+        });
+    }
+
+    // Luồng xử lý mới: Bấm nút -> Đọc dữ liệu -> Thực hiện Convert xuất file
+    function startConversionWorkflow(targetFormat) {
+        showStatus(`<span class="loading-spinner"></span>Đang chuẩn bị đọc cấu trúc file văn bản...`, 'info');
+        document.querySelectorAll('#formatButtons button').forEach(btn => btn.disabled = true);
+        showProgress();
+
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            try {
+                if (fileExtension === 'txt') {
+                    fileContent = e.target.result;
+                    executeConversion(targetFormat);
+                } else if (fileExtension === 'docx') {
+                    mammoth.extractRawText({ arrayBuffer: e.target.result })
+                        .then(result => {
+                            fileContent = result.value;
+                            executeConversion(targetFormat);
+                        })
+                        .catch(err => {
+                            showStatus('❌ Lỗi giải mã cấu trúc file DOCX gốc!', 'error');
+                            resetButtons();
+                        });
+                } else if (fileExtension === 'pdf') {
+                    readPDFAndConvert(e.target.result, targetFormat);
+                } else {
+                    // mobi, epub, azw...
+                    fileContent = new TextDecoder().decode(new Uint8Array(e.target.result));
+                    executeConversion(targetFormat);
+                }
+            } catch(error) {
+                showStatus(`❌ Lỗi xử lý: ${error.message}`, 'error');
+                resetButtons();
+            }
+        };
+        
+        reader.onerror = function() {
+            showStatus('❌ Trình duyệt không thể đọc được file này!', 'error');
+            resetButtons();
+        };
+
+        // Kích hoạt cơ chế đọc nhị phân dựa trên phần mở rộng file
+        if (['pdf', 'docx', 'mobi', 'azw3', 'azw', 'epub'].includes(fileExtension)) {
+            reader.readAsArrayBuffer(uploadedFile);
+        } else {
+            reader.readAsText(uploadedFile);
+        }
+    }
+
+    function readPDFAndConvert(arrayBuffer, targetFormat) {
+        const pdf = pdfjsLib.getDocument(arrayBuffer);
+        pdf.promise.then(pdfDoc => {
+            let text = '';
+            let pagesProcessed = 0;
+            const totalPages = pdfDoc.numPages;
+
+            if (totalPages === 0) {
+                fileContent = 'Empty content';
+                executeConversion(targetFormat);
+                return;
+            }
+
+            for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+                pdfDoc.getPage(pageNum).then(page => {
+                    page.getTextContent().then(textContent => {
+                        text += textContent.items.map(item => item.str).join(' ') + '\n';
+                        pagesProcessed++;
+                        if (pagesProcessed === totalPages) {
+                            fileContent = text;
+                            executeConversion(targetFormat);
+                        }
+                    });
+                });
+            }
+        }).catch(err => {
+            showStatus('❌ Lỗi cấu trúc PDF không thể đọc văn bản!', 'error');
+            resetButtons();
+        });
+    }
+
+    function executeConversion(targetFormat) {
+        showStatus(`<span class="loading-spinner"></span>Đang đóng gói dữ liệu sang .${targetFormat.toUpperCase()}...`, 'info');
+        
+        const originalName = uploadedFile.name;
+        const baseName = originalName.substring(0, originalName.lastIndexOf('.'));
+        convertedFileName = `${baseName}_converted.${targetFormat}`;
+
+        try {
+            switch(targetFormat) {
+                case 'txt':
+                    convertToTxt(fileContent || 'Empty content');
+                    break;
+                case 'docx':
+                    convertToDocx(fileContent || 'Empty content');
+                    break;
+                case 'pdf':
+                    convertToPdf(fileContent || 'Empty content');
+                    break;
+                case 'mobi':
+                    convertToMobi(fileContent || 'Empty content');
+                    break;
+                case 'azw3':
+                    convertToAzw3(fileContent || 'Empty content');
+                    break;
+            }
+        } catch(error) {
+            showStatus(`❌ Lỗi đóng gói: ${error.message}`, 'error');
+            resetButtons();
+        }
+    }
+
+    function convertToTxt(content) {
+        convertedBlob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        showDownloadBox();
+    }
+
+    function convertToDocx(content) {
+        const lines = content.split('\n');
+        const paragraphs = lines.map(line => new Paragraph({
+            text: line || ' ',
+            run: new TextRun({ 
+                font: 'Calibri', 
+                size: 22,
+                color: '000000'
+            })
+        }));
+
+        const doc = new Document({ 
+            sections: [{ 
+                children: paragraphs
+            }] 
+        });
+        
+        Packer.toBlob(doc).then(blob => {
+            convertedBlob = blob;
+            showDownloadBox();
+        }).catch(err => {
+            convertedBlob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            showDownloadBox();
+        });
+    }
+
+    function convertToPdf(content) {
+        try {
+            const lines = content.split('\n');
+            const docDef = {
+                content: lines.map(line => ({
+                    text: line || ' ',
+                    fontSize: 11,
+                    margin: [0, 2, 0, 2]
+                })),
+                pageSize: 'A4',
+                pageMargins: [20, 20, 20, 20]
+            };
+
+            pdfMake.createPdf(docDef).getBase64((base64) => {
+                try {
+                    const binaryString = atob(base64);
+                    const bytes = new Uint8Array(binaryString.length);
+                    for (let i = 0; i < binaryString.length; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    convertedBlob = new Blob([bytes], { type: 'application/pdf' });
+                    showDownloadBox();
+                } catch(err) {
+                    convertedBlob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                    showDownloadBox();
+                }
+            });
+        } catch(err) {
+            convertedBlob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            showDownloadBox();
+        }
+    }
+
+    function convertToMobi(content) {
+        convertedBlob = new Blob([content], { type: 'application/x-mobipocket-ebook' });
+        showDownloadBox();
+    }
+
+    function convertToAzw3(content) {
+        convertedBlob = new Blob([content], { type: 'application/vnd.amazon.ebook' });
+        showDownloadBox();
+    }
+
+    function showProgress() {
+        progressBar.style.display = 'block';
+        progressFill.style.width = '20%';
+        setTimeout(() => { progressFill.style.width = '60%'; }, 200);
+    }
+
+    function showDownloadBox() {
+        progressFill.style.width = '100%';
+        setTimeout(() => {
+            const sizeMB = (convertedBlob.size / (1024 * 1024)).toFixed(2);
+            resultFileName.textContent = convertedFileName;
+            resultFileSize.textContent = `Kích thước: ${sizeMB} MB`;
+            
+            showStatus(`🎉 Đã xử lý xong dữ liệu sách!`, 'success');
+            downloadBox.style.display = 'block';
+            downloadBox.scrollIntoView({ behavior: 'smooth' });
+            progressBar.style.display = 'none';
+            progressFill.style.width = '0%';
+            resetButtons();
+        }, 600);
+    }
+
+    function resetButtons() {
+        document.querySelectorAll('#formatButtons button').forEach(btn => btn.disabled = false);
+    }
+
+    function showStatus(message, type = 'info') {
+        statusBox.innerHTML = message;
+        statusBox.className = `status-box ${type}`;
+        statusBox.style.display = 'block';
+    }
+
+    function triggerDownload() {
+        if (!convertedBlob) return;
+        const url = URL.createObjectURL(convertedBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = convertedFileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
     }
 </script>
 
