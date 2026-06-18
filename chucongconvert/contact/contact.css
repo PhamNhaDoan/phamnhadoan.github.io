@@ -1,34 +1,32 @@
-/* Reset cơ bản và font chữ */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-}
-
-/* CĂN CHÍNH GIỮA MÀN HÌNH: 
-   Sử dụng Flexbox để form luôn nằm giữa bất kể kích thước màn hình */
-body {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+/* Container bọc bên ngoài dùng để ép card vào chính giữa vùng board */
+.contact-wrapper {
     display: flex;
-    justify-content: center; /* Căn giữa theo chiều ngang */
-    align-items: center;     /* Căn giữa theo chiều dọc */
-    min-height: 100vh;       /* Chiều cao tối thiểu bằng 100% màn hình */
-    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 40px 20px;
+    box-sizing: border-box;
 }
 
-/* Khung bọc của Form */
+/* Khung Card chính - Custom theo vibe dễ thương của web */
 .contact-card {
     background: #ffffff;
-    padding: 40px 35px;
-    border-radius: 24px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    padding: 35px 30px;
+    border-radius: 20px;
+    /* Hiệu ứng viền nét đứt hoặc nét liền mảnh hợp style vẽ tay (markers & magic) */
+    border: 3px solid #2d3748; 
+    box-shadow: 6px 6px 0px #2d3748; /* Đổ bóng khối cứng siêu cá tính */
     width: 100%;
-    max-width: 460px; /* Độ rộng vừa vặn cho form */
+    max-width: 440px;
     text-align: center;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 10; /* Nổi lên trên các hình doodle nền */
 }
 
+/* Tiêu đề */
 .contact-header h2 {
+    font-family: 'Fredoka', sans-serif;
     color: #2d3748;
     font-size: 26px;
     font-weight: 700;
@@ -39,13 +37,12 @@ body {
     color: #718096;
     font-size: 14px;
     line-height: 1.5;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 }
 
-/* Các ô nhập liệu */
+/* Các nhóm nhập liệu */
 .input-group {
-    position: relative;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     text-align: left;
 }
 
@@ -53,66 +50,62 @@ body {
 .input-group textarea {
     width: 100%;
     padding: 12px 16px;
-    background: #f7fafc;
-    border: 1px solid #e2e8f0;
+    background: #fafafa;
+    border: 2px solid #2d3748;
     border-radius: 12px;
     font-size: 15px;
     color: #2d3748;
     outline: none;
-    transition: all 0.3s ease;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
 }
 
-/* Hiệu ứng khi nhấn chọn vào ô nhập liệu */
+/* Khi bấm chọn vào ô nhập liệu */
 .input-group input:focus,
 .input-group textarea:focus {
-    background: #fff;
-    border-color: #667eea;
-    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+    background: #ffffff;
+    border-color: #ff7675; /* Đổi sang một chút sắc hồng/cam ấm áp */
+    box-shadow: 3px 3px 0px #2d3748;
 }
 
-/* NÚT SEND SIÊU ĐẸP */
+/* NÚT SEND SIÊU XỊN VÀ ĐÁNG YÊU */
 .submit-btn {
     width: 100%;
     padding: 14px;
-    /* Màu gradient chuyển sắc tím xanh hiện đại */
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
+    background: #ff7675; /* Màu nền nổi bật, tràn đầy năng lượng */
+    color: #ffffff;
+    border: 2px solid #2d3748;
     border-radius: 12px;
+    font-family: 'Fredoka', sans-serif;
     font-size: 16px;
     font-weight: 600;
-    letter-spacing: 0.5px;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
-    /* Đổ bóng phát sáng mờ nhẹ */
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    gap: 10px;
+    box-shadow: 4px 4px 0px #2d3748; /* Đổ bóng đồng bộ với card */
+    transition: all 0.2s ease;
 }
 
 /* Hiệu ứng khi rê chuột vào nút Send */
 .submit-btn:hover {
-    /* Đổi hướng màu gradient nhẹ và tăng độ sáng */
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-    /* Tăng độ bóng phát sáng nhìn rất "hi-tech" */
-    box-shadow: 0 6px 20px rgba(118, 75, 162, 0.6);
-    /* Nút hơi nhô lên nhẹ */
-    transform: translateY(-2px);
+    background: #ff6b6b;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #2d3748;
 }
 
 /* Hiệu ứng khi bấm click chuột */
 .submit-btn:active {
-    transform: translateY(1px);
-    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px #2d3748;
 }
 
-/* Hiệu ứng cho icon máy bay giấy (nếu có) bay lên khi hover */
+/* Hiệu ứng icon máy bay giấy nhỏ bay lên nhẹ */
 .submit-btn svg {
-    transition: transform 0.3s ease;
+    transition: transform 0.2s ease;
 }
 
 .submit-btn:hover svg {
-    transform: translate(4px, -4px);
+    transform: translate(3px, -3px);
 }
