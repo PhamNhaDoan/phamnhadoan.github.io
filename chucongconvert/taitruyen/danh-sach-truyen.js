@@ -1,4 +1,4 @@
-[
+const dataStories = [
   {
     "id": 1,
     "ten": "Truyện Ngọt Ngào Nhất Thế Gian",
