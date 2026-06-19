@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kho Tải Truyện Sủng Công - ChuCongConvert</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+            --primary-purple: #7451eb;
+            --secondary-pink: #ff758c;
+            --raw-glow: linear-gradient(135deg, #ff416c, #ff4b2b);
+            --qt-glow: linear-gradient(135deg, #00c6ff, #0072ff);
+            --text-dark: #333333;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 50px 20px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Container kính mờ sang trọng, bay bổng */
+        .main-wrapper {
+            max-width: 1250px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.75);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(181, 129, 108, 0.15);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            animation: floatUp 1.2s ease-out;
+        }
+
+        h1 {
+            font-family: 'Comfortaa', cursive;
+            text-align: center;
+            background: linear-gradient(45deg, var(--primary-purple), var(--secondary-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+            font-size: 2.5rem;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #8e8d8a;
+            font-style: italic;
+            margin-bottom: 40px;
+            font-size: 0.95rem;
+        }
+
+        /* Thanh tìm kiếm phát sáng */
+        .search-container {
+            position: relative;
+            max-width: 450px;
+            margin: 0 auto 40px auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 25px;
+            font-size: 1rem;
+            border: 2px solid rgba(116, 81, 235, 0.2);
+            border-radius: 50px;
+            outline: none;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text-dark);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-family: 'Nunito', sans-serif;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-purple);
+            box-shadow: 0 10px 25px rgba(116, 81, 235, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Bảng danh sách truyện nổi khối */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            background: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(90deg, #7451eb, #977ef2);
+            color: white;
+            font-family: 'Comfortaa', cursive;
+            font-weight: 700;
+            padding: 20px;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 20px;
+            border-bottom: 1px solid #f0edf5;
+            font-size: 0.95rem;
+            vertical-align: middle;
+        }
+
+        /* Hiệu ứng lướt qua hàng cực mượt */
+        tr {
+            transition: all 0.35s ease;
+        }
+
+        tr:hover {
+            background-color: rgba(116, 81, 235, 0.04);
+            transform: scale(1.005) translateX(4px);
+        }
+
+        .story-title {
+            font-weight: 700;
+            color: #4a34a8;
+            font-size: 1.05rem;
+        }
+
+        .author-name {
+            color: #555555;
+            font-weight: 600;
+        }
+
+        .genre-tag {
+            background: rgba(255, 117, 140, 0.1);
+            color: var(--secondary-pink);
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-block;
+            margin: 3px;
+            border: 1px solid rgba(255, 117, 140, 0.15);
+        }
+
+        .notes-text {
+            color: #777777;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* 2 NÚT RAW VÀ QT CỰC KỲ ĐẸP VÀ PHÁT SÁNG */
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 65px;
+            padding: 9px 0;
+            margin: 4px;
+            border-radius: 30px;
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-family: 'Comfortaa', cursive;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-raw { background: var(--raw-glow); box-shadow: 0 4px 15px rgba(255, 65, 108, 0.35); }
+        .btn-qt { background: var(--qt-glow); box-shadow: 0 4px 15px rgba(0, 114, 255, 0.35); }
+
+        /* Hiệu ứng Hover phát nổ neon và phóng to nhẹ */
+        .btn-download:hover {
+            transform: translateY(-4px) scale(1.12);
+        }
+        
+        .btn-raw:hover { box-shadow: 0 8px 25px rgba(255, 65, 108, 0.6); }
+        .btn-qt:hover { box-shadow: 0 8px 25px rgba(0, 114, 255, 0.6); }
+
+        .btn-download:active {
+            transform: translateY(-1px) scale(1);
+        }
+
+        /* Keyframes Animation xuất hiện dập dìu */
+        @keyframes floatUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive di động */
+        @media (max-width: 768px) {
+            .main-wrapper { padding: 20px; border-radius: 20px; }
+            th, td { padding: 12px; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <h1>✿ Kho Tải Truyện Cao Cấp ✿</h1>
+    <div class="subtitle">Nơi cập nhật những bộ truyện sủng công lãng mạn nhất</div>
+    
+    <div class="search-container">
+        <input type="text" id="searchBar" class="search-input" placeholder="Tìm tên truyện, tác giả, thể loại...">
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 25%">Tên truyện</th>
+                    <th style="width: 15%">Tác giả</th>
+                    <th style="width: 23%">Thể loại</th>
+                    <th style="width: 22%">Ghi chú</th>
+                    <th style="width: 15%; text-align: center;">Tải về</th>
+                </tr>
+            </thead>
+            <tbody id="storyTableBody">
+                </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    async function loadStories() {
+        try {
+            const response = await fetch('danh-sach-truyen.json');
+            let stories = await response.json();
+            
+            // Xếp truyện mới thêm (ID lớn hơn) lên đầu bảng
+            stories.reverse();
+
+            const tableBody = document.getElementById('storyTableBody');
+            const searchBar = document.getElementById('searchBar');
+
+            function displayStories(data) {
+                tableBody.innerHTML = '';
+                if(data.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#999; padding: 30px;">Không thấy truyện cần tìm rồi nàng ơi...</td></tr>`;
+                    return;
+                }
+                
+                data.forEach(story => {
+                    const genres = story.theLoai.split(',').map(g => `<span class="genre-tag">${g.trim()}</span>`).join('');
+                    
+                    const row = `
+                        <tr>
+                            <td class="story-title">${story.ten}</td>
+                            <td class="author-name">${story.tacGia}</td>
+                            <td>${genres}</td>
+                            <td class="notes-text">${story.ghiChu || '-'}</td>
+                            <td style="text-align: center; white-space: nowrap;">
+                                <a href="${story.linkRaw}" target="_blank" class="btn-download btn-raw">Raw</a>
+                                <a href="${story.linkQT}" target="_blank" class="btn-download btn-qt">QT</a>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                });
+            }
+
+            displayStories(stories);
+
+            // Bộ lọc tìm kiếm thời gian thực siêu mượt
+            searchBar.addEventListener('input', (e) => {
+                const keyword = e.target.value.toLowerCase().trim();
+                const filtered = stories.filter(story => 
+                    story.ten.toLowerCase().includes(keyword) || 
+                    story.tacGia.toLowerCase().includes(keyword) || 
+                    story.theLoai.toLowerCase().includes(keyword)
+                );
+                displayStories(filtered);
+            });
+
+        } catch (error) {
+            console.error(error);
+            document.getElementById('storyTableBody').innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ff758c; padding:30px;">Lỗi tải dữ liệu. Bạn hãy kiểm tra lại file JSON nhé!</td></tr>`;
+        }
+    }
+
+    window.onload = loadStories;
+</script>
+</body>
+</html>
