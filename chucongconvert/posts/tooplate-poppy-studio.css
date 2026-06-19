@@ -69,7 +69,7 @@ body {
   border-radius: 50%;
   width: 110px;
   height: 110px;
-  font-family: 'Fredoka', sans-serif;
+  font-family: 'Comfortaa', sans-serif;
   font-weight: 700;
   font-size: 15px;
   line-height: 1.2;
@@ -87,7 +87,7 @@ body {
 }
 
 .site-title {
-  font-family: 'Fredoka', sans-serif;
+  font-family: 'Comfortaa', sans-serif;
   font-weight: 700;
   font-size: clamp(32px, 6vw, 56px);
   color: var(--ink);
@@ -114,7 +114,7 @@ body {
   padding: 0 20px;
 }
 .nav-strip a {
-  font-family: 'Fredoka', sans-serif;
+  font-family: 'Comfortaa', sans-serif;
   font-weight: 600;
   font-size: 13px;
   text-decoration: none;
@@ -233,7 +233,7 @@ body {
 
 /* ─── Note typography ─── */
 .note-title {
-  font-family: 'Fredoka', sans-serif;
+  font-family: 'Comfortaa', sans-serif;
   font-weight: 700;
   font-size: 24px;
   color: var(--ink);
@@ -250,7 +250,7 @@ body {
 }
 .note-tag {
   display: inline-block;
-  font-family: 'Fredoka', sans-serif;
+  font-family: 'Comfortaa', sans-serif;
   font-weight: 600;
   font-size: 12px;
   background: var(--butter);
@@ -284,7 +284,7 @@ body {
 }
 
 .note--1 .note-hero-text {
-  font-family: 'Fredoka', sans-serif;
+  font-family: 'Comfortaa', sans-serif;
   font-weight: 700;
   font-size: clamp(28px, 4vw, 48px);
   color: #E8889A;
@@ -395,7 +395,7 @@ body {
   padding-bottom: 44px;
 }
 .note--4 .quote-mark {
-  font-family: 'Fredoka', sans-serif;
+  font-family: 'Comfortaa', sans-serif;
   font-size: 60px;
   color: rgba(58,50,38,0.12);
   line-height: 0.7;
@@ -403,7 +403,7 @@ body {
   position: relative; z-index: 1;
 }
 .note--4 .attribution {
-  font-family: 'Fredoka', sans-serif;
+  font-family: 'Comfortaa', sans-serif;
   font-weight: 600;
   font-size: 13px;
   color: var(--ink);
@@ -427,7 +427,7 @@ body {
 }
 .note--5 .cta-link {
   display: inline-block;
-  font-family: 'Fredoka', sans-serif;
+  font-family: 'Comfortaa', sans-serif;
   font-weight: 700;
   font-size: 15px;
   color: var(--ink);
@@ -519,7 +519,7 @@ body {
   height: 24px;
   background: var(--pastel-pink);
   border-radius: 50%;
-  font-family: 'Fredoka', sans-serif;
+  font-family: 'Comfortaa', sans-serif;
   font-weight: 700;
   font-size: 13px;
   color: var(--ink);
