@@ -7,90 +7,80 @@
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
-            --primary-purple: #7451eb;
-            --secondary-pink: #ff758c;
-            --raw-glow: linear-gradient(135deg, #ff416c, #ff4b2b);
-            --qt-glow: linear-gradient(135deg, #00c6ff, #0072ff);
-            --text-dark: #333333;
+            --bg-color: #faf9f6; /* Nền trắng kem cao cấp, dịu mắt */
+            --primary-purple: #6c5ce7;
+            --text-dark: #2d3436;
+            --text-muted: #636e72;
+            --border-color: #f1f2f6;
+            --raw-color: #ff4757;
+            --qt-color: #2f3542; /* Màu QT tối lịch lãm, sang trọng */
         }
 
         body {
             font-family: 'Nunito', sans-serif;
-            background: var(--bg-gradient);
+            background-color: var(--bg-color);
             color: var(--text-dark);
             margin: 0;
-            padding: 50px 20px;
+            padding: 40px 20px;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* Container kính mờ sang trọng, bay bổng */
         .main-wrapper {
-            max-width: 1250px;
+            max-width: 1200px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.75);
-            padding: 40px;
-            border-radius: 30px;
-            box-shadow: 0 20px 50px rgba(181, 129, 108, 0.15);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            animation: floatUp 1.2s ease-out;
+            background: #ffffff;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02); /* Đổ bóng siêu nhẹ, thanh lịch */
+            border: 1px solid #f1f2f6;
         }
 
         h1 {
             font-family: 'Comfortaa', cursive;
             text-align: center;
-            background: linear-gradient(45deg, var(--primary-purple), var(--secondary-pink));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--primary-purple);
             margin-bottom: 5px;
-            font-size: 2.5rem;
-            letter-spacing: 1px;
+            font-size: 2.2rem;
+            font-weight: 700;
         }
 
         .subtitle {
             text-align: center;
-            color: #8e8d8a;
+            color: var(--text-muted);
             font-style: italic;
-            margin-bottom: 40px;
-            font-size: 0.95rem;
+            margin-bottom: 35px;
+            font-size: 0.9rem;
         }
 
-        /* Thanh tìm kiếm phát sáng */
+        /* Thanh tìm kiếm tối giản tinh tế */
         .search-container {
-            position: relative;
-            max-width: 450px;
-            margin: 0 auto 40px auto;
+            max-width: 400px;
+            margin: 0 auto 35px auto;
         }
 
         .search-input {
             width: 100%;
-            padding: 14px 25px;
-            font-size: 1rem;
-            border: 2px solid rgba(116, 81, 235, 0.2);
-            border-radius: 50px;
+            padding: 12px 20px;
+            font-size: 0.95rem;
+            border: 1px solid #dfe4ea;
+            border-radius: 6px;
             outline: none;
-            background: rgba(255, 255, 255, 0.9);
+            background: #ffffff;
             color: var(--text-dark);
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: border-color 0.2s ease;
             font-family: 'Nunito', sans-serif;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+            box-sizing: border-box;
         }
 
         .search-input:focus {
             border-color: var(--primary-purple);
-            box-shadow: 0 10px 25px rgba(116, 81, 235, 0.15);
-            transform: translateY(-2px);
         }
 
-        /* Bảng danh sách truyện nổi khối */
+        /* Bảng danh sách truyện phẳng phẳng, sạch sẽ */
         .table-container {
             overflow-x: auto;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
         }
 
         table {
@@ -100,120 +90,93 @@
         }
 
         th {
-            background: linear-gradient(90deg, #7451eb, #977ef2);
-            color: white;
+            background-color: #f8f9fa;
+            color: var(--text-dark);
             font-family: 'Comfortaa', cursive;
             font-weight: 700;
-            padding: 20px;
-            font-size: 1rem;
-            letter-spacing: 0.5px;
+            padding: 16px 20px;
+            font-size: 0.95rem;
+            border-bottom: 2px solid var(--border-color);
         }
 
         td {
-            padding: 20px;
-            border-bottom: 1px solid #f0edf5;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
             font-size: 0.95rem;
             vertical-align: middle;
         }
 
-        /* Hiệu ứng lướt qua hàng cực mượt */
+        /* Hiệu ứng lướt hàng êm dịu, nhẹ máy */
         tr {
-            transition: all 0.35s ease;
+            transition: background-color 0.2s ease;
         }
 
         tr:hover {
-            background-color: rgba(116, 81, 235, 0.04);
-            transform: scale(1.005) translateX(4px);
+            background-color: #fcfcff;
         }
 
         .story-title {
             font-weight: 700;
-            color: #4a34a8;
-            font-size: 1.05rem;
+            color: #2f3542;
         }
 
         .author-name {
-            color: #555555;
-            font-weight: 600;
+            color: var(--text-muted);
         }
 
-        /* BIẾN TAG THỂ LOẠI THÀNH NÚT BẤM DỄ THƯƠNG SANG CHẢNH */
+        /* NÚT THỂ LOẠI KHÔNG CÒN HIỆU ỨNG NẶNG */
         .genre-tag {
-            background: rgba(255, 117, 140, 0.1);
-            color: var(--secondary-pink);
-            padding: 5px 14px;
-            border-radius: 30px;
+            background: #f1f2f6;
+            color: #57606f;
+            padding: 4px 10px;
+            border-radius: 4px;
             font-size: 0.8rem;
-            font-weight: 700;
+            font-weight: 600;
             display: inline-block;
-            margin: 3px;
-            border: 1px solid rgba(255, 117, 140, 0.15);
+            margin: 2px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            user-select: none; /* Tránh bôi đen chữ khi bấm nhanh */
+            transition: all 0.2s ease;
+            user-select: none;
         }
 
-        /* Hiệu ứng khi rê chuột vào nút thể loại */
         .genre-tag:hover {
-            background: var(--secondary-pink);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(255, 117, 140, 0.3);
-        }
-
-        /* Hiệu ứng khi nhấn giữ nút thể loại */
-        .genre-tag:active {
-            transform: translateY(0);
+            background: var(--primary-purple);
+            color: #ffffff;
         }
 
         .notes-text {
-            color: #777777;
+            color: var(--text-muted);
             font-size: 0.9rem;
             line-height: 1.4;
         }
 
-        /* 2 NÚT RAW VÀ QT PHÁT SÁNG */
+        /* 2 NÚT RAW VÀ QT TỐI GIẢN CHÂN PHƯƠNG, SIÊU SANG */
         .btn-download {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 65px;
-            padding: 9px 0;
-            margin: 4px;
-            border-radius: 30px;
-            color: white;
+            width: 58px;
+            padding: 7px 0;
+            margin: 2px;
+            border-radius: 4px;
+            color: #ffffff;
             text-decoration: none;
             font-weight: 700;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
+            font-size: 0.75rem;
             text-transform: uppercase;
             font-family: 'Comfortaa', cursive;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            z-index: 1;
+            transition: opacity 0.2s ease;
         }
 
-        .btn-raw { background: var(--raw-glow); box-shadow: 0 4px 15px rgba(255, 65, 108, 0.35); }
-        .btn-qt { background: var(--qt-glow); box-shadow: 0 4px 15px rgba(0, 114, 255, 0.35); }
+        .btn-raw { background-color: var(--raw-color); }
+        .btn-qt { background-color: var(--qt-color); }
 
         .btn-download:hover {
-            transform: translateY(-4px) scale(1.12);
-        }
-        
-        .btn-raw:hover { box-shadow: 0 8px 25px rgba(255, 65, 108, 0.6); }
-        .btn-qt:hover { box-shadow: 0 8px 25px rgba(0, 114, 255, 0.6); }
-
-        .btn-download:active {
-            transform: translateY(-1px) scale(1);
-        }
-
-        @keyframes floatUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
+            opacity: 0.85; /* Hiệu ứng mờ nhẹ thanh lịch khi hover */
         }
 
         @media (max-width: 768px) {
-            .main-wrapper { padding: 20px; border-radius: 20px; }
+            .main-wrapper { padding: 20px; }
             th, td { padding: 12px; }
             h1 { font-size: 1.8rem; }
         }
@@ -247,7 +210,6 @@
 </div>
 
 <script>
-    // BIẾN CHỨA DỮ LIỆU GỐC TRỰC TIẾP
     const dataStories = [
       {
         "id": 1,
@@ -278,7 +240,6 @@
       }
     ];
 
-    // Tạo biến toàn cục để lưu danh sách đã sắp xếp giúp logic tìm kiếm mượt hơn
     let globalStories = [...dataStories];
     globalStories.sort((a, b) => b.id - a.id);
 
@@ -293,7 +254,6 @@
         }
         
         data.forEach(story => {
-            // Thêm hàm onclickvào từng tag để kích hoạt tính năng click-to-search
             const genres = story.theLoai ? story.theLoai.split(',').map(g => {
                 const genreName = g.trim();
                 return `<span class="genre-tag" onclick="filterByGenre('${genreName}')">${genreName}</span>`;
@@ -321,13 +281,10 @@
         });
     }
 
-    // HÀM XỬ LÝ KHI NGƯỜI ĐỌC CLICK VÀO NÚT THỂ LOẠI
     function filterByGenre(genreName) {
         const searchBar = document.getElementById('searchBar');
         if (searchBar) {
-            searchBar.value = genreName; // Tự gõ chữ vào thanh search
-            
-            // Kích hoạt bộ lọc tìm kiếm ngay lập tức
+            searchBar.value = genreName;
             const keyword = genreName.toLowerCase();
             const filtered = globalStories.filter(story => 
                 (story.ten && story.ten.toLowerCase().includes(keyword)) || 
@@ -335,8 +292,6 @@
                 (story.theLoai && story.theLoai.toLowerCase().includes(keyword))
             );
             displayStories(filtered);
-            
-            // Cuộn nhẹ lên trên thanh tìm kiếm để người đọc dễ thấy
             searchBar.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }
