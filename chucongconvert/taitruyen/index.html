@@ -234,21 +234,16 @@
 </div>
 
 <script>
-    async function loadStories() {
+    function loadStories() {
         try {
-            let response;
-            // Thử tìm file JSON ở cùng thư mục /taitruyen trước
-            try {
-                response = await fetch('danh-sach-truyen.json');
-                if (!response.ok) throw new Error();
-            } catch (e) {
-                // Nếu không thấy, tự động nhảy ra thư mục gốc tìm tiếp
-                response = await fetch('../danh-sach-truyen.json');
-                if (!response.ok) throw new Error("Không tìm thấy file JSON ở cả 2 nơi");
+            // Lấy dữ liệu trực tiếp từ file .js đã nhúng ở trên đầu trang
+            let stories = typeof dataStories !== 'undefined' ? dataStories : [];
+            
+            if (stories.length === 0) {
+                document.getElementById('storyTableBody').innerHTML = `<tr><td colspan="5" style="text-align:center; color:#999; padding: 30px;">Danh sách truyện đang trống hoặc lỗi tải dữ liệu bà ơi...</td></tr>`;
+                return;
             }
-            
-            let stories = await response.json();
-            
+
             // Xếp truyện mới nhất (ID lớn hơn) lên vị trí đầu tiên
             stories.sort((a, b) => b.id - a.id);
 
@@ -265,7 +260,6 @@
                 data.forEach(story => {
                     const genres = story.theLoai ? story.theLoai.split(',').map(g => `<span class="genre-tag">${g.trim()}</span>`).join('') : '-';
                     
-                    // Kiểm tra link hợp lệ (phải bắt đầu bằng http)
                     const isValidLink = (link) => link && link.trim().toLowerCase().startsWith('http');
 
                     const btnRaw = isValidLink(story.linkRaw) ? `<a href="${story.linkRaw}" target="_blank" class="btn-download btn-raw">Raw</a>` : '';
@@ -303,7 +297,7 @@
 
         } catch (error) {
             console.error(error);
-            document.getElementById('storyTableBody').innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ff758c; padding:30px;">Lỗi tải dữ liệu. Bạn hãy kiểm tra lại vị trí và nội dung file JSON trên GitHub nhé!</td></tr>`;
+            document.getElementById('storyTableBody').innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ff758c; padding:30px;">Lỗi hệ thống hiển thị. Bà kiểm tra lại file code nha!</td></tr>`;
         }
     }
 
