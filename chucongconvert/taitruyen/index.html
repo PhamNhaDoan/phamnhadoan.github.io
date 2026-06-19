@@ -8,9 +8,9 @@
     <style>
         :root {
             --bg-color: #f7f5f0; /* Nền xám sữa kem dịu mắt */
-            --primary-earth-green: #556b2f; /* Xanh lá đất (Xanh rêu) */
-            --earth-orange: #d97443; /* Cam đất mộc mạc */
-            --earth-blue: #4a6b82; /* Xanh đất (Xanh biển trầm) */
+            --primary-earth-green: #556b2f; /* Xanh lá đất (Xanh rêu) làm nút Đọc */
+            --earth-orange: #d97443; /* Cam đất làm nút Raw */
+            --earth-blue: #4a6b82; /* Xanh đất trầm làm nút QT */
             --text-dark: #2f3542;
             --text-muted: #747d8c;
             --border-color: #a4b0be; /* Màu xám viền */
@@ -25,15 +25,15 @@
             min-height: 100vh;
         }
 
-        /* Container viền chấm bi sang trọng, nhẹ nhàng */
+        /* KHUNG VIỀN NGOÀI CHẤM BI SANG TRỌNG */
         .main-wrapper {
-            max-width: 1200px;
+            max-width: 1250px;
             margin: 0 auto;
             background: #ffffff;
             padding: 35px;
             border-radius: 24px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01);
-            border: 3px dotted var(--border-color); /* Viền chấm bi khung chính */
+            border: 3px dotted var(--border-color); /* Duy nhất viền ngoài này chấm bi */
         }
 
         h1 {
@@ -53,7 +53,7 @@
             font-size: 0.9rem;
         }
 
-        /* Thanh tìm kiếm tối giản bo tròn */
+        /* Thanh tìm kiếm tối giản bo tròn viền liền mảnh */
         .search-container {
             max-width: 400px;
             margin: 0 auto 35px auto;
@@ -63,8 +63,8 @@
             width: 100%;
             padding: 12px 25px;
             font-size: 0.95rem;
-            border: 2px dotted var(--border-color); /* Viền chấm bi cho ô search */
-            border-radius: 50px; /* Bo tròn hoàn toàn */
+            border: 1px solid #dfe4ea; /* Viền liền mảnh sạch sẽ */
+            border-radius: 50px; /* Bo tròn tuyệt đối */
             outline: none;
             background: #ffffff;
             color: var(--text-dark);
@@ -74,15 +74,14 @@
         }
 
         .search-input:focus {
-            border-style: dashed;
             border-color: var(--earth-orange);
         }
 
-        /* Bảng danh sách truyện phẳng sạch sẽ */
+        /* Bảng phẳng lì, gọn nhẹ */
         .table-container {
             overflow-x: auto;
-            border-radius: 16px;
-            border: 2px dotted var(--border-color); /* Viền chấm bi quanh bảng */
+            border-radius: 12px;
+            border: 1px solid #dfe4ea; /* Viền bảng liền mảnh thanh lịch */
         }
 
         table {
@@ -92,18 +91,18 @@
         }
 
         th {
-            background-color: #f1f2f6; /* Nền xám nhạt cho th */
+            background-color: #f1f2f6;
             color: var(--text-dark);
             font-family: 'Comfortaa', cursive;
             font-weight: 700;
             padding: 16px 20px;
             font-size: 0.95rem;
-            border-bottom: 2px dotted var(--border-color);
+            border-bottom: 2px solid #dfe4ea;
         }
 
         td {
             padding: 16px 20px;
-            border-bottom: 1px dotted #ced6e0;
+            border-bottom: 1px solid #f1f2f6;
             font-size: 0.95rem;
             vertical-align: middle;
         }
@@ -125,12 +124,12 @@
             color: var(--text-muted);
         }
 
-        /* TAG THỂ LOẠI BO TRÒN XINH XẮN */
+        /* TAG THỂ LOẠI BO TRÒN */
         .genre-tag {
-            background: #f1f2f6; /* Nền xám nhẹ thanh lịch */
+            background: #f1f2f6;
             color: #57606f;
             padding: 5px 14px;
-            border-radius: 50px; /* Bo tròn tuyệt đối */
+            border-radius: 50px; /* Bo tròn bong bóng */
             font-size: 0.8rem;
             font-weight: 600;
             display: inline-block;
@@ -141,7 +140,7 @@
         }
 
         .genre-tag:hover {
-            background: var(--primary-earth-green); /* Hover lên màu xanh lá đất */
+            background: var(--primary-earth-green);
             color: #ffffff;
         }
 
@@ -151,12 +150,12 @@
             line-height: 1.4;
         }
 
-        /* 2 NÚT RAW VÀ QT BO TRÒN TUYỆT ĐỐI */
+        /* TẤT CẢ CÁC NÚT BẤM ĐỀU BO TRÒN 100% */
         .btn-download {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 60px;
+            width: 62px;
             padding: 8px 0;
             margin: 2px;
             border-radius: 50px; /* Bo góc bong bóng tròn xịn */
@@ -169,8 +168,9 @@
             transition: opacity 0.2s ease;
         }
 
-        .btn-raw { background-color: var(--earth-orange); } /* Cam đất */
-        .btn-qt { background-color: var(--earth-blue); }    /* Xanh biển trầm đất */
+        .btn-doc { background-color: var(--primary-earth-green); width: 75px; } /* Nút Đọc online to hơn xíu */
+        .btn-raw { background-color: var(--earth-orange); }
+        .btn-qt { background-color: var(--earth-blue); }
 
         .btn-download:hover {
             opacity: 0.85;
@@ -186,7 +186,7 @@
 <body>
 
 <div class="main-wrapper">
-    <h1>✿ Kho Tải Truyện Cao Cấp ✿</h1>
+    <h1>✿ Kho Truyện Sủng Công Cao Cấp ✿</h1>
     <div class="subtitle">Nơi cập nhật những bộ truyện sủng công lãng mạn nhất</div>
     
     <div class="search-container">
@@ -197,11 +197,12 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 25%">Tên truyện</th>
-                    <th style="width: 15%">Tác giả</th>
-                    <th style="width: 23%">Thể loại</th>
-                    <th style="width: 22%">Ghi chú</th>
-                    <th style="width: 15%; text-align: center;">Tải về</th>
+                    <th style="width: 22%">Tên truyện</th>
+                    <th style="width: 14%">Tác giả</th>
+                    <th style="width: 20%">Thể loại</th>
+                    <th style="width: 18%">Ghi chú</th>
+                    <th style="width: 13%; text-align: center;">Đọc Online</th>
+                    <th style="width: 13%; text-align: center;">Tải Về</th>
                 </tr>
             </thead>
             <tbody id="storyTableBody">
@@ -211,7 +212,7 @@
 </div>
 
 <script>
-    // GIỮ NGUYÊN DANH SÁCH TRUYỆN BẤT TỬ CỦA BÀ
+    // MẢNG DỮ LIỆU GỐC (Bà cập nhật thêm truyện ở đây)
     const dataStories = [
       {
         "id": 1,
@@ -219,6 +220,7 @@
         "tacGia": "Mèo Của Công Bảo",
         "theLoai": "Đam mỹ, Sủng công, Công khống",
         "ghiChu": "Truyện siêu ngọt, thụ sủng công lên trời, đề cử!",
+        "linkDoc": "https://www.wattpad.com/story/sample1",
         "linkRaw": "https://drive.google.com/file/d/sample1",
         "linkQT": "https://mediafire.com/file/sample1"
       },
@@ -228,6 +230,7 @@
         "tacGia": "Cá Muối Chăm Chỉ",
         "theLoai": "Xuyên nhanh, Hệ thống, Thụ sủng công",
         "ghiChu": "Bản cập nhật mới nhất ngày hôm nay.",
+        "linkDoc": "k",
         "linkRaw": "https://drive.google.com/file/d/sample2",
         "linkQT": "https://mediafire.com/file/sample2"
       },
@@ -237,6 +240,7 @@
         "tacGia": "Marey",
         "theLoai": "Chủ công, thụ sủng công, hiện đại",
         "ghiChu": "Đơn nguyên văn",
+        "linkDoc": "https://wikidich3.com/truyen/sample3",
         "linkRaw": "https://drive.google.com/file/d/1XFm9Fm_2VaDXXZQx6vJAAUB_clT6tbe7/view?usp=drive_link",
         "linkQT": "k"
       }
@@ -251,7 +255,7 @@
         
         tableBody.innerHTML = '';
         if (data.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#999; padding: 30px;">Không thấy truyện cần tìm rồi nàng ơi...</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#999; padding: 30px;">Không thấy truyện cần tìm rồi nàng ơi...</td></tr>`;
             return;
         }
         
@@ -263,9 +267,12 @@
             
             const isValidLink = (link) => link && link.trim().toLowerCase().startsWith('http');
 
+            // Xử lý nút Đọc online
+            const btnDoc = isValidLink(story.linkDoc) ? `<a href="${story.linkDoc}" target="_blank" class="btn-download btn-doc">Đọc</a>` : '<span style="color:#bbb; font-style:italic;">Chưa có</span>';
+
+            // Xử lý nút Tải về (Raw, QT)
             const btnRaw = isValidLink(story.linkRaw) ? `<a href="${story.linkRaw}" target="_blank" class="btn-download btn-raw">Raw</a>` : '';
             const btnQT = isValidLink(story.linkQT) ? `<a href="${story.linkQT}" target="_blank" class="btn-download btn-qt">QT</a>` : '';
-            
             const downloadCell = (btnRaw || btnQT) ? `${btnRaw} ${btnQT}` : '<span style="color:#bbb; font-style:italic;">Chưa có</span>';
 
             const row = `
@@ -274,9 +281,8 @@
                     <td class="author-name">${story.tacGia || '-'}</td>
                     <td>${genres}</td>
                     <td class="notes-text">${story.ghiChu || '-'}</td>
-                    <td style="text-align: center; white-space: nowrap;">
-                        ${downloadCell}
-                    </td>
+                    <td style="text-align: center; white-space: nowrap;">${btnDoc}</td>
+                    <td style="text-align: center; white-space: nowrap;">${downloadCell}</td>
                 </tr>
             `;
             tableBody.innerHTML += row;
