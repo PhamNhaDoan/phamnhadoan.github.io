@@ -7,13 +7,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #faf9f6; /* Nền trắng kem cao cấp, dịu mắt */
-            --primary-purple: #6c5ce7;
-            --text-dark: #2d3436;
-            --text-muted: #636e72;
-            --border-color: #f1f2f6;
-            --raw-color: #ff4757;
-            --qt-color: #2f3542; /* Màu QT tối lịch lãm, sang trọng */
+            --bg-color: #f7f5f0; /* Nền xám sữa kem dịu mắt */
+            --primary-earth-green: #556b2f; /* Xanh lá đất (Xanh rêu) */
+            --earth-orange: #d97443; /* Cam đất mộc mạc */
+            --earth-blue: #4a6b82; /* Xanh đất (Xanh biển trầm) */
+            --text-dark: #2f3542;
+            --text-muted: #747d8c;
+            --border-color: #a4b0be; /* Màu xám viền */
         }
 
         body {
@@ -25,20 +25,21 @@
             min-height: 100vh;
         }
 
+        /* Container viền chấm bi sang trọng, nhẹ nhàng */
         .main-wrapper {
             max-width: 1200px;
             margin: 0 auto;
             background: #ffffff;
             padding: 35px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02); /* Đổ bóng siêu nhẹ, thanh lịch */
-            border: 1px solid #f1f2f6;
+            border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01);
+            border: 3px dotted var(--border-color); /* Viền chấm bi khung chính */
         }
 
         h1 {
             font-family: 'Comfortaa', cursive;
             text-align: center;
-            color: var(--primary-purple);
+            color: var(--primary-earth-green);
             margin-bottom: 5px;
             font-size: 2.2rem;
             font-weight: 700;
@@ -52,7 +53,7 @@
             font-size: 0.9rem;
         }
 
-        /* Thanh tìm kiếm tối giản tinh tế */
+        /* Thanh tìm kiếm tối giản bo tròn */
         .search-container {
             max-width: 400px;
             margin: 0 auto 35px auto;
@@ -60,27 +61,28 @@
 
         .search-input {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px 25px;
             font-size: 0.95rem;
-            border: 1px solid #dfe4ea;
-            border-radius: 6px;
+            border: 2px dotted var(--border-color); /* Viền chấm bi cho ô search */
+            border-radius: 50px; /* Bo tròn hoàn toàn */
             outline: none;
             background: #ffffff;
             color: var(--text-dark);
-            transition: border-color 0.2s ease;
+            transition: all 0.2s ease;
             font-family: 'Nunito', sans-serif;
             box-sizing: border-box;
         }
 
         .search-input:focus {
-            border-color: var(--primary-purple);
+            border-style: dashed;
+            border-color: var(--earth-orange);
         }
 
-        /* Bảng danh sách truyện phẳng phẳng, sạch sẽ */
+        /* Bảng danh sách truyện phẳng sạch sẽ */
         .table-container {
             overflow-x: auto;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            border: 2px dotted var(--border-color); /* Viền chấm bi quanh bảng */
         }
 
         table {
@@ -90,57 +92,56 @@
         }
 
         th {
-            background-color: #f8f9fa;
+            background-color: #f1f2f6; /* Nền xám nhạt cho th */
             color: var(--text-dark);
             font-family: 'Comfortaa', cursive;
             font-weight: 700;
             padding: 16px 20px;
             font-size: 0.95rem;
-            border-bottom: 2px solid var(--border-color);
+            border-bottom: 2px dotted var(--border-color);
         }
 
         td {
             padding: 16px 20px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px dotted #ced6e0;
             font-size: 0.95rem;
             vertical-align: middle;
         }
 
-        /* Hiệu ứng lướt hàng êm dịu, nhẹ máy */
         tr {
             transition: background-color 0.2s ease;
         }
 
         tr:hover {
-            background-color: #fcfcff;
+            background-color: #f9f8f6;
         }
 
         .story-title {
             font-weight: 700;
-            color: #2f3542;
+            color: var(--text-dark);
         }
 
         .author-name {
             color: var(--text-muted);
         }
 
-        /* NÚT THỂ LOẠI KHÔNG CÒN HIỆU ỨNG NẶNG */
+        /* TAG THỂ LOẠI BO TRÒN XINH XẮN */
         .genre-tag {
-            background: #f1f2f6;
+            background: #f1f2f6; /* Nền xám nhẹ thanh lịch */
             color: #57606f;
-            padding: 4px 10px;
-            border-radius: 4px;
+            padding: 5px 14px;
+            border-radius: 50px; /* Bo tròn tuyệt đối */
             font-size: 0.8rem;
             font-weight: 600;
             display: inline-block;
-            margin: 2px;
+            margin: 3px 2px;
             cursor: pointer;
             transition: all 0.2s ease;
             user-select: none;
         }
 
         .genre-tag:hover {
-            background: var(--primary-purple);
+            background: var(--primary-earth-green); /* Hover lên màu xanh lá đất */
             color: #ffffff;
         }
 
@@ -150,15 +151,15 @@
             line-height: 1.4;
         }
 
-        /* 2 NÚT RAW VÀ QT TỐI GIẢN CHÂN PHƯƠNG, SIÊU SANG */
+        /* 2 NÚT RAW VÀ QT BO TRÒN TUYỆT ĐỐI */
         .btn-download {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 58px;
-            padding: 7px 0;
+            width: 60px;
+            padding: 8px 0;
             margin: 2px;
-            border-radius: 4px;
+            border-radius: 50px; /* Bo góc bong bóng tròn xịn */
             color: #ffffff;
             text-decoration: none;
             font-weight: 700;
@@ -168,11 +169,11 @@
             transition: opacity 0.2s ease;
         }
 
-        .btn-raw { background-color: var(--raw-color); }
-        .btn-qt { background-color: var(--qt-color); }
+        .btn-raw { background-color: var(--earth-orange); } /* Cam đất */
+        .btn-qt { background-color: var(--earth-blue); }    /* Xanh biển trầm đất */
 
         .btn-download:hover {
-            opacity: 0.85; /* Hiệu ứng mờ nhẹ thanh lịch khi hover */
+            opacity: 0.85;
         }
 
         @media (max-width: 768px) {
@@ -210,6 +211,7 @@
 </div>
 
 <script>
+    // GIỮ NGUYÊN DANH SÁCH TRUYỆN BẤT TỬ CỦA BÀ
     const dataStories = [
       {
         "id": 1,
@@ -217,8 +219,8 @@
         "tacGia": "Mèo Của Công Bảo",
         "theLoai": "Đam mỹ, Sủng công, Công khống",
         "ghiChu": "Truyện siêu ngọt, thụ sủng công lên trời, đề cử!",
-        "linkRaw": "https://drive.google.com/...",
-        "linkQT": "https://mediafire.com/..."
+        "linkRaw": "https://drive.google.com/file/d/sample1",
+        "linkQT": "https://mediafire.com/file/sample1"
       },
       {
         "id": 2,
@@ -226,8 +228,8 @@
         "tacGia": "Cá Muối Chăm Chỉ",
         "theLoai": "Xuyên nhanh, Hệ thống, Thụ sủng công",
         "ghiChu": "Bản cập nhật mới nhất ngày hôm nay.",
-        "linkRaw": "https://drive.google.com/...",
-        "linkQT": "https://mediafire.com/..."
+        "linkRaw": "https://drive.google.com/file/d/sample2",
+        "linkQT": "https://mediafire.com/file/sample2"
       },
       {
         "id": 1781870912608,
