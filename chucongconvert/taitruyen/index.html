@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kho Tải Truyện Sủng Công - ChuCongConvert</title>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-    <script src="./danh-sach-truyen.js"></script>
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
@@ -234,6 +233,37 @@
 </div>
 
 <script>
+    // DỮ LIỆU ĐƯỢC KHAI BÁO TRỰC TIẾP TẠI ĐÂY - KHÔNG SỢ LỖI VERCEL CHẶN FILE NỮA!
+    const dataStories = [
+      {
+        "id": 1,
+        "ten": "Truyện Ngọt Ngào Nhất Thế Gian",
+        "tacGia": "Mèo Của Công Bảo",
+        "theLoai": "Đam mỹ, Sủng công, Công khống",
+        "ghiChu": "Truyện siêu ngọt, thụ sủng công lên trời, đề cử!",
+        "linkRaw": "https://drive.google.com/...",
+        "linkQT": "https://mediafire.com/..."
+      },
+      {
+        "id": 2,
+        "ten": "Xuyên Thành Vạn Nhân Mê Nhưng Chỉ Sủng Công",
+        "tacGia": "Cá Muối Chăm Chỉ",
+        "theLoai": "Xuyên nhanh, Hệ thống, Thụ sủng công",
+        "ghiChu": "Bản cập nhật mới nhất ngày hôm nay.",
+        "linkRaw": "https://drive.google.com/...",
+        "linkQT": "https://mediafire.com/..."
+      },
+      {
+        "id": 1781870912608,
+        "ten": "Chủ công đơn nguyên văn",
+        "tacGia": "Marey",
+        "theLoai": "Chủ công, thụ sủng công, hiện đại",
+        "ghiChu": "Đơn nguyên văn",
+        "linkRaw": "https://drive.google.com/file/d/1XFm9Fm_2VaDXXZQx6vJAAUB_clT6tbe7/view?usp=drive_link",
+        "linkQT": "k"
+      }
+    ];
+
     function displayStories(data) {
         const tableBody = document.getElementById('storyTableBody');
         if (!tableBody) return;
@@ -247,7 +277,6 @@
         data.forEach(story => {
             const genres = story.theLoai ? story.theLoai.split(',').map(g => `<span class="genre-tag">${g.trim()}</span>`).join('') : '-';
             
-            // Kiểm tra xem link có hợp lệ không (phải bắt đầu bằng http)
             const isValidLink = (link) => link && link.trim().toLowerCase().startsWith('http');
 
             const btnRaw = isValidLink(story.linkRaw) ? `<a href="${story.linkRaw}" target="_blank" class="btn-download btn-raw">Raw</a>` : '';
@@ -270,40 +299,29 @@
         });
     }
 
-    // Cơ chế kiểm tra dữ liệu chủ động (Anti-lag, trị dứt điểm lỗi Vercel)
-    function initStoryTable() {
-        // Kiểm tra xem biến dữ liệu trong file .js đã sẵn sàng chưa
-        if (typeof dataStories !== 'undefined' && dataStories !== null) {
-            let stories = dataStories;
+    function initStories() {
+        let stories = dataStories;
+        // Xếp truyện mới nhất (ID lớn hơn) lên đầu bảng
+        stories.sort((a, b) => b.id - a.id);
 
-            // Sắp xếp truyện mới nhất (ID lớn hơn) lên đầu bảng
-            stories.sort((a, b) => b.id - a.id);
+        displayStories(stories);
 
-            // Hiển thị danh sách truyện
-            displayStories(stories);
-
-            // Cấu hình thanh tìm kiếm thời gian thực
-            const searchBar = document.getElementById('searchBar');
-            if (searchBar) {
-                // Xóa bỏ các event listener cũ nếu có để tránh trùng lặp
-                searchBar.oninput = (e) => {
-                    const keyword = e.target.value.toLowerCase().trim();
-                    const filtered = stories.filter(story => 
-                        (story.ten && story.ten.toLowerCase().includes(keyword)) || 
-                        (story.tacGia && story.tacGia.toLowerCase().includes(keyword)) || 
-                        (story.theLoai && story.theLoai.toLowerCase().includes(keyword))
-                    );
-                    displayStories(filtered);
-                };
-            }
-        } else {
-            // Nếu chưa tìm thấy file .js, cứ 100 mili-giây sẽ tự động quét lại một lần cho tới khi thấy thì thôi
-            setTimeout(initStoryTable, 100);
+        const searchBar = document.getElementById('searchBar');
+        if (searchBar) {
+            searchBar.addEventListener('input', (e) => {
+                const keyword = e.target.value.toLowerCase().trim();
+                const filtered = stories.filter(story => 
+                    (story.ten && story.ten.toLowerCase().includes(keyword)) || 
+                    (story.tacGia && story.tacGia.toLowerCase().includes(keyword)) || 
+                    (story.theLoai && story.theLoai.toLowerCase().includes(keyword))
+                );
+                displayStories(filtered);
+            });
         }
     }
 
-    // Chạy kích hoạt ngay khi trình duyệt vừa đọc đến thẻ script này
-    initStoryTable();
+    // Chạy ngay lập tức
+    window.onload = initStories;
 </script>
 </body>
 </html>
