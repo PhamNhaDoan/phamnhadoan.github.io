@@ -90,17 +90,21 @@
             <textarea id="ghiChu" rows="3" placeholder="Ghi chú hoặc lời nhắn ngắn (nếu có)..."></textarea>
         </div>
         <div class="form-group">
+            <label>Link Đọc Online (Wattpad / Wikidich...):</label>
+            <input type="text" id="linkDoc" placeholder="Dán link Wattpad, Wikidich (nếu có)">
+        </div>
+        <div class="form-group">
             <label>Link Tải RAW:</label>
-            <input type="text" id="linkRaw" placeholder="Link Drive / Mediafire (nếu có)">
+            <input type="text" id="linkRaw" placeholder="Dán link Drive / Mediafire (nếu có)">
         </div>
         <div class="form-group">
             <label>Link Tải QT:</label>
-            <input type="text" id="linkQT" placeholder="Link Drive / Mediafire (nếu có)">
+            <input type="text" id="linkQT" placeholder="Dán link Drive / Mediafire (nếu có)">
         </div>
         <button type="submit" class="btn-submit">Tạo & Tự Động Copy Mã JSON</button>
     </form>
 
-    <div class="status-msg" id="statusMsg">Đã copy mã thành công! Đem dán vào file JSON nha bà.</div>
+    <div class="status-msg" id="statusMsg">Đã copy mã thành công! Đem dán vào file index.html nha bà.</div>
     <div class="code-output" id="codeOutput"></div>
 </div>
 
@@ -108,27 +112,26 @@
     document.getElementById('storyForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Lấy giá trị các ô
         const ten = document.getElementById('ten').value.trim();
         const tacGia = document.getElementById('tacGia').value.trim();
         const theLoai = document.getElementById('theLoai').value.trim();
         const ghiChu = document.getElementById('ghiChu').value.trim();
+        const linkDoc = document.getElementById('linkDoc').value.trim();
         const linkRaw = document.getElementById('linkRaw').value.trim();
         const linkQT = document.getElementById('linkQT').value.trim();
 
-        // Kiểm tra xem bà có để trống hết sạch không
-        if (!ten && !tacGia && !theLoai && !ghiChu && !linkRaw && !linkQT) {
+        if (!ten && !tacGia && !theLoai && !ghiChu && !linkDoc && !linkRaw && !linkQT) {
             alert("Bà ơi, ít nhất phải điền 1 ô thông tin chứ để trống hết trơn sao tạo mã được nè!");
             return;
         }
         
-        // Tạo object dữ liệu (ô nào trống sẽ tự động nhận chuỗi rỗng "")
         const newStory = {
             id: Date.now(),
             ten: ten,
             tacGia: tacGia,
             theLoai: theLoai,
             ghiChu: ghiChu,
+            linkDoc: linkDoc, // Thêm trường linkDoc vào đoạn code xuất ra
             linkRaw: linkRaw,
             linkQT: linkQT
         };
@@ -139,14 +142,12 @@
         outputBox.style.display = 'block';
         outputBox.innerText = jsonFormat;
 
-        // Tự động sao chép thẳng vào khay nhớ tạm
         navigator.clipboard.writeText(jsonFormat).then(() => {
             const msg = document.getElementById('statusMsg');
             msg.style.display = 'block';
             setTimeout(() => { msg.style.display = 'none'; }, 3500);
         });
 
-        // Reset form để sẵn sàng nhập bộ tiếp theo
         document.getElementById('storyForm').reset();
     });
 </script>
