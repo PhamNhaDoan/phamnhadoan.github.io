@@ -137,16 +137,33 @@
             font-weight: 600;
         }
 
+        /* BIẾN TAG THỂ LOẠI THÀNH NÚT BẤM DỄ THƯƠNG SANG CHẢNH */
         .genre-tag {
             background: rgba(255, 117, 140, 0.1);
             color: var(--secondary-pink);
-            padding: 5px 12px;
+            padding: 5px 14px;
             border-radius: 30px;
             font-size: 0.8rem;
             font-weight: 700;
             display: inline-block;
             margin: 3px;
             border: 1px solid rgba(255, 117, 140, 0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none; /* Tránh bôi đen chữ khi bấm nhanh */
+        }
+
+        /* Hiệu ứng khi rê chuột vào nút thể loại */
+        .genre-tag:hover {
+            background: var(--secondary-pink);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(255, 117, 140, 0.3);
+        }
+
+        /* Hiệu ứng khi nhấn giữ nút thể loại */
+        .genre-tag:active {
+            transform: translateY(0);
         }
 
         .notes-text {
@@ -155,183 +172,8 @@
             line-height: 1.4;
         }
 
-        /* 2 NÚT RAW VÀ QT CỰC KỲ ĐẸP VÀ PHÁT SÁNG */
+        /* 2 NÚT RAW VÀ QT PHÁT SÁNG */
         .btn-download {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            width: 65px;
-            padding: 9px 0;
-            margin: 4px;
-            border-radius: 30px;
-            color: white;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            font-family: 'Comfortaa', cursive;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            z-index: 1;
-        }
-
-        .btn-raw { background: var(--raw-glow); box-shadow: 0 4px 15px rgba(255, 65, 108, 0.35); }
-        .btn-qt { background: var(--qt-glow); box-shadow: 0 4px 15px rgba(0, 114, 255, 0.35); }
-
-        /* Hiệu ứng Hover phát nổ neon và phóng to nhẹ */
-        .btn-download:hover {
-            transform: translateY(-4px) scale(1.12);
-        }
-        
-        .btn-raw:hover { box-shadow: 0 8px 25px rgba(255, 65, 108, 0.6); }
-        .btn-qt:hover { box-shadow: 0 8px 25px rgba(0, 114, 255, 0.6); }
-
-        .btn-download:active {
-            transform: translateY(-1px) scale(1);
-        }
-
-        /* Keyframes Animation xuất hiện dập dìu */
-        @keyframes floatUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Responsive di động */
-        @media (max-width: 768px) {
-            .main-wrapper { padding: 20px; border-radius: 20px; }
-            th, td { padding: 12px; }
-            h1 { font-size: 1.8rem; }
-        }
-    </style>
-</head>
-<body>
-
-<div class="main-wrapper">
-    <h1>✿ Kho Tải Truyện Cao Cấp ✿</h1>
-    <div class="subtitle">Nơi cập nhật những bộ truyện sủng công lãng mạn nhất</div>
-    
-    <div class="search-container">
-        <input type="text" id="searchBar" class="search-input" placeholder="Tìm tên truyện, tác giả, thể loại...">
-    </div>
-
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 25%">Tên truyện</th>
-                    <th style="width: 15%">Tác giả</th>
-                    <th style="width: 23%">Thể loại</th>
-                    <th style="width: 22%">Ghi chú</th>
-                    <th style="width: 15%; text-align: center;">Tải về</th>
-                </tr>
-            </thead>
-            <tbody id="storyTableBody">
-                </tbody>
-        </table>
-    </div>
-</div>
-
-<script>
-    // DỮ LIỆU ĐƯỢC KHAI BÁO TRỰC TIẾP TẠI ĐÂY - KHÔNG SỢ LỖI VERCEL CHẶN FILE NỮA!
-    const dataStories = [
-      {
-        "id": 1,
-        "ten": "Truyện Ngọt Ngào Nhất Thế Gian",
-        "tacGia": "Mèo Của Công Bảo",
-        "theLoai": "Đam mỹ, Sủng công, Công khống",
-        "ghiChu": "Truyện siêu ngọt, thụ sủng công lên trời, đề cử!",
-        "linkRaw": "https://drive.google.com/...",
-        "linkQT": "https://mediafire.com/..."
-      },
-      {
-        "id": 2,
-        "ten": "Xuyên Thành Vạn Nhân Mê Nhưng Chỉ Sủng Công",
-        "tacGia": "Cá Muối Chăm Chỉ",
-        "theLoai": "Xuyên nhanh, Hệ thống, Thụ sủng công",
-        "ghiChu": "Bản cập nhật mới nhất ngày hôm nay.",
-        "linkRaw": "https://drive.google.com/...",
-        "linkQT": "https://mediafire.com/..."
-      },
-      {
-        "id": 1781870912608,
-        "ten": "Chủ công đơn nguyên văn",
-        "tacGia": "Marey",
-        "theLoai": "Chủ công, thụ sủng công, hiện đại",
-        "ghiChu": "Đơn nguyên văn",
-        "linkRaw": "https://drive.google.com/file/d/1XFm9Fm_2VaDXXZQx6vJAAUB_clT6tbe7/view?usp=drive_link",
-        "linkQT": "k"
-      }
-    ,
-{
-  "id": 1781873007462,
-  "ten": "Cộng thử đăng",
-  "tacGia": "Marey",
-  "theLoai": "Sư huynh đệ, cường cường, mỹ công soái thụ, cổ đại",
-  "ghiChu": "",
-  "linkRaw": "https://drive.google.com/drive/u/1/folders/1MOIq5kxy7h012AUuefj0wbnW9bAsSoTO",
-  "linkQT": ""
-}
-    ];
-
-    function displayStories(data) {
-        const tableBody = document.getElementById('storyTableBody');
-        if (!tableBody) return;
-        
-        tableBody.innerHTML = '';
-        if (data.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#999; padding: 30px;">Không thấy truyện cần tìm rồi nàng ơi...</td></tr>`;
-            return;
-        }
-        
-        data.forEach(story => {
-            const genres = story.theLoai ? story.theLoai.split(',').map(g => `<span class="genre-tag">${g.trim()}</span>`).join('') : '-';
-            
-            const isValidLink = (link) => link && link.trim().toLowerCase().startsWith('http');
-
-            const btnRaw = isValidLink(story.linkRaw) ? `<a href="${story.linkRaw}" target="_blank" class="btn-download btn-raw">Raw</a>` : '';
-            const btnQT = isValidLink(story.linkQT) ? `<a href="${story.linkQT}" target="_blank" class="btn-download btn-qt">QT</a>` : '';
-            
-            const downloadCell = (btnRaw || btnQT) ? `${btnRaw} ${btnQT}` : '<span style="color:#bbb; font-style:italic;">Chưa có</span>';
-
-            const row = `
-                <tr>
-                    <td class="story-title">${story.ten || '-'}</td>
-                    <td class="author-name">${story.tacGia || '-'}</td>
-                    <td>${genres}</td>
-                    <td class="notes-text">${story.ghiChu || '-'}</td>
-                    <td style="text-align: center; white-space: nowrap;">
-                        ${downloadCell}
-                    </td>
-                </tr>
-            `;
-            tableBody.innerHTML += row;
-        });
-    }
-
-    function initStories() {
-        let stories = dataStories;
-        // Xếp truyện mới nhất (ID lớn hơn) lên đầu bảng
-        stories.sort((a, b) => b.id - a.id);
-
-        displayStories(stories);
-
-        const searchBar = document.getElementById('searchBar');
-        if (searchBar) {
-            searchBar.addEventListener('input', (e) => {
-                const keyword = e.target.value.toLowerCase().trim();
-                const filtered = stories.filter(story => 
-                    (story.ten && story.ten.toLowerCase().includes(keyword)) || 
-                    (story.tacGia && story.tacGia.toLowerCase().includes(keyword)) || 
-                    (story.theLoai && story.theLoai.toLowerCase().includes(keyword))
-                );
-                displayStories(filtered);
-            });
-        }
-    }
-
-    // Chạy ngay lập tức
-    window.onload = initStories;
-</script>
-</body>
-</html>
+            justify
