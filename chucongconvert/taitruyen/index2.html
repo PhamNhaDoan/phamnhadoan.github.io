@@ -3,115 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Tool - Thêm Truyện</title>
+    <title>Admin Tool - Tự Động Push Truyện</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-            margin: 0;
-            padding: 30px;
-            color: #333;
-        }
-        .admin-box {
-            max-width: 550px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        h2 { margin-top: 0; color: #555; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 30px; color: #333; }
+        .admin-box { max-width: 550px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h2 { margin-top: 0; color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; }
-        input[type="text"], textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 0.95rem;
-        }
+        input[type="text"], textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; }
+        input[type="password"] { width: 100%; padding: 10px; border: 1px solid #ff7675; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; background: #fff5f5; }
         textarea { resize: vertical; }
-        .btn-submit {
-            width: 100%;
-            padding: 12px;
-            background: #20bf6b;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .btn-submit:hover { background: #26de81; }
-        .code-output {
-            margin-top: 20px;
-            background: #222;
-            color: #00ff66;
-            padding: 15px;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 0.85rem;
-            white-space: pre-wrap;
-            display: none;
-        }
-        .status-msg {
-            background: #ebfffa;
-            color: #0aa370;
-            border: 1px solid #b3f5e4;
-            padding: 10px;
-            border-radius: 6px;
-            text-align: center;
-            margin-top: 15px;
-            display: none;
-            font-weight: bold;
-        }
+        .btn-submit { width: 100%; padding: 14px; background: #0984e3; color: #fff; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+        .btn-submit:hover { background: #74b9ff; }
+        .btn-submit:disabled { background: #b2bec3; cursor: not-allowed; }
+        .status-msg { padding: 12px; border-radius: 6px; text-align: center; margin-top: 15px; display: none; font-weight: bold; }
+        .success { background: #ebfffa; color: #0aa370; border: 1px solid #b3f5e4; }
+        .error { background: #fff5f5; color: #d63031; border: 1px solid #fab1a0; }
+        .config-section { background: #f1f2f6; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #0984e3; }
     </style>
 </head>
 <body>
 
 <div class="admin-box">
-    <h2>Hệ Thống Thêm Truyện Mới (Admin Only)</h2>
+    <h2>Hệ Thống Đẩy Truyện Tự Động (GitHub API)</h2>
+    
+    <div class="config-section">
+        <div class="form-group">
+            <label style="color: #0984e3;">1. Tên tài khoản GitHub của bà:</label>
+            <input type="text" id="ghUser" placeholder="Ví dụ: phamnhadoan">
+        </div>
+        <div class="form-group">
+            <label style="color: #0984e3;">2. Tên Kho lưu trữ (Repository):</label>
+            <input type="text" id="ghRepo" placeholder="Ví dụ: chucongconvert">
+        </div>
+        <div class="form-group">
+            <label style="color: #d63031;">3. Chìa khóa GitHub Token (ghp_...):</label>
+            <input type="password" id="ghToken" placeholder="Dán mã ghp_... lấy ở Bước 1 vào đây">
+        </div>
+    </div>
+
     <form id="storyForm">
         <div class="form-group">
             <label>Tên Truyện:</label>
-            <input type="text" id="ten" placeholder="Nhập tên truyện (nếu có)">
+            <input type="text" id="ten" placeholder="Nhập tên truyện">
         </div>
         <div class="form-group">
             <label>Tác Giả:</label>
-            <input type="text" id="tacGia" placeholder="Tên tác giả (nếu có)">
+            <input type="text" id="tacGia" placeholder="Tên tác giả">
         </div>
         <div class="form-group">
             <label>Thể Loại (Phân tách bằng dấu phẩy):</label>
-            <input type="text" id="theLoai" placeholder="Ví dụ: Đam mỹ, Sủng công (nếu có)">
+            <input type="text" id="theLoai" placeholder="Ví dụ: Đam mỹ, Sủng công">
         </div>
         <div class="form-group">
             <label>Ghi Chú:</label>
-            <textarea id="ghiChu" rows="3" placeholder="Ghi chú hoặc lời nhắn ngắn (nếu có)..."></textarea>
+            <textarea id="ghiChu" rows="2" placeholder="Ghi chú ngắn..."></textarea>
         </div>
         <div class="form-group">
-            <label>Link Đọc Online (Wattpad / Wikidich...):</label>
-            <input type="text" id="linkDoc" placeholder="Dán link Wattpad, Wikidich (nếu có)">
+            <label>Link Đọc Online:</label>
+            <input type="text" id="linkDoc" placeholder="Dán link Wattpad, Wikidich...">
         </div>
         <div class="form-group">
             <label>Link Tải RAW:</label>
-            <input type="text" id="linkRaw" placeholder="Dán link Drive / Mediafire (nếu có)">
+            <input type="text" id="linkRaw" placeholder="Dán link Drive / Mediafire">
         </div>
         <div class="form-group">
             <label>Link Tải QT:</label>
-            <input type="text" id="linkQT" placeholder="Dán link Drive / Mediafire (nếu có)">
+            <input type="text" id="linkQT" placeholder="Dán link Drive / Mediafire">
         </div>
-        <button type="submit" class="btn-submit">Tạo & Tự Động Copy Mã JSON</button>
+        <button type="submit" id="submitBtn" class="btn-submit">Bấm Gửi & Push Thẳng Lên Web ✨</button>
     </form>
 
-    <div class="status-msg" id="statusMsg">Đã copy mã thành công! Đem dán vào file index.html nha bà.</div>
-    <div class="code-output" id="codeOutput"></div>
+    <div class="status-msg" id="statusMsg"></div>
 </div>
 
 <script>
-    document.getElementById('storyForm').addEventListener('submit', function(e) {
+    // Tự động tải lại thông tin GitHub đã lưu ở lần trước (nếu có)
+    document.getElementById('ghUser').value = localStorage.getItem('gh_user') || '';
+    document.getElementById('ghRepo').value = localStorage.getItem('gh_repo') || '';
+    document.getElementById('ghToken').value = localStorage.getItem('gh_token') || '';
+
+    document.getElementById('storyForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
+        // Lấy thông tin cấu hình GitHub
+        const user = document.getElementById('ghUser').value.trim();
+        const repo = document.getElementById('ghRepo').value.trim();
+        const token = document.getElementById('ghToken').value.trim();
+
+        if (!user || !repo || !token) {
+            showStatus("Bà ơi, điền đầy đủ 3 ô thông tin GitHub ở trên đầu trang thì máy mới push được nha!", "error");
+            return;
+        }
+
+        // Lưu lại cấu hình vào bộ nhớ duyệt trình để lần sau đỡ nhập lại
+        localStorage.setItem('gh_user', user);
+        localStorage.setItem('gh_repo', repo);
+        localStorage.setItem('gh_token', token);
+
+        // Lấy dữ liệu truyện
         const ten = document.getElementById('ten').value.trim();
         const tacGia = document.getElementById('tacGia').value.trim();
         const theLoai = document.getElementById('theLoai').value.trim();
@@ -121,35 +111,98 @@
         const linkQT = document.getElementById('linkQT').value.trim();
 
         if (!ten && !tacGia && !theLoai && !ghiChu && !linkDoc && !linkRaw && !linkQT) {
-            alert("Bà ơi, ít nhất phải điền 1 ô thông tin chứ để trống hết trơn sao tạo mã được nè!");
+            alert("Ít nhất phải điền 1 ô thông tin truyện nha bà!");
             return;
         }
-        
-        const newStory = {
+
+        const btnSubmit = document.getElementById('submitBtn');
+        btnSubmit.disabled = true;
+        btnSubmit.innerText = "Đang kết nối GitHub và push...";
+        showStatus("Hệ thống đang kết nối, bà đợi xíu...", "success");
+
+        // Tạo cục dữ liệu truyện mới
+        const newStoryObj = {
             id: Date.now(),
             ten: ten,
             tacGia: tacGia,
             theLoai: theLoai,
             ghiChu: ghiChu,
-            linkDoc: linkDoc, // Thêm trường linkDoc vào đoạn code xuất ra
+            linkDoc: linkDoc,
             linkRaw: linkRaw,
             linkQT: linkQT
         };
 
-        const jsonFormat = `,\n${JSON.stringify(newStory, null, 2)}`;
-        
-        const outputBox = document.getElementById('codeOutput');
-        outputBox.style.display = 'block';
-        outputBox.innerText = jsonFormat;
+        const pathToFile = "taitruyen/index.html"; // Đường dẫn đến file cần chèn dữ liệu
+        const apiUrl = `https://api.github.com/repos/${user}/${repo}/contents/${pathToFile}`;
 
-        navigator.clipboard.writeText(jsonFormat).then(() => {
-            const msg = document.getElementById('statusMsg');
-            msg.style.display = 'block';
-            setTimeout(() => { msg.style.display = 'none'; }, 3500);
-        });
+        try {
+            // Bước A: Lấy nội dung hiện tại của file index.html từ GitHub về
+            const resGet = await fetch(apiUrl, {
+                headers: { "Authorization": `token ${token}` }
+            });
 
-        document.getElementById('storyForm').reset();
+            if (!resGet.ok) throw new Error("Không thể kết nối đến GitHub. Kiểm tra lại Token hoặc tên User/Repo nha bà!");
+
+            const fileData = await resGet.json();
+            const sha = fileData.sha; // Mã SHA để định danh phiên bản file cũ
+            
+            // Giải mã nội dung file từ Base64 sang chữ đọc được
+            let currentContent = decodeURIComponent(escape(atob(fileData.content)));
+
+            // Bước B: Tìm mảng dataStories và nhét truyện mới vào đầu mảng
+            const targetString = "const dataStories = [";
+            const insertPosition = currentContent.indexOf(targetString);
+
+            if (insertPosition === -1) {
+                throw new Error("Không tìm thấy dòng 'const dataStories = [' trong file index.html để chèn truyện!");
+            }
+
+            // Cắt chuỗi và chèn truyện mới ngay sau dấu ngoặc vuông mở [
+            const splitIndex = insertPosition + targetString.length;
+            const textToInsert = `\n      ${JSON.stringify(newStoryObj, null, 2)},`;
+            
+            let updatedContent = currentContent.slice(0, splitIndex) + textToInsert + currentContent.slice(splitIndex);
+
+            // Mã hóa ngược lại nội dung sang Base64 chuẩn UTF-8 để gửi lên GitHub
+            const encodedContent = btoa(unescape(encodeURIComponent(updatedContent)));
+
+            // Bước C: Gửi yêu cầu cập nhật ghi đè file lên GitHub
+            const resPut = await fetch(apiUrl, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `token ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    message: `Tự động thêm truyện: ${ten || 'Mới'}`,
+                    content: encodedContent,
+                    sha: sha // Gửi kèm SHA để GitHub cho phép ghi đè
+                })
+            });
+
+            if (resPut.ok) {
+                showStatus(`✨ Tuyệt vời ông mặt trời! Đã push truyện "${ten || 'Mới'}" trực tiếp lên web thành công rồi bà ơi! Đợi Vercel cập nhật 10 giây nha.`, "success");
+                document.getElementById('storyForm').reset();
+            } else {
+                const errData = await resPut.json();
+                throw new Error(errData.message || "Lỗi khi lưu file lên GitHub.");
+            }
+
+        } catch (error) {
+            console.error(error);
+            showStatus(`❌ Thất bại: ${error.message}`, "error");
+        } finally {
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = "Bấm Gửi & Push Thẳng Lên Web ✨";
+        }
     });
+
+    function showStatus(text, type) {
+        const msg = document.getElementById('statusMsg');
+        msg.className = `status-msg ${type}`;
+        msg.innerText = text;
+        msg.style.display = 'block';
+    }
 </script>
 </body>
 </html>
