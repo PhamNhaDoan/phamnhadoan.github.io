@@ -1,0 +1,111 @@
+/* Container bọc bên ngoài dùng để ép card vào chính giữa vùng board */
+.contact-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
+
+/* Khung Card chính - Custom theo vibe dễ thương của web */
+.contact-card {
+    background: #ffffff;
+    padding: 35px 30px;
+    border-radius: 20px;
+    /* Hiệu ứng viền nét đứt hoặc nét liền mảnh hợp style vẽ tay (markers & magic) */
+    border: 3px solid #2d3748; 
+    box-shadow: 6px 6px 0px #2d3748; /* Đổ bóng khối cứng siêu cá tính */
+    width: 100%;
+    max-width: 440px;
+    text-align: center;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 10; /* Nổi lên trên các hình doodle nền */
+}
+
+/* Tiêu đề */
+.contact-header h2 {
+    font-family: 'Fredoka', sans-serif;
+    color: #2d3748;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.contact-header p {
+    color: #718096;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 25px;
+}
+
+/* Các nhóm nhập liệu */
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-group input,
+.input-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    background: #fafafa;
+    border: 2px solid #2d3748;
+    border-radius: 12px;
+    font-size: 15px;
+    color: #2d3748;
+    outline: none;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+/* Khi bấm chọn vào ô nhập liệu */
+.input-group input:focus,
+.input-group textarea:focus {
+    background: #ffffff;
+    border-color: #ff7675; /* Đổi sang một chút sắc hồng/cam ấm áp */
+    box-shadow: 3px 3px 0px #2d3748;
+}
+
+/* NÚT SEND SIÊU XỊN VÀ ĐÁNG YÊU */
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: #ff7675; /* Màu nền nổi bật, tràn đầy năng lượng */
+    color: #ffffff;
+    border: 2px solid #2d3748;
+    border-radius: 12px;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 4px 4px 0px #2d3748; /* Đổ bóng đồng bộ với card */
+    transition: all 0.2s ease;
+}
+
+/* Hiệu ứng khi rê chuột vào nút Send */
+.submit-btn:hover {
+    background: #ff6b6b;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #2d3748;
+}
+
+/* Hiệu ứng khi bấm click chuột */
+.submit-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px #2d3748;
+}
+
+/* Hiệu ứng icon máy bay giấy nhỏ bay lên nhẹ */
+.submit-btn svg {
+    transition: transform 0.2s ease;
+}
+
+.submit-btn:hover svg {
+    transform: translate(3px, -3px);
+}
