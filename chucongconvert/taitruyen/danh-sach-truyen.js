@@ -26,4 +26,4 @@ const dataStories = [
   "linkRaw": "https://drive.google.com/file/d/1XFm9Fm_2VaDXXZQx6vJAAUB_clT6tbe7/view?usp=drive_link",
   "linkQT": "k"
 }
-]
+];
