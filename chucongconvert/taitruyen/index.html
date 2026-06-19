@@ -234,74 +234,78 @@
 </div>
 
 <script>
-    function loadStories() {
-        try {
-            // Lấy dữ liệu trực tiếp từ file .js đã nhúng ở trên đầu trang
-            let stories = typeof dataStories !== 'undefined' ? dataStories : [];
+    function displayStories(data) {
+        const tableBody = document.getElementById('storyTableBody');
+        if (!tableBody) return;
+        
+        tableBody.innerHTML = '';
+        if (data.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#999; padding: 30px;">Không thấy truyện cần tìm rồi nàng ơi...</td></tr>`;
+            return;
+        }
+        
+        data.forEach(story => {
+            const genres = story.theLoai ? story.theLoai.split(',').map(g => `<span class="genre-tag">${g.trim()}</span>`).join('') : '-';
             
-            if (stories.length === 0) {
-                document.getElementById('storyTableBody').innerHTML = `<tr><td colspan="5" style="text-align:center; color:#999; padding: 30px;">Danh sách truyện đang trống hoặc lỗi tải dữ liệu bà ơi...</td></tr>`;
+            // Kiểm tra xem link có hợp lệ không (phải bắt đầu bằng http)
+            const isValidLink = (link) => link && link.trim().toLowerCase().startsWith('http');
+
+            const btnRaw = isValidLink(story.linkRaw) ? `<a href="${story.linkRaw}" target="_blank" class="btn-download btn-raw">Raw</a>` : '';
+            const btnQT = isValidLink(story.linkQT) ? `<a href="${story.linkQT}" target="_blank" class="btn-download btn-qt">QT</a>` : '';
+            
+            const downloadCell = (btnRaw || btnQT) ? `${btnRaw} ${btnQT}` : '<span style="color:#bbb; font-style:italic;">Chưa có</span>';
+
+            const row = `
+                <tr>
+                    <td class="story-title">${story.ten || '-'}</td>
+                    <td class="author-name">${story.tacGia || '-'}</td>
+                    <td>${genres}</td>
+                    <td class="notes-text">${story.ghiChu || '-'}</td>
+                    <td style="text-align: center; white-space: nowrap;">
+                        ${downloadCell}
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    // Hàm khởi tạo chính, chạy khi toàn bộ tài nguyên (bao gồm cả file danh-sach-truyen.js) load xong
+    window.addEventListener('load', () => {
+        try {
+            // Kiểm tra xem biến dữ liệu đã nạp vào bộ nhớ thành công chưa
+            let stories = typeof dataStories !== 'undefined' ? dataStories : null;
+            
+            if (!stories) {
+                document.getElementById('storyTableBody').innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ff758c; padding: 30px;">Hệ thống đang nạp dữ liệu từ file .js, bà đợi 2-3 giây rồi F5 lại thử nha...</td></tr>`;
                 return;
             }
 
-            // Xếp truyện mới nhất (ID lớn hơn) lên vị trí đầu tiên
+            // Sắp xếp truyện mới nhất (ID lớn hơn) lên đầu bảng
             stories.sort((a, b) => b.id - a.id);
 
-            const tableBody = document.getElementById('storyTableBody');
+            // Hiển thị danh sách truyện lần đầu tiên
+            displayStories(stories);
+
+            // Xử lý bộ lọc tìm kiếm thời gian thực
             const searchBar = document.getElementById('searchBar');
-
-            function displayStories(data) {
-                tableBody.innerHTML = '';
-                if(data.length === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#999; padding: 30px;">Không thấy truyện cần tìm rồi nàng ơi...</td></tr>`;
-                    return;
-                }
-                
-                data.forEach(story => {
-                    const genres = story.theLoai ? story.theLoai.split(',').map(g => `<span class="genre-tag">${g.trim()}</span>`).join('') : '-';
-                    
-                    const isValidLink = (link) => link && link.trim().toLowerCase().startsWith('http');
-
-                    const btnRaw = isValidLink(story.linkRaw) ? `<a href="${story.linkRaw}" target="_blank" class="btn-download btn-raw">Raw</a>` : '';
-                    const btnQT = isValidLink(story.linkQT) ? `<a href="${story.linkQT}" target="_blank" class="btn-download btn-qt">QT</a>` : '';
-                    
-                    const downloadCell = (btnRaw || btnQT) ? `${btnRaw} ${btnQT}` : '<span style="color:#bbb; font-style:italic;">Chưa có</span>';
-
-                    const row = `
-                        <tr>
-                            <td class="story-title">${story.ten || '-'}</td>
-                            <td class="author-name">${story.tacGia || '-'}</td>
-                            <td>${genres}</td>
-                            <td class="notes-text">${story.ghiChu || '-'}</td>
-                            <td style="text-align: center; white-space: nowrap;">
-                                ${downloadCell}
-                            </td>
-                        </tr>
-                    `;
-                    tableBody.innerHTML += row;
+            if (searchBar) {
+                searchBar.addEventListener('input', (e) => {
+                    const keyword = e.target.value.toLowerCase().trim();
+                    const filtered = stories.filter(story => 
+                        (story.ten && story.ten.toLowerCase().includes(keyword)) || 
+                        (story.tacGia && story.tacGia.toLowerCase().includes(keyword)) || 
+                        (story.theLoai && story.theLoai.toLowerCase().includes(keyword))
+                    );
+                    displayStories(filtered);
                 });
             }
 
-            displayStories(stories);
-
-            // Tìm kiếm thời gian thực siêu mượt
-            searchBar.addEventListener('input', (e) => {
-                const keyword = e.target.value.toLowerCase().trim();
-                const filtered = stories.filter(story => 
-                    (story.ten && story.ten.toLowerCase().includes(keyword)) || 
-                    (story.tacGia && story.tacGia.toLowerCase().includes(keyword)) || 
-                    (story.theLoai && story.theLoai.toLowerCase().includes(keyword))
-                );
-                displayStories(filtered);
-            });
-
         } catch (error) {
-            console.error(error);
-            document.getElementById('storyTableBody').innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ff758c; padding:30px;">Lỗi hệ thống hiển thị. Bà kiểm tra lại file code nha!</td></tr>`;
+            console.error("Lỗi vận hành:", error);
+            document.getElementById('storyTableBody').innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ff758c; padding:30px;">Gặp lỗi hiển thị rồi bà ơi!</td></tr>`;
         }
-    }
-
-    window.onload = loadStories;
+    });
 </script>
 </body>
 </html>
