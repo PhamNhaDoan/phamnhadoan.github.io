@@ -30,15 +30,15 @@
     <div class="config-section">
         <div class="form-group">
             <label style="color: #0984e3;">1. Tên tài khoản GitHub của bà:</label>
-            <input type="text" id="ghUser" placeholder="Ví dụ: phamnhadoan">
+            <input type="text" id="ghUser" placeholder="Ví dụ: PhamNhaDoan">
         </div>
         <div class="form-group">
             <label style="color: #0984e3;">2. Tên Kho lưu trữ (Repository):</label>
-            <input type="text" id="ghRepo" placeholder="Ví dụ: chucongconvert">
+            <input type="text" id="ghRepo" placeholder="Ví dụ: phamnhadoan.github.io">
         </div>
         <div class="form-group">
             <label style="color: #d63031;">3. Chìa khóa GitHub Token (ghp_...):</label>
-            <input type="password" id="ghToken" placeholder="Dán mã ghp_... lấy ở Bước 1 vào đây">
+            <input type="password" id="ghToken" placeholder="Dán mã ghp_... của bà vào đây">
         </div>
     </div>
 
@@ -78,30 +78,28 @@
 </div>
 
 <script>
-    // Tự động tải lại thông tin GitHub đã lưu ở lần trước (nếu có)
-    document.getElementById('ghUser').value = localStorage.getItem('gh_user') || '';
-    document.getElementById('ghRepo').value = localStorage.getItem('gh_repo') || '';
+    // Tự động tải lại thông tin cấu hình cũ nếu có
+    document.getElementById('ghUser').value = localStorage.getItem('gh_user') || 'PhamNhaDoan';
+    document.getElementById('ghRepo').value = localStorage.getItem('gh_repo') || 'phamnhadoan.github.io';
     document.getElementById('ghToken').value = localStorage.getItem('gh_token') || '';
 
     document.getElementById('storyForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        // Lấy thông tin cấu hình GitHub
         const user = document.getElementById('ghUser').value.trim();
         const repo = document.getElementById('ghRepo').value.trim();
         const token = document.getElementById('ghToken').value.trim();
 
         if (!user || !repo || !token) {
-            showStatus("Bà ơi, điền đầy đủ 3 ô thông tin GitHub ở trên đầu trang thì máy mới push được nha!", "error");
+            showStatus("Bà ơi, điền đầy đủ thông tin GitHub và Token ghp_... thì tool mới chạy được nha!", "error");
             return;
         }
 
-        // Lưu lại cấu hình vào bộ nhớ duyệt trình để lần sau đỡ nhập lại
+        // Lưu lại cấu hình vào trình duyệt
         localStorage.setItem('gh_user', user);
         localStorage.setItem('gh_repo', repo);
         localStorage.setItem('gh_token', token);
 
-        // Lấy dữ liệu truyện
         const ten = document.getElementById('ten').value.trim();
         const tacGia = document.getElementById('tacGia').value.trim();
         const theLoai = document.getElementById('theLoai').value.trim();
@@ -118,9 +116,8 @@
         const btnSubmit = document.getElementById('submitBtn');
         btnSubmit.disabled = true;
         btnSubmit.innerText = "Đang kết nối GitHub và push...";
-        showStatus("Hệ thống đang kết nối, bà đợi xíu...", "success");
+        showStatus("Hệ thống đang thực hiện lệnh, bà đợi xíu...", "success");
 
-        // Tạo cục dữ liệu truyện mới
         const newStoryObj = {
             id: Date.now(),
             ten: ten,
@@ -132,24 +129,22 @@
             linkQT: linkQT
         };
 
-        const pathToFile = "taitruyen/index.html"; // Đường dẫn đến file cần chèn dữ liệu
+        // ĐƯỜNG DẪN ĐƯỢC THIẾT LẬP CHÍNH XÁC TUYỆT ĐỐI THEO KHO CỦA BÀ
+        const pathToFile = "chucongconvert/taitruyen/index.html"; 
         const apiUrl = `https://api.github.com/repos/${user}/${repo}/contents/${pathToFile}`;
 
         try {
-            // Bước A: Lấy nội dung hiện tại của file index.html từ GitHub về
             const resGet = await fetch(apiUrl, {
                 headers: { "Authorization": `token ${token}` }
             });
 
-            if (!resGet.ok) throw new Error("Không thể kết nối đến GitHub. Kiểm tra lại Token hoặc tên User/Repo nha bà!");
+            if (!resGet.ok) throw new Error("Không thể kết nối đến GitHub. Kiểm tra kĩ Token ghp_... đã tích chọn ô 'repo' chưa nha bà!");
 
             const fileData = await resGet.json();
-            const sha = fileData.sha; // Mã SHA để định danh phiên bản file cũ
+            const sha = fileData.sha;
             
-            // Giải mã nội dung file từ Base64 sang chữ đọc được
             let currentContent = decodeURIComponent(escape(atob(fileData.content)));
 
-            // Bước B: Tìm mảng dataStories và nhét truyện mới vào đầu mảng
             const targetString = "const dataStories = [";
             const insertPosition = currentContent.indexOf(targetString);
 
@@ -157,16 +152,12 @@
                 throw new Error("Không tìm thấy dòng 'const dataStories = [' trong file index.html để chèn truyện!");
             }
 
-            // Cắt chuỗi và chèn truyện mới ngay sau dấu ngoặc vuông mở [
             const splitIndex = insertPosition + targetString.length;
             const textToInsert = `\n      ${JSON.stringify(newStoryObj, null, 2)},`;
             
             let updatedContent = currentContent.slice(0, splitIndex) + textToInsert + currentContent.slice(splitIndex);
-
-            // Mã hóa ngược lại nội dung sang Base64 chuẩn UTF-8 để gửi lên GitHub
             const encodedContent = btoa(unescape(encodeURIComponent(updatedContent)));
 
-            // Bước C: Gửi yêu cầu cập nhật ghi đè file lên GitHub
             const resPut = await fetch(apiUrl, {
                 method: "PUT",
                 headers: {
@@ -176,12 +167,12 @@
                 body: JSON.stringify({
                     message: `Tự động thêm truyện: ${ten || 'Mới'}`,
                     content: encodedContent,
-                    sha: sha // Gửi kèm SHA để GitHub cho phép ghi đè
+                    sha: sha
                 })
             });
 
             if (resPut.ok) {
-                showStatus(`✨ Tuyệt vời ông mặt trời! Đã push truyện "${ten || 'Mới'}" trực tiếp lên web thành công rồi bà ơi! Đợi Vercel cập nhật 10 giây nha.`, "success");
+                showStatus(`✨ Quá đỉnh bà ơi! Đã tự dán code và push truyện "${ten || 'Mới'}" lên GitHub thành công. Đợi 10 giây rồi vào trang chính xem nha bấy bê.`, "success");
                 document.getElementById('storyForm').reset();
             } else {
                 const errData = await resPut.json();
