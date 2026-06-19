@@ -235,11 +235,20 @@
 <script>
     async function loadStories() {
         try {
-            const response = await fetch('danh-sach-truyen.json');
+            // Tự động tìm file JSON ở cả 2 vị trí: cùng thư mục hoặc ở thư mục gốc ngoài cùng
+            let response;
+            try {
+                response = await fetch('danh-sach-truyen.json');
+                if (!response.ok) throw new Error();
+            } catch (e) {
+                // Nếu tìm ở cùng thư mục không thấy, tự nhảy ra ngoài 1 cấp để tìm
+                response = await fetch('../danh-sach-truyen.json');
+            }
+            
             let stories = await response.json();
             
-            // Xếp truyện mới thêm (ID lớn hơn) lên đầu bảng
-            stories.reverse();
+            // Xếp truyện mới thêm lên đầu bảng (sắp xếp theo ID giảm dần)
+            stories.sort((a, b) => b.id - a.id);
 
             const tableBody = document.getElementById('storyTableBody');
             const searchBar = document.getElementById('searchBar');
@@ -252,17 +261,27 @@
                 }
                 
                 data.forEach(story => {
-                    const genres = story.theLoai.split(',').map(g => `<span class="genre-tag">${g.trim()}</span>`).join('');
+                    // Xử lý cắt nhỏ thể loại thành các tag dễ thương
+                    const genres = story.theLoai ? story.theLoai.split(',').map(g => `<span class="genre-tag">${g.trim()}</span>`).join('') : '-';
                     
+                    // Hàm kiểm tra xem link có hợp lệ không (phải bắt đầu bằng http hoặc https)
+                    const isValidLink = (link) => link && link.trim().toLowerCase().startsWith('http');
+
+                    // Tạo nút bấm nếu có link hợp lệ, ngược lại để trống (ẩn nút)
+                    const btnRaw = isValidLink(story.linkRaw) ? `<a href="${story.linkRaw}" target="_blank" class="btn-download btn-raw">Raw</a>` : '';
+                    const btnQT = isValidLink(story.linkQT) ? `<a href="${story.linkQT}" target="_blank" class="btn-download btn-qt">QT</a>` : '';
+                    
+                    // Nếu cả 2 nút đều không có link thì hiện chữ "Chưa có"
+                    const downloadCell = (btnRaw || btnQT) ? `${btnRaw} ${btnQT}` : '<span style="color:#bbb; font-style:italic;">Chưa có</span>';
+
                     const row = `
                         <tr>
-                            <td class="story-title">${story.ten}</td>
-                            <td class="author-name">${story.tacGia}</td>
+                            <td class="story-title">${story.ten || '-'}</td>
+                            <td class="author-name">${story.tacGia || '-'}</td>
                             <td>${genres}</td>
                             <td class="notes-text">${story.ghiChu || '-'}</td>
                             <td style="text-align: center; white-space: nowrap;">
-                                <a href="${story.linkRaw}" target="_blank" class="btn-download btn-raw">Raw</a>
-                                <a href="${story.linkQT}" target="_blank" class="btn-download btn-qt">QT</a>
+                                ${downloadCell}
                             </td>
                         </tr>
                     `;
@@ -276,18 +295,21 @@
             searchBar.addEventListener('input', (e) => {
                 const keyword = e.target.value.toLowerCase().trim();
                 const filtered = stories.filter(story => 
-                    story.ten.toLowerCase().includes(keyword) || 
-                    story.tacGia.toLowerCase().includes(keyword) || 
-                    story.theLoai.toLowerCase().includes(keyword)
+                    (story.ten && story.ten.toLowerCase().includes(keyword)) || 
+                    (story.tacGia && story.tacGia.toLowerCase().includes(keyword)) || 
+                    (story.theLoai && story.theLoai.toLowerCase().includes(keyword))
                 );
                 displayStories(filtered);
             });
 
         } catch (error) {
             console.error(error);
-            document.getElementById('storyTableBody').innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ff758c; padding:30px;">Lỗi tải dữ liệu. Bạn hãy kiểm tra lại file JSON nhé!</td></tr>`;
+            document.getElementById('storyTableBody').innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ff758c; padding:30px;">Lỗi tải dữ liệu. Bạn hãy kiểm tra lại vị trí file JSON nhé!</td></tr>`;
         }
     }
+
+    window.onload = loadStories;
+</script>
 
     window.onload = loadStories;
 </script>
