@@ -176,4 +176,189 @@
         .btn-download {
             display: inline-flex;
             align-items: center;
-            justify
+            justify-content: center;
+            width: 65px;
+            padding: 9px 0;
+            margin: 4px;
+            border-radius: 30px;
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-family: 'Comfortaa', cursive;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-raw { background: var(--raw-glow); box-shadow: 0 4px 15px rgba(255, 65, 108, 0.35); }
+        .btn-qt { background: var(--qt-glow); box-shadow: 0 4px 15px rgba(0, 114, 255, 0.35); }
+
+        .btn-download:hover {
+            transform: translateY(-4px) scale(1.12);
+        }
+        
+        .btn-raw:hover { box-shadow: 0 8px 25px rgba(255, 65, 108, 0.6); }
+        .btn-qt:hover { box-shadow: 0 8px 25px rgba(0, 114, 255, 0.6); }
+
+        .btn-download:active {
+            transform: translateY(-1px) scale(1);
+        }
+
+        @keyframes floatUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .main-wrapper { padding: 20px; border-radius: 20px; }
+            th, td { padding: 12px; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <h1>✿ Kho Tải Truyện Cao Cấp ✿</h1>
+    <div class="subtitle">Nơi cập nhật những bộ truyện sủng công lãng mạn nhất</div>
+    
+    <div class="search-container">
+        <input type="text" id="searchBar" class="search-input" placeholder="Tìm tên truyện, tác giả, thể loại...">
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 25%">Tên truyện</th>
+                    <th style="width: 15%">Tác giả</th>
+                    <th style="width: 23%">Thể loại</th>
+                    <th style="width: 22%">Ghi chú</th>
+                    <th style="width: 15%; text-align: center;">Tải về</th>
+                </tr>
+            </thead>
+            <tbody id="storyTableBody">
+                </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // BIẾN CHỨA DỮ LIỆU GỐC TRỰC TIẾP
+    const dataStories = [
+      {
+        "id": 1,
+        "ten": "Truyện Ngọt Ngào Nhất Thế Gian",
+        "tacGia": "Mèo Của Công Bảo",
+        "theLoai": "Đam mỹ, Sủng công, Công khống",
+        "ghiChu": "Truyện siêu ngọt, thụ sủng công lên trời, đề cử!",
+        "linkRaw": "https://drive.google.com/...",
+        "linkQT": "https://mediafire.com/..."
+      },
+      {
+        "id": 2,
+        "ten": "Xuyên Thành Vạn Nhân Mê Nhưng Chỉ Sủng Công",
+        "tacGia": "Cá Muối Chăm Chỉ",
+        "theLoai": "Xuyên nhanh, Hệ thống, Thụ sủng công",
+        "ghiChu": "Bản cập nhật mới nhất ngày hôm nay.",
+        "linkRaw": "https://drive.google.com/...",
+        "linkQT": "https://mediafire.com/..."
+      },
+      {
+        "id": 1781870912608,
+        "ten": "Chủ công đơn nguyên văn",
+        "tacGia": "Marey",
+        "theLoai": "Chủ công, thụ sủng công, hiện đại",
+        "ghiChu": "Đơn nguyên văn",
+        "linkRaw": "https://drive.google.com/file/d/1XFm9Fm_2VaDXXZQx6vJAAUB_clT6tbe7/view?usp=drive_link",
+        "linkQT": "k"
+      }
+    ];
+
+    // Tạo biến toàn cục để lưu danh sách đã sắp xếp giúp logic tìm kiếm mượt hơn
+    let globalStories = [...dataStories];
+    globalStories.sort((a, b) => b.id - a.id);
+
+    function displayStories(data) {
+        const tableBody = document.getElementById('storyTableBody');
+        if (!tableBody) return;
+        
+        tableBody.innerHTML = '';
+        if (data.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#999; padding: 30px;">Không thấy truyện cần tìm rồi nàng ơi...</td></tr>`;
+            return;
+        }
+        
+        data.forEach(story => {
+            // Thêm hàm onclickvào từng tag để kích hoạt tính năng click-to-search
+            const genres = story.theLoai ? story.theLoai.split(',').map(g => {
+                const genreName = g.trim();
+                return `<span class="genre-tag" onclick="filterByGenre('${genreName}')">${genreName}</span>`;
+            }).join('') : '-';
+            
+            const isValidLink = (link) => link && link.trim().toLowerCase().startsWith('http');
+
+            const btnRaw = isValidLink(story.linkRaw) ? `<a href="${story.linkRaw}" target="_blank" class="btn-download btn-raw">Raw</a>` : '';
+            const btnQT = isValidLink(story.linkQT) ? `<a href="${story.linkQT}" target="_blank" class="btn-download btn-qt">QT</a>` : '';
+            
+            const downloadCell = (btnRaw || btnQT) ? `${btnRaw} ${btnQT}` : '<span style="color:#bbb; font-style:italic;">Chưa có</span>';
+
+            const row = `
+                <tr>
+                    <td class="story-title">${story.ten || '-'}</td>
+                    <td class="author-name">${story.tacGia || '-'}</td>
+                    <td>${genres}</td>
+                    <td class="notes-text">${story.ghiChu || '-'}</td>
+                    <td style="text-align: center; white-space: nowrap;">
+                        ${downloadCell}
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    // HÀM XỬ LÝ KHI NGƯỜI ĐỌC CLICK VÀO NÚT THỂ LOẠI
+    function filterByGenre(genreName) {
+        const searchBar = document.getElementById('searchBar');
+        if (searchBar) {
+            searchBar.value = genreName; // Tự gõ chữ vào thanh search
+            
+            // Kích hoạt bộ lọc tìm kiếm ngay lập tức
+            const keyword = genreName.toLowerCase();
+            const filtered = globalStories.filter(story => 
+                (story.ten && story.ten.toLowerCase().includes(keyword)) || 
+                (story.tacGia && story.tacGia.toLowerCase().includes(keyword)) || 
+                (story.theLoai && story.theLoai.toLowerCase().includes(keyword))
+            );
+            displayStories(filtered);
+            
+            // Cuộn nhẹ lên trên thanh tìm kiếm để người đọc dễ thấy
+            searchBar.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    function initStories() {
+        displayStories(globalStories);
+
+        const searchBar = document.getElementById('searchBar');
+        if (searchBar) {
+            searchBar.addEventListener('input', (e) => {
+                const keyword = e.target.value.toLowerCase().trim();
+                const filtered = globalStories.filter(story => 
+                    (story.ten && story.ten.toLowerCase().includes(keyword)) || 
+                    (story.tacGia && story.tacGia.toLowerCase().includes(keyword)) || 
+                    (story.theLoai && story.theLoai.toLowerCase().includes(keyword))
+                );
+                displayStories(filtered);
+            });
+        }
+    }
+
+    window.onload = initStories;
+</script>
+</body>
+</html>
