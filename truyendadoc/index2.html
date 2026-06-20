@@ -34,7 +34,7 @@
         </div>
         <div class="form-group">
             <label style="color: #20bf6b;">2. Tên Kho lưu trữ (Repository mới):</label>
-            <input type="text" id="ghRepo" placeholder="Mặc định: phamnhadoan.github.io/truyendadoc">
+            <input type="text" id="ghRepo" placeholder="Mặc định: truyendadoc">
         </div>
         <div class="form-group">
             <label style="color: #d63031;">3. Chìa khóa GitHub Token (ghp_...):</label>
@@ -76,7 +76,7 @@
 <script>
     // Tự động nạp lại thông tin cấu hình cũ
     document.getElementById('ghUser').value = localStorage.getItem('rev_user') || 'PhamNhaDoan';
-    document.getElementById('ghRepo').value = localStorage.getItem('rev_repo') || 'phamnhadoan.github.io/truyendadoc';
+    document.getElementById('ghRepo').value = localStorage.getItem('rev_repo') || 'truyendadoc';
     document.getElementById('ghToken').value = localStorage.getItem('rev_token') || '';
 
     // Hàm chuyển file ảnh thành dạng chuỗi Base64
