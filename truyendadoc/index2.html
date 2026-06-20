@@ -33,8 +33,8 @@
             <input type="text" id="ghUser" placeholder="Ví dụ: PhamNhaDoan">
         </div>
         <div class="form-group">
-            <label style="color: #20bf6b;">2. Tên Kho lưu trữ (Repository mới):</label>
-            <input type="text" id="ghRepo" placeholder="Mặc định: truyendadoc">
+            <label style="color: #20bf6b;">2. Tên Kho lưu trữ (Repository gốc):</label>
+            <input type="text" id="ghRepo" placeholder="Ví dụ: phamnhadoan.github.io">
         </div>
         <div class="form-group">
             <label style="color: #d63031;">3. Chìa khóa GitHub Token (ghp_...):</label>
@@ -74,12 +74,10 @@
 </div>
 
 <script>
-    // Tự động nạp lại thông tin cấu hình cũ
     document.getElementById('ghUser').value = localStorage.getItem('rev_user') || 'PhamNhaDoan';
-    document.getElementById('ghRepo').value = localStorage.getItem('rev_repo') || 'truyendadoc';
+    document.getElementById('ghRepo').value = localStorage.getItem('rev_repo') || 'phamnhadoan.github.io';
     document.getElementById('ghToken').value = localStorage.getItem('rev_token') || '';
 
-    // Hàm chuyển file ảnh thành dạng chuỗi Base64
     const fileToToBase64 = file => new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -99,7 +97,6 @@
             return;
         }
 
-        // Lưu thông tin cấu hình vào trình duyệt
         localStorage.setItem('rev_user', user);
         localStorage.setItem('rev_repo', repo);
         localStorage.setItem('rev_token', token);
@@ -122,21 +119,22 @@
         showStatus("Bắt đầu kết nối API, bà đợi xíu nha...", "success");
 
         try {
-            let finalImgPath = ""; // Đường dẫn ảnh sau khi push lên GitHub
+            let finalImgPathForGitHub = "truyendadoc/img/default.jpg"; 
+            let relativeImgPathForHTML = "img/default.jpg"; 
 
-            // BƯỚC 1: XỬ LÝ ĐẨY ẢNH LÊN THƯ MỤC IMG NẾU BÀ CÓ CHỌN FILE
+            // BƯỚC 1: UPLOAD ẢNH
             if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
                 const fileExtension = file.name.split('.').pop();
-                // Đổi tên ảnh thành mã số thời gian để không bao giờ bị trùng lặp file
                 const newImgName = `img-${Date.now()}.${fileExtension}`;
-                finalImgPath = `img/${newImgName}`;
+                
+                finalImgPathForGitHub = `truyendadoc/img/${newImgName}`;
+                relativeImgPathForHTML = `img/${newImgName}`;
 
                 const imgBase64 = await fileToToBase64(file);
-                const imgApiUrl = `https://api.github.com/repos/${user}/${repo}/contents/${finalImgPath}`;
+                const imgApiUrl = `https://api.github.com/repos/${user}/${repo}/contents/${finalImgPathForGitHub}`;
 
-                // Gọi lệnh đẩy file ảnh trực tiếp lên GitHub
-                await fetch(imgApiUrl, {
+                const resPutImg = await fetch(imgApiUrl, {
                     method: "PUT",
                     headers: {
                         "Authorization": `token ${token}`,
@@ -148,10 +146,15 @@
                         branch: "main"
                     })
                 });
+
+                if (!resPutImg.ok) {
+                    const imgErrData = await resPutImg.json();
+                    throw new Error(`[Lỗi upload ảnh: ${resPutImg.status}] ${imgErrData.message}`);
+                }
             }
 
-            // BƯỚC 2: TIẾN HÀNH CHÈN DỮ LIỆU CODE VÀO FILE INDEX.HTML
-            const pathToFile = "index.html";
+            // BƯỚC 2: ĐỌC VÀ CHÈN DATA VÀO INDEX.HTML
+            const pathToFile = "truyendadoc/index.html";
             const htmlApiUrl = `https://api.github.com/repos/${user}/${repo}/contents/${pathToFile}?ref=main`;
 
             const resGetHtml = await fetch(htmlApiUrl, {
@@ -159,38 +162,36 @@
             });
 
             if (!resGetHtml.ok) {
-                throw new Error(`[Mã lỗi: ${resGetHtml.status}] Không lấy được file index.html. Kiểm tra lại Token hoặc tên User/Repo nha bà!`);
+                throw new Error(`[Mã lỗi: ${resGetHtml.status}] Không lấy được file tại '${pathToFile}'. Hãy kiểm tra chắc chắn file index.html đã nằm trong thư mục 'truyendadoc' của repo '${repo}' chưa nha bà!`);
             }
 
             const fileData = await resGetHtml.json();
             const sha = fileData.sha;
             let currentContent = decodeURIComponent(escape(atob(fileData.content)));
 
-            const targetString = "const dataReviews = [";
-            const insertPosition = currentContent.indexOf(targetString);
-
-            if (insertPosition === -1) {
-                throw new Error("Không tìm thấy dòng 'const dataReviews = [' trong file index.html!");
+            // SỬ DỤNG REGEX THÔNG MINH: Tìm chuỗi "dataReviews" có dấu ngoặc mở mảng vuông "["
+            const matchKeyword = currentContent.match(/dataReviews\s*=\s*\[/);
+            if (!matchKeyword) {
+                throw new Error("Không tìm thấy biến mảng dữ liệu 'dataReviews' trong file index.html!");
             }
 
-            // Cục đối tượng review mới
+            const insertPosition = matchKeyword.index + matchKeyword[0].length;
+
             const newReviewObj = {
                 id: Date.now(),
                 ten: ten,
                 tacGia: tacGia,
                 nhaEdit: nhaEdit,
                 review: reviewText,
-                hinhAnh: finalImgPath, // Gắn đường dẫn thư mục ảnh vừa tạo ở Bước 1 vào đây
+                hinhAnh: relativeImgPathForHTML,
                 linkDoc: linkDoc
             };
 
-            const splitIndex = insertPosition + targetString.length;
             const textToInsert = `\n      ${JSON.stringify(newReviewObj, null, 2)},`;
-            let updatedContent = currentContent.slice(0, splitIndex) + textToInsert + currentContent.slice(splitIndex);
+            let updatedContent = currentContent.slice(0, insertPosition) + textToInsert + currentContent.slice(insertPosition);
 
             const encodedContent = btoa(unescape(encodeURIComponent(updatedContent)));
 
-            // Lưu đè file index.html mới lên GitHub
             const resPutHtml = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${pathToFile}`, {
                 method: "PUT",
                 headers: {
@@ -206,7 +207,7 @@
             });
 
             if (resPutHtml.ok) {
-                showStatus(`✨ Quá đỉnh luôn bà ơi! Đã upload thành công tấm ảnh vào folder 'img/' và đăng bài review "${ten}" lên trang chủ rồi nhé!`, "success");
+                showStatus(`✨ Quá tuyệt vời bà ơi! Đã upload ảnh thành công vào folder 'truyendadoc/img/' và cập nhật bài review truyện "${ten}" lên trang chủ thành công rực rỡ rồi nhé!`, "success");
                 document.getElementById('reviewForm').reset();
             } else {
                 const errData = await resPutHtml.json();
