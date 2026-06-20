@@ -7,9 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f7f5f0; /* Nền xám sữa kem dịu nhẹ */
-            --primary-green: #556b2f; /* Xanh lá đất tinh tế */
-            --earth-orange: #d97443; /* Cam đất mộc mạc */
+            --bg-color: #f7f5f0;
+            --primary-green: #556b2f;
+            --earth-orange: #d97443;
             --text-dark: #2f3542;
             --text-muted: #747d8c;
             --border-color: #ced6e0;
@@ -24,7 +24,6 @@
             min-height: 100vh;
         }
 
-        /* Khung viền ngoài chấm bi đồng bộ gu của bà */
         .main-wrapper {
             max-width: 1100px;
             margin: 0 auto;
@@ -52,7 +51,6 @@
             font-size: 0.9rem;
         }
 
-        /* Thanh tìm kiếm bo tròn */
         .search-container {
             max-width: 400px;
             margin: 0 auto 35px auto;
@@ -73,14 +71,12 @@
             border-color: var(--earth-orange);
         }
 
-        /* Lưới hiển thị danh sách review truyện */
         .review-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 25px;
         }
 
-        /* Thẻ truyện tối giản sang trọng */
         .review-card {
             background: #ffffff;
             border: 1px solid #f1f2f6;
@@ -151,7 +147,6 @@
             border-left: 3px solid var(--earth-orange);
         }
 
-        /* Nút Đọc bo tròn bong bóng */
         .btn-read {
             display: block;
             text-align: center;
@@ -187,35 +182,26 @@
         <input type="text" id="searchBar" class="search-input" placeholder="Tìm tên truyện, tác giả, nhà edit...">
     </div>
 
-    <div class="review-grid" id="reviewGrid">
-        </div>
+    <div class="review-grid" id="reviewGrid"></div>
 </div>
 
 <script>
     // DỮ LIỆU REVIEW GỐC CHẠY TỰ ĐỘNG
-    const dataReviews = [
-      {
-        "id": 1,
-        "ten": "Chủ công đơn nguyên văn",
-        "tacGia": "Marey",
-        "nhaEdit": "Cá Voi Nhỏ",
-        "review": "Truyện cực kỳ hay, công siêu ngầu sủng thụ đúng gu tui luôn, đề cử mạnh nha mọi người!",
-        "hinhAnh": "img/sample.jpg",
-        "linkDoc": "https://wikidich3.com/"
-      }
-    ];
+    const dataReviews = [];
 
     function displayReviews(data) {
         const grid = document.getElementById('reviewGrid');
         if (!grid) return;
         grid.innerHTML = '';
         
-        if (data.length === 0) {
+        const validData = data.filter(item => item && item.ten);
+        
+        if (validData.length === 0) {
             grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#999; padding: 40px;">Không thấy bài review cần tìm rồi nàng ơi...</div>`;
             return;
         }
 
-        data.forEach(item => {
+        validData.forEach(item => {
             const row = `
                 <div class="review-card">
                     <div class="book-img-box">
@@ -238,7 +224,6 @@
 
     function initReviews() {
         let reviews = [...dataReviews];
-        // Xếp bài mới nhất lên hàng đầu
         reviews.sort((a, b) => b.id - a.id);
         displayReviews(reviews);
 
@@ -247,9 +232,11 @@
             searchBar.addEventListener('input', (e) => {
                 const keyword = e.target.value.toLowerCase().trim();
                 const filtered = reviews.filter(item => 
-                    (item.ten && item.ten.toLowerCase().includes(keyword)) || 
-                    (item.tacGia && item.tacGia.toLowerCase().includes(keyword)) || 
-                    (item.nhaEdit && item.nhaEdit.toLowerCase().includes(keyword))
+                    item && (
+                        (item.ten && item.ten.toLowerCase().includes(keyword)) || 
+                        (item.tacGia && item.tacGia.toLowerCase().includes(keyword)) || 
+                        (item.nhaEdit && item.nhaEdit.toLowerCase().includes(keyword))
+                    )
                 );
                 displayReviews(filtered);
             });
