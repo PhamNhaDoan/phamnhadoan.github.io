@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nhật ký đu buê đuê - ChuCongConvert</title>
+  <!-- Nhúng font chữ thanh mảnh, sang trọng không lỗi Tiếng Việt -->
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #f7f5f0; /* Nền xám sữa kem dịu nhẹ */
+      --primary-green: #556b2f; /* Xanh lá đất tinh tế */
+      --earth-orange: #d97443; /* Cam đất mộc mạc */
+      --text-dark: #2f3542;
+      --text-muted: #747d8c;
+      --border-color: #a4b0be;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      margin: 0;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    /* Khung viền ngoài duy nhất có chấm bi sang trọng */
+    .main-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 35px;
+      border-radius: 24px;
+      border: 3px dotted var(--border-color);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01);
+    }
+
+    h1 {
+      font-family: 'Comfortaa', cursive;
+      text-align: center;
+      color: var(--primary-green);
+      margin-bottom: 5px;
+      font-size: 2.2rem;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-bottom: 45px;
+      font-size: 0.9rem;
+    }
+
+    /* Thanh tìm kiếm tối giản bo tròn */
+    .search-container {
+      max-width: 400px;
+      margin: 0 auto 40px auto;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 25px;
+      font-size: 0.95rem;
+      border: 1px solid #dfe4ea;
+      border-radius: 50px;
+      outline: none;
+      box-sizing: border-box;
+      font-family: 'Nunito', sans-serif;
+      transition: border-color 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--earth-orange);
+    }
+
+    /* CẤU TRÚC TIMELINE DỌC ĐƯỢC TỐI ƯU SIÊU NHẸ */
+    .tm-timelines {
+      position: relative;
+      padding: 20px 0;
+    }
+
+    /* Trục dọc chính giữa của timeline */
+    .tm-timeline-white-bar {
+      width: 4px;
+      background-color: #dfe4ea;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 35px; /* Căn lề trái cố định để đẹp trên cả điện thoại */
+      border-radius: 2px;
+    }
+
+    .tm-timeline-item {
+      position: relative;
+      margin-bottom: 40px;
+      padding-left: 70px; /* Chừa khoảng trống cho trục dọc */
+    }
+
+    /* Dấu chấm tròn mọc trên trục dải timeline */
+    .tm-timeline-circle {
+      width: 16px;
+      height: 16px;
+      background: #ffffff;
+      border: 4px solid var(--primary-green);
+      border-radius: 50%;
+      position: absolute;
+      left: 25px;
+      top: 25px;
+      z-index: 2;
+    }
+
+    /* Tách màu xen kẽ cho các dấu chấm thêm sinh động */
+    .tm-timeline-item:nth-child(even) .tm-timeline-circle {
+      border-color: var(--earth-orange);
+    }
+
+    /* Khung chứa nội dung mỗi dòng timeline */
+    .tm-media {
+      display: flex;
+      background: #ffffff;
+      border: 1px solid #f1f2f6;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.01);
+      transition: background-color 0.2s ease;
+    }
+
+    .tm-media:hover {
+      background-color: #faf9f6;
+    }
+
+    /* Khung bọc ảnh truyện */
+    .tm-timeline-img-wrap {
+      flex-shrink: 0;
+      width: 110px;
+      height: 150px;
+      background: #f1f2f6;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #dfe4ea;
+      margin-right: 20px;
+    }
+
+    .tm-media-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .tm-media-body {
+      flex-grow: 1;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #57606f;
+    }
+
+    .tm-text-green {
+      font-family: 'Comfortaa', cursive;
+      color: var(--primary-green);
+      font-size: 1.1rem;
+      margin: 0 0 8px 0;
+      font-weight: 700;
+    }
+
+    .tm-text-green a {
+      color: var(--earth-orange);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .book-meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .review-content {
+      background: #fcfcfa;
+      padding: 12px;
+      border-radius: 6px;
+      border-left: 3px solid var(--earth-orange);
+      margin-bottom: 12px;
+    }
+
+    /* Nút Đọc Online hình bong bóng bo tròn */
+    .btn-read {
+      display: inline-block;
+      background-color: var(--primary-green);
+      color: #ffffff;
+      text-decoration: none;
+      padding: 6px 18px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      font-family: 'Comfortaa', cursive;
+      transition: opacity 0.2s ease;
+      text-transform: uppercase;
+    }
+
+    .btn-read:hover {
+      opacity: 0.85;
+    }
+
+    /* Tối ưu hiển thị cho màn hình điện thoại nhỏ */
+    @media (max-width: 576px) {
+      .tm-media { flex-direction: column; }
+      .tm-timeline-img-wrap { margin-bottom: 15px; margin-right: 0; width: 90px; height: 125px; }
+      .main-wrapper { padding: 20px; }
+      h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+  <h1>✿ Nhật ký đu buê đuê ✿</h1>
+  <div class="subtitle">Nơi lưu trữ hành trình và cảm nhận những bộ truyện sủng công lãng mạn</div>
+  
+  <div class="search-container">
+    <input type="text" id="searchBar" class="search-input" placeholder="Tìm tên truyện, tác giả, nhà edit...">
+  </div>
+
+  <!-- KHU VỰC TIMELINE -->
+  <div class="tm-timelines">
+    <!-- Trục dọc chạy dọc suốt timeline -->
+    <div class="tm-timeline-white-bar"></div>
+    
+    <!-- Danh sách timeline sẽ tự động render vào đây -->
+    <div id="timelineContainer"></div>
+  </div>
+</div>
+
+<script>
+  // MẢNG DỮ LIỆU GỐC (Trang index2.html sẽ tự động chèn truyện mới lên đầu mảng này)
+  const dataReviews = [
+    {
+      "id": 1,
+      "ten": "NHÀ SOẠN NHẠC",
+      "tacGia": "Yến Sơn Kiều",
+      "nhaEdit": "Thỏ",
+      "review": "Toẹt vời, cường công niên thượng, anh công cực kỳ lạnh nhạt lãnh cảm, tóc dài tới vai, là thuần top. Thụ nhỏ hơn 8 tuổi làm nghề lính cứu hỏa. Truyện slice of life dễ thương vô cùng, thụ truy công thụ sủng công.",
+      "hinhAnh": "img/img-140-01.jpg",
+      "linkDoc": "https://www.facebook.com/mintybunny"
+    }
+  ];
+
+  function displayTimeline(data) {
+    const container = document.getElementById('timelineContainer');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    if (data.length === 0) {
+      container.innerHTML = `<div style="text-align:center; color:#999; padding: 30px;">Không tìm thấy bài viết nào phù hợp...</div>`;
+      return;
+    }
+
+    data.forEach(item => {
+      const isValidLink = (link) => link && link.trim().toLowerCase().startsWith('http');
+      const btnLink = isValidLink(item.linkDoc) ? `<a href="${item.linkDoc}" target="_blank" class="btn-read">Đọc ngay</a>` : '';
+
+      const htmlItem = `
+        <div class="tm-timeline-item">
+          <div class="tm-timeline-circle"></div>
+          <div class="tm-media">
+            <div class="tm-timeline-img-wrap">
+              <img class="tm-media-img" src="${item.hinhAnh || 'img/default.jpg'}" alt="${item.ten}">
+            </div>
+            <div class="tm-media-body">
+              <h5 class="tm-text-green">${item.ten || 'Chưa rõ tên'}</h5>
+              <div class="book-meta">
+                <strong>Tác giả:</strong> ${item.tacGia || '-'} | 
+                <strong>Edit bởi:</strong> ${item.nhaEdit || '-'}
+              </div>
+              <div class="review-content">${item.review || 'Chưa có cảm nhận...'}</div>
+              ${btnLink}
+            </div>
+          </div>
+        </div>
+      `;
+      container.innerHTML += htmlItem;
+    });
+  }
+
+  function initTimeline() {
+    let reviews = [...dataReviews];
+    // Luôn xếp ID lớn nhất (bài mới nhất) lên vị trí đầu tiên của trục timeline
+    reviews.sort((a, b) => b.id - a.id);
+    displayTimeline(reviews);
+
+    const searchBar = document.getElementById('searchBar');
+    if (searchBar) {
+      searchBar.addEventListener('input', (e) => {
+        const keyword = e.target.value.toLowerCase().trim();
+        const filtered = reviews.filter(item => 
+          (item.ten && item.ten.toLowerCase().includes(keyword)) || 
+          (item.tacGia && item.tacGia.toLowerCase().includes(keyword)) || 
+          (item.nhaEdit && item.nhaEdit.toLowerCase().includes(keyword))
+        );
+        displayTimeline(filtered);
+      });
+    }
+  }
+
+  window.onload = initTimeline;
+</script>
+</body>
+</html>
