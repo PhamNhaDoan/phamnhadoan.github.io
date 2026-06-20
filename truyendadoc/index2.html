@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Tool - Đăng Bài Review & Push Ảnh</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 30px; color: #333; }
+        .admin-box { max-width: 550px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h2 { margin-top: 0; color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; }
+        input[type="text"], textarea, input[type="file"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; }
+        input[type="password"] { width: 100%; padding: 10px; border: 1px solid #ff7675; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; background: #fff5f5; }
+        textarea { resize: vertical; }
+        .btn-submit { width: 100%; padding: 14px; background: #20bf6b; color: #fff; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+        .btn-submit:hover { background: #26de81; }
+        .btn-submit:disabled { background: #b2bec3; cursor: not-allowed; }
+        .status-msg { padding: 12px; border-radius: 6px; text-align: left; margin-top: 15px; display: none; font-weight: bold; line-height: 1.5; white-space: pre-wrap; font-family: monospace; }
+        .success { background: #ebfffa; color: #0aa370; border: 1px solid #b3f5e4; }
+        .error { background: #fff5f5; color: #d63031; border: 1px solid #fab1a0; }
+        .config-section { background: #f1f2f6; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #20bf6b; }
+    </style>
+</head>
+<body>
+
+<div class="admin-box">
+    <h2>Hệ Thống Đăng Bài & Push Ảnh Lên GitHub</h2>
+    
+    <div class="config-section">
+        <div class="form-group">
+            <label style="color: #20bf6b;">1. Tên tài khoản GitHub của bà:</label>
+            <input type="text" id="ghUser" placeholder="Ví dụ: PhamNhaDoan">
+        </div>
+        <div class="form-group">
+            <label style="color: #20bf6b;">2. Tên Kho lưu trữ (Repository mới):</label>
+            <input type="text" id="ghRepo" placeholder="Mặc định: truyendadoc">
+        </div>
+        <div class="form-group">
+            <label style="color: #d63031;">3. Chìa khóa GitHub Token (ghp_...):</label>
+            <input type="password" id="ghToken" placeholder="Dán mã ghp_... quyền repo vào đây">
+        </div>
+    </div>
+
+    <form id="reviewForm">
+        <div class="form-group">
+            <label>Chọn hình ảnh từ máy tính:</label>
+            <input type="file" id="hinhAnhFile" accept="image/*">
+        </div>
+        <div class="form-group">
+            <label>Tên Truyện:</label>
+            <input type="text" id="ten" placeholder="Nhập tên truyện">
+        </div>
+        <div class="form-group">
+            <label>Tên Tác Giả:</label>
+            <input type="text" id="tacGia" placeholder="Nhập tên tác giả">
+        </div>
+        <div class="form-group">
+            <label>Nhà Edit / Dịch:</label>
+            <input type="text" id="nhaEdit" placeholder="Nhập tên nhà edit">
+        </div>
+        <div class="form-group">
+            <label>Review Ngắn:</label>
+            <textarea id="review" rows="3" placeholder="Viết vài dòng cảm nhận siêu ngắn vào đây nha bà..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Link Đọc Truyện:</label>
+            <input type="text" id="linkDoc" placeholder="Dán link Wattpad, Wikidich...">
+        </div>
+        <button type="submit" id="submitBtn" class="btn-submit">Đăng Bài & Upload Ảnh Lên Web ✨</button>
+    </form>
+
+    <div class="status-msg" id="statusMsg"></div>
+</div>
+
+<script>
+    // Tự động nạp lại thông tin cấu hình cũ
+    document.getElementById('ghUser').value = localStorage.getItem('rev_user') || 'PhamNhaDoan';
+    document.getElementById('ghRepo').value = localStorage.getItem('rev_repo') || 'truyendadoc';
+    document.getElementById('ghToken').value = localStorage.getItem('rev_token') || '';
+
+    // Hàm chuyển file ảnh thành dạng chuỗi Base64
+    const fileToToBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = error => reject(error);
+    });
+
+    document.getElementById('reviewForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const user = document.getElementById('ghUser').value.trim();
+        const repo = document.getElementById('ghRepo').value.trim();
+        const token = document.getElementById('ghToken').value.trim();
+
+        if (!user || !repo || !token) {
+            showStatus("Bà ơi, điền đầy đủ thông tin cấu hình GitHub ở trên đầu trang trước nha!", "error");
+            return;
+        }
+
+        // Lưu thông tin cấu hình vào trình duyệt
+        localStorage.setItem('rev_user', user);
+        localStorage.setItem('rev_repo', repo);
+        localStorage.setItem('rev_token', token);
+
+        const ten = document.getElementById('ten').value.trim();
+        const tacGia = document.getElementById('tacGia').value.trim();
+        const nhaEdit = document.getElementById('nhaEdit').value.trim();
+        const reviewText = document.getElementById('review').value.trim();
+        const linkDoc = document.getElementById('linkDoc').value.trim();
+        const fileInput = document.getElementById('hinhAnhFile');
+
+        if (!ten) {
+            alert("Ít nhất bà phải điền Tên Truyện nha!");
+            return;
+        }
+
+        const btnSubmit = document.getElementById('submitBtn');
+        btnSubmit.disabled = true;
+        btnSubmit.innerText = "Đang xử lý đẩy ảnh và code lên GitHub...";
+        showStatus("Bắt đầu kết nối API, bà đợi xíu nha...", "success");
+
+        try {
+            let finalImgPath = ""; // Đường dẫn ảnh sau khi push lên GitHub
+
+            // BƯỚC 1: XỬ LÝ ĐẨY ẢNH LÊN THƯ MỤC IMG NẾU BÀ CÓ CHỌN FILE
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const fileExtension = file.name.split('.').pop();
+                // Đổi tên ảnh thành mã số thời gian để không bao giờ bị trùng lặp file
+                const newImgName = `img-${Date.now()}.${fileExtension}`;
+                finalImgPath = `img/${newImgName}`;
+
+                const imgBase64 = await fileToToBase64(file);
+                const imgApiUrl = `https://api.github.com/repos/${user}/${repo}/contents/${finalImgPath}`;
+
+                // Gọi lệnh đẩy file ảnh trực tiếp lên GitHub
+                await fetch(imgApiUrl, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `token ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        message: `Upload ảnh truyện: ${ten}`,
+                        content: imgBase64,
+                        branch: "main"
+                    })
+                });
+            }
+
+            // BƯỚC 2: TIẾN HÀNH CHÈN DỮ LIỆU CODE VÀO FILE INDEX.HTML
+            const pathToFile = "index.html";
+            const htmlApiUrl = `https://api.github.com/repos/${user}/${repo}/contents/${pathToFile}?ref=main`;
+
+            const resGetHtml = await fetch(htmlApiUrl, {
+                headers: { "Authorization": `token ${token}` }
+            });
+
+            if (!resGetHtml.ok) {
+                throw new Error(`[Mã lỗi: ${resGetHtml.status}] Không lấy được file index.html. Kiểm tra lại Token hoặc tên User/Repo nha bà!`);
+            }
+
+            const fileData = await resGetHtml.json();
+            const sha = fileData.sha;
+            let currentContent = decodeURIComponent(escape(atob(fileData.content)));
+
+            const targetString = "const dataReviews = [";
+            const insertPosition = currentContent.indexOf(targetString);
+
+            if (insertPosition === -1) {
+                throw new Error("Không tìm thấy dòng 'const dataReviews = [' trong file index.html!");
+            }
+
+            // Cục đối tượng review mới
+            const newReviewObj = {
+                id: Date.now(),
+                ten: ten,
+                tacGia: tacGia,
+                nhaEdit: nhaEdit,
+                review: reviewText,
+                hinhAnh: finalImgPath, // Gắn đường dẫn thư mục ảnh vừa tạo ở Bước 1 vào đây
+                linkDoc: linkDoc
+            };
+
+            const splitIndex = insertPosition + targetString.length;
+            const textToInsert = `\n      ${JSON.stringify(newReviewObj, null, 2)},`;
+            let updatedContent = currentContent.slice(0, splitIndex) + textToInsert + currentContent.slice(splitIndex);
+
+            const encodedContent = btoa(unescape(encodeURIComponent(updatedContent)));
+
+            // Lưu đè file index.html mới lên GitHub
+            const resPutHtml = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${pathToFile}`, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `token ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    message: `Tự động thêm review: ${ten}`,
+                    content: encodedContent,
+                    sha: sha,
+                    branch: "main"
+                })
+            });
+
+            if (resPutHtml.ok) {
+                showStatus(`✨ Quá đỉnh luôn bà ơi! Đã upload thành công tấm ảnh vào folder 'img/' và đăng bài review "${ten}" lên trang chủ rồi nhé!`, "success");
+                document.getElementById('reviewForm').reset();
+            } else {
+                const errData = await resPutHtml.json();
+                throw new Error(`[Lỗi lưu HTML: ${resPutHtml.status}] ${errData.message}`);
+            }
+
+        } catch (error) {
+            console.error(error);
+            showStatus(`❌ Thất bại:\n${error.message}`, "error");
+        } finally {
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = "Đăng Bài & Upload Ảnh Lên Web ✨";
+        }
+    });
+
+    function showStatus(text, type) {
+        const msg = document.getElementById('statusMsg');
+        msg.className = `status-msg ${type}`;
+        msg.innerText = text;
+        msg.style.display = 'block';
+    }
+</script>
+</body>
+</html>

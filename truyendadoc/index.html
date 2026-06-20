@@ -1,133 +1,262 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="vi">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Góc Review Truyện Siêu Ngắn - ChuCongConvert</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f7f5f0; /* Nền xám sữa kem dịu nhẹ */
+            --primary-green: #556b2f; /* Xanh lá đất tinh tế */
+            --earth-orange: #d97443; /* Cam đất mộc mạc */
+            --text-dark: #2f3542;
+            --text-muted: #747d8c;
+            --border-color: #ced6e0;
+        }
 
-  <title>Nhật ký đu buê đuê</title>
-	<!--
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
 
-    Template 2104 Sloopa
+        /* Khung viền ngoài chấm bi đồng bộ gu của bà */
+        .main-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 35px;
+            border-radius: 24px;
+            border: 3px dotted #a4b0be;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01);
+        }
 
-	http://www.tooplate.com/view/2104-sloopa
+        h1 {
+            font-family: 'Comfortaa', cursive;
+            text-align: center;
+            color: var(--primary-green);
+            margin-bottom: 5px;
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
 
-    -->
-  <!-- load CSS -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400">        <!-- Google web font "Open Sans" -->
-  <link rel="stylesheet" href="css/bootstrap.min.css">                                            <!-- https://getbootstrap.com/ -->
-  <link rel="stylesheet" href="css/fontawesome-all.min.css">                                      <!-- Font awesome -->
-  <link rel="stylesheet" href="css/tooplate-style.css">                                           <!-- Templatemo style -->
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 35px;
+            font-size: 0.9rem;
+        }
 
-  <script>
-    var renderPage = true;
+        /* Thanh tìm kiếm bo tròn */
+        .search-container {
+            max-width: 400px;
+            margin: 0 auto 35px auto;
+        }
 
-    if (navigator.userAgent.indexOf('MSIE') !== -1
-      || navigator.appVersion.indexOf('Trident/') > 0) {
-      /* Microsoft Internet Explorer detected in. */
-      alert("Please view this in a modern browser such as Chrome or Microsoft Edge.");
-      renderPage = false;
-    }
-  </script>
+        .search-input {
+            width: 100%;
+            padding: 12px 25px;
+            font-size: 0.95rem;
+            border: 1px solid #dfe4ea;
+            border-radius: 50px;
+            outline: none;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+        }
 
+        .search-input:focus {
+            border-color: var(--earth-orange);
+        }
+
+        /* Lưới hiển thị danh sách review truyện */
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        /* Thẻ truyện tối giản sang trọng */
+        .review-card {
+            background: #ffffff;
+            border: 1px solid #f1f2f6;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease;
+        }
+
+        .review-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .book-img-box {
+            width: 100%;
+            height: 220px;
+            background: #f1f2f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-bottom: 1px solid #f1f2f6;
+        }
+
+        .book-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .book-info {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .book-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0 0 8px 0;
+            font-family: 'Comfortaa', cursive;
+        }
+
+        .book-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .book-meta strong {
+            color: #57606f;
+        }
+
+        .review-text {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #57606f;
+            background: #faf9f6;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            flex-grow: 1;
+            border-left: 3px solid var(--earth-orange);
+        }
+
+        /* Nút Đọc bo tròn bong bóng */
+        .btn-read {
+            display: block;
+            text-align: center;
+            background-color: var(--primary-green);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 0;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            font-family: 'Comfortaa', cursive;
+            transition: opacity 0.2s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-read:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .main-wrapper { padding: 20px; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
 </head>
-
 <body>
 
-  <!-- Loader -->
+<div class="main-wrapper">
+    <h1>✿ Nhật Ký Đọc Truyện ✿</h1>
+    <div class="subtitle">Nơi lưu trữ những dòng review siêu ngắn, chân thực nhất</div>
+    
+    <div class="search-container">
+        <input type="text" id="searchBar" class="search-input" placeholder="Tìm tên truyện, tác giả, nhà edit...">
+    </div>
 
-
-  <div class="tm-container">
-    <div class="tm-container-inner">
-      <section class="tm-first-section">
-      
-      </section>
-      <section class="tm-text-section">
-        <div class="tm-timelines">
-          <h2 class="tm-text-green mb-5">Năm 2016</h2>
-          <div class="tm-timelines-inner">
-            <div class="tm-timeline-white-bar"></div>
-            <div class="tm-timeline-circle"></div>
-            <div class="tm-timeline mb-4 tm-first-timeline">
-              <div class="media tm-media">
-                <div class="tm-timeline-img-wrap mr-4">
-                  <img class="tm-media-img tm-media-img-ml-1" src="img/img-140-01.jpg" alt="Image 1">
-                </div>
-                <div class="media-body tm-media-body tm-media-body-ml-1">
-                  <h5 class="mt-0 tm-text-green">NHÀ SOẠN NHẠC - Yến Sơn Kiều - Edit by <a href="https://https://www.facebook.com/mintybunny">Thỏ</a></h5>
-                 Toẹt vời, cường công niên thượng, anh công cực kỳ lạnh nhạt lãnh cảm, tóc dài tới vai, là thuần top. Thụ nhỏ hơn 8 tuổi làm nghề lính cứu hỏa. Truyện slice of life dễ thương vô cùng, thụ truy công thụ sủng công.</div>
-              </div>
-            </div>
-            <div class="tm-timeline mb-4 tm-second-timeline">
-              <div class="media tm-media">
-                <div class="tm-timeline-img-wrap mr-4">
-                  <img class="tm-media-img tm-media-img-ml-2" src="img/img-140-02.jpg" alt="Image 2">
-                </div>
-                <div class="media-body tm-media-body tm-media-body-ml-2">
-                  <h5 class="mt-0 tm-text-green">Đang gõ...</h5>
-                  Đang gõ...
-                </div>
-              </div>
-            </div>
-            <div class="tm-timeline mb-4 tm-first-timeline">
-              <div class="media tm-media">
-                <div class="tm-timeline-img-wrap mr-4">
-                  <img class="tm-media-img tm-media-img-ml-1" src="img/img-140-03.jpg" alt="Image 3">
-                </div>
-                <div class="media-body tm-media-body tm-media-body-ml-1">
-                  <h5 class="mt-0 tm-text-red">Đang gõ...</h5>
-               Đang gõ...
-                </div>
-              </div>
-            </div>
-            <div class="tm-timeline mb-4 tm-second-timeline">
-              <div class="media tm-media">
-                <div class="tm-timeline-img-wrap mr-4">
-                  <img class="tm-media-img tm-media-img-ml-2" src="img/img-140-04.jpg" alt="Image 4">
-                </div>
-                <div class="media-body tm-media-body tm-media-body-ml-2">
-                  <h5 class="mt-0 tm-text-red">Đang gõ...</h5>
-                  Đang gõ...
-                </div>
-              </div>
-            </div>
-            <div class="tm-timeline mb-4 tm-third-timeline">
-              <div class="media tm-media">
-                <div class="tm-timeline-img-wrap mr-4">
-                  <img class="tm-media-img tm-media-img-ml-3" src="img/img-140-05.jpg" alt="Image 5">
-                </div>
-                <div class="media-body tm-media-body tm-media-body-ml-3">
-                  <h5 class="mt-0 tm-text-red">Đang gõ...</h5>
-                  Đang gõ...
-                </div>
-              </div>
-            </div>
-			   <div class="tm-timeline mb-4 tm-first-timeline">
-              <div class="media tm-media">
-                <div class="tm-timeline-img-wrap mr-4">
-                  <img class="tm-media-img tm-media-img-ml-1" src="img/img-140-01.jpg" alt="Image 1">
-                </div>
-                <div class="media-body tm-media-body tm-media-body-ml-1">
-                  <h5 class="mt-0 tm-text-green">Đang gõ...</a></h5>
-                 Đang gõ...</div>
-              </div>
-          </div>
+    <div class="review-grid" id="reviewGrid">
         </div>
-  <!-- load JS -->
-  <script src="js/jquery-3.2.1.slim.min.js"></script> <!-- https://jquery.com/ -->
-  <script>
+</div>
 
-    /* DOM is ready
-    ------------------------------------------------*/
-    $(function () {
-
-      if (renderPage) {
-        $('body').addClass('loaded');
+<script>
+    // DỮ LIỆU REVIEW GỐC CHẠY TỰ ĐỘNG
+    const dataReviews = [
+      {
+        "id": 1,
+        "ten": "Chủ công đơn nguyên văn",
+        "tacGia": "Marey",
+        "nhaEdit": "Cá Voi Nhỏ",
+        "review": "Truyện cực kỳ hay, công siêu ngầu sủng thụ đúng gu tui luôn, đề cử mạnh nha mọi người!",
+        "hinhAnh": "img/sample.jpg",
+        "linkDoc": "https://wikidich3.com/"
       }
+    ];
 
-      $('.tm-current-year').text(new Date().getFullYear());  // Update year in copyright
-    });
+    function displayReviews(data) {
+        const grid = document.getElementById('reviewGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        
+        if (data.length === 0) {
+            grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#999; padding: 40px;">Không thấy bài review cần tìm rồi nàng ơi...</div>`;
+            return;
+        }
 
-  </script>
+        data.forEach(item => {
+            const row = `
+                <div class="review-card">
+                    <div class="book-img-box">
+                        <img src="${item.hinhAnh || 'img/default.jpg'}" class="book-img" alt="${item.ten}">
+                    </div>
+                    <div class="book-info">
+                        <h3 class="book-title">${item.ten || 'Chưa rõ tên'}</h3>
+                        <div class="book-meta">
+                            <strong>Tác giả:</strong> ${item.tacGia || '-'}<br>
+                            <strong>Nhà edit:</strong> ${item.nhaEdit || '-'}
+                        </div>
+                        <div class="review-text">${item.review || 'Chưa có bài cảm nhận...'}</div>
+                        <a href="${item.linkDoc || '#'}" target="_blank" class="btn-read">Đọc Ngay</a>
+                    </div>
+                </div>
+            `;
+            grid.innerHTML += row;
+        });
+    }
+
+    function initReviews() {
+        let reviews = [...dataReviews];
+        // Xếp bài mới nhất lên hàng đầu
+        reviews.sort((a, b) => b.id - a.id);
+        displayReviews(reviews);
+
+        const searchBar = document.getElementById('searchBar');
+        if (searchBar) {
+            searchBar.addEventListener('input', (e) => {
+                const keyword = e.target.value.toLowerCase().trim();
+                const filtered = reviews.filter(item => 
+                    (item.ten && item.ten.toLowerCase().includes(keyword)) || 
+                    (item.tacGia && item.tacGia.toLowerCase().includes(keyword)) || 
+                    (item.nhaEdit && item.nhaEdit.toLowerCase().includes(keyword))
+                );
+                displayReviews(filtered);
+            });
+        }
+    }
+
+    window.onload = initReviews;
+</script>
 </body>
 </html>
