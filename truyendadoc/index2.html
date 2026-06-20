@@ -34,7 +34,7 @@
         </div>
         <div class="form-group">
             <label style="color: #20bf6b;">2. Tên Kho lưu trữ (Repository):</label>
-            <input type="text" id="ghRepo" placeholder="Ví dụ: phamnhadoan.github.io/truyendadoc">
+            <input type="text" id="ghRepo" placeholder="Ví dụ: truyendadoc">
         </div>
         <div class="form-group">
             <label style="color: #d63031;">3. Chìa khóa GitHub Token (ghp_...):</label>
@@ -74,8 +74,9 @@
 </div>
 
 <script>
+    // Điền mặc định tên repo gọn gàng, chuẩn xác cho bà
     document.getElementById('ghUser').value = localStorage.getItem('rev_user') || 'phamnhadoan';
-    document.getElementById('ghRepo').value = localStorage.getItem('rev_repo') || 'phamnhadoan.github.io/truyendadoc';
+    document.getElementById('ghRepo').value = localStorage.getItem('rev_repo') || 'truyendadoc';
     document.getElementById('ghToken').value = localStorage.getItem('rev_token') || '';
 
     const fileToToBase64 = file => new Promise((resolve, reject) => {
@@ -121,7 +122,7 @@
         try {
             let finalImgPath = "img/default.jpg"; 
 
-            // BƯỚC 1: UPLOAD ẢNH
+            // BƯỚC 1: UPLOAD ẢNH THẲNG VÀO THƯ MỤC IMG/ Ở GỐC REPO
             if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
                 const fileExtension = file.name.split('.').pop();
@@ -129,7 +130,7 @@
                 finalImgPath = `img/${newImgName}`;
 
                 const imgBase64 = await fileToToBase64(file);
-                const imgApiUrl = `https://api.github.com/repos/${user}/${encodeURIComponent(repo)}/contents/${finalImgPath}`;
+                const imgApiUrl = `https://api.github.com/repos/${user}/${repo}/contents/${finalImgPath}`;
 
                 const resPutImg = await fetch(imgApiUrl, {
                     method: "PUT",
@@ -150,9 +151,9 @@
                 }
             }
 
-            // BƯỚC 2: ĐỌC VÀ CHÈN DATA VÀO INDEX.HTML Ở GỐC REPO
+            // BƯỚC 2: ĐỌC VÀ CHÈN DATA VÀO FILE INDEX.HTML Ở GỐC REPO
             const pathToFile = "index.html";
-            const htmlApiUrl = `https://api.github.com/repos/${user}/${encodeURIComponent(repo)}/contents/${pathToFile}?ref=main`;
+            const htmlApiUrl = `https://api.github.com/repos/${user}/${repo}/contents/${pathToFile}?ref=main`;
 
             const resGetHtml = await fetch(htmlApiUrl, {
                 headers: { "Authorization": `token ${token}` }
@@ -166,16 +167,16 @@
             const sha = fileData.sha;
             let currentContent = decodeURIComponent(escape(atob(fileData.content)));
 
-            // THUẬT TOÁN MỚI: Chỉ quét từ khóa mấu chốt 'dataReviews' và tìm dấu ngoặc mở đầu tiên sau đó
+            // Tìm chữ dataReviews trong file index.html
             const keywordIndex = currentContent.indexOf("dataReviews");
             if (keywordIndex === -1) {
-                throw new Error("Không tìm thấy chữ 'dataReviews' trong file index.html! Bà hãy kiểm tra xem file index.html trên GitHub có bị xóa nhầm mất biến này không nha.");
+                throw new Error("Không tìm thấy mảng dữ liệu 'dataReviews' trong file index.html! Nàng hãy kiểm tra xem file trên GitHub có bị xóa nhầm mất dòng này không nhé.");
             }
 
-            // Tìm dấu mở ngoặc vuông `[` đầu tiên xuất hiện sau chữ dataReviews
+            // Tìm dấu ngoặc mở mảng `[` đầu tiên ngay sau chữ dataReviews
             const insertPosition = currentContent.indexOf("[", keywordIndex) + 1;
             if (insertPosition === 0) {
-                throw new Error("Tìm thấy chữ dataReviews nhưng không thấy dấu mở mảng '[' phía sau!");
+                throw new Error("Tìm thấy chữ dataReviews nhưng không định vị được dấu mở mảng '[' phía sau!");
             }
 
             const newReviewObj = {
@@ -194,7 +195,7 @@
             const encodedContent = btoa(unescape(encodeURIComponent(updatedContent)));
 
             // Gửi dữ liệu cập nhật đè lại lên GitHub
-            const resPutHtml = await fetch(`https://api.github.com/repos/${user}/${encodeURIComponent(repo)}/contents/${pathToFile}`, {
+            const resPutHtml = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${pathToFile}`, {
                 method: "PUT",
                 headers: {
                     "Authorization": `token ${token}`,
