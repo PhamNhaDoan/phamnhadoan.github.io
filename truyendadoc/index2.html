@@ -74,7 +74,6 @@
 </div>
 
 <script>
-    // Tự động nạp cấu hình chuẩn xác cho bà
     document.getElementById('ghUser').value = localStorage.getItem('rev_user') || 'phamnhadoan';
     document.getElementById('ghRepo').value = localStorage.getItem('rev_repo') || 'phamnhadoan.github.io/truyendadoc';
     document.getElementById('ghToken').value = localStorage.getItem('rev_token') || '';
@@ -130,7 +129,6 @@
                 finalImgPath = `img/${newImgName}`;
 
                 const imgBase64 = await fileToToBase64(file);
-                // Mã hóa tên repo trong url để tránh lỗi ký tự đặc biệt như dấu gạch chéo
                 const imgApiUrl = `https://api.github.com/repos/${user}/${encodeURIComponent(repo)}/contents/${finalImgPath}`;
 
                 const resPutImg = await fetch(imgApiUrl, {
@@ -168,13 +166,14 @@
             const sha = fileData.sha;
             let currentContent = decodeURIComponent(escape(atob(fileData.content)));
 
-            // Tìm vị trí mảng bằng RegEx thông minh
-            const match = currentContent.match(/(const\s+dataReviews\s*=\s*\[)/);
+            // REGEX SIÊU THÔNG MINH: Tìm đúng cụm dataReviews kèm dấu ngoặc vuông bất kể khoảng trắng hay xuống dòng
+            const match = currentContent.match(/dataReviews\s*=\s*\[/);
 
             if (!match) {
-                throw new Error("Không tìm thấy mảng dữ liệu 'const dataReviews = [' trong file index.html! Hãy kiểm tra xem file của bà có bị sửa mất dòng này không nhé.");
+                throw new Error("Không tìm thấy biến mảng dữ liệu 'dataReviews = [' trong file index.html! Hãy kiểm tra xem file của bà có bị sửa mất dòng này không nhé.");
             }
 
+            // Tính toán vị trí chèn ngay sau dấu mở ngoặc vuông `[` của mảng
             const insertPosition = match.index + match[0].length;
 
             const newReviewObj = {
@@ -187,6 +186,7 @@
                 linkDoc: linkDoc
             };
 
+            // Tạo đoạn chuỗi JSON chèn vào đầu mảng
             const textToInsert = `\n      ${JSON.stringify(newReviewObj, null, 2)},`;
             let updatedContent = currentContent.slice(0, insertPosition) + textToInsert + currentContent.slice(insertPosition);
 
