@@ -121,7 +121,7 @@
         try {
             let finalImgPath = "img/default.jpg"; 
 
-            // BƯỚC 1: UPLOAD ẢNH THẲNG VÀO THƯ MỤC IMG/ Ở GỐC REPO
+            // BƯỚC 1: UPLOAD ẢNH
             if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
                 const fileExtension = file.name.split('.').pop();
@@ -150,7 +150,7 @@
                 }
             }
 
-            // BƯỚC 2: ĐỌC VÀ CHÈN DATA VÀO FILE INDEX.HTML Ở GỐC REPO
+            // BƯỚC 2: ĐỌC VÀ CHÈN DATA VÀO INDEX.HTML Ở GỐC REPO
             const pathToFile = "index.html";
             const htmlApiUrl = `https://api.github.com/repos/${user}/${encodeURIComponent(repo)}/contents/${pathToFile}?ref=main`;
 
@@ -166,15 +166,17 @@
             const sha = fileData.sha;
             let currentContent = decodeURIComponent(escape(atob(fileData.content)));
 
-            // REGEX SIÊU THÔNG MINH: Tìm đúng cụm dataReviews kèm dấu ngoặc vuông bất kể khoảng trắng hay xuống dòng
-            const match = currentContent.match(/dataReviews\s*=\s*\[/);
-
-            if (!match) {
-                throw new Error("Không tìm thấy biến mảng dữ liệu 'dataReviews = [' trong file index.html! Hãy kiểm tra xem file của bà có bị sửa mất dòng này không nhé.");
+            // THUẬT TOÁN MỚI: Chỉ quét từ khóa mấu chốt 'dataReviews' và tìm dấu ngoặc mở đầu tiên sau đó
+            const keywordIndex = currentContent.indexOf("dataReviews");
+            if (keywordIndex === -1) {
+                throw new Error("Không tìm thấy chữ 'dataReviews' trong file index.html! Bà hãy kiểm tra xem file index.html trên GitHub có bị xóa nhầm mất biến này không nha.");
             }
 
-            // Tính toán vị trí chèn ngay sau dấu mở ngoặc vuông `[` của mảng
-            const insertPosition = match.index + match[0].length;
+            // Tìm dấu mở ngoặc vuông `[` đầu tiên xuất hiện sau chữ dataReviews
+            const insertPosition = currentContent.indexOf("[", keywordIndex) + 1;
+            if (insertPosition === 0) {
+                throw new Error("Tìm thấy chữ dataReviews nhưng không thấy dấu mở mảng '[' phía sau!");
+            }
 
             const newReviewObj = {
                 id: Date.now(),
@@ -186,7 +188,6 @@
                 linkDoc: linkDoc
             };
 
-            // Tạo đoạn chuỗi JSON chèn vào đầu mảng
             const textToInsert = `\n      ${JSON.stringify(newReviewObj, null, 2)},`;
             let updatedContent = currentContent.slice(0, insertPosition) + textToInsert + currentContent.slice(insertPosition);
 
