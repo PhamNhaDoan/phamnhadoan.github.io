@@ -17,9 +17,10 @@
         h1 { font-family: 'Comfortaa', cursive; color: var(--primary-green); text-align: center; }
         .admin-box { margin-top: 30px; padding: 20px; background: #fffaf0; border-radius: 12px; border: 1px solid #ddd; }
         input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; }
+        button { width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; margin-top: 10px; }
         .btn-delete { background-color: #ff4757; }
         .btn-delete-latest { background-color: var(--earth-orange); }
+        .config-box { border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -27,6 +28,13 @@
 <div class="main-wrapper">
     <h1>✿ Khu Vực Phẫu Thuật Truyện ✿</h1>
     
+    <div class="config-box">
+        <h3>Cấu hình kết nối</h3>
+        <input type="text" id="owner" placeholder="Tên tài khoản GitHub (VD: PhamNhaDoan)">
+        <input type="text" id="repo" placeholder="Tên kho lưu trữ (VD: truyendadoc)">
+        <input type="password" id="token" placeholder="GitHub Token (ghp_...)">
+    </div>
+
     <div class="admin-box">
         <h3>Xóa theo tên truyện</h3>
         <input type="text" id="deleteName" placeholder="Nhập chính xác tên truyện...">
@@ -34,41 +42,35 @@
     </div>
 
     <div class="admin-box">
-        <h3>Xóa truyện vừa up gần nhất</h3>
+        <h3>Xóa truyện gần nhất</h3>
         <button onclick="deleteLatest()" class="btn-delete-latest">Xóa truyện gần nhất</button>
     </div>
 </div>
 
 <script>
-    // LƯU Ý: Bà cần copy hàm getRepoData và updateGitHubFile từ index2.html qua đây
-    // để logic đẩy dữ liệu lên GitHub hoạt động được.
-    
+    // Hàm này cần được thay thế bằng logic đẩy dữ liệu thực tế của bà
+    function getCredentials() {
+        return {
+            owner: document.getElementById('owner').value,
+            repo: document.getElementById('repo').value,
+            token: document.getElementById('token').value
+        };
+    }
+
     async function deleteStory(updatedArray) {
-        alert("Đang đẩy dữ liệu mới lên GitHub...");
-        // Tích hợp hàm updateGitHubFile từ index2.html ở đây
+        const { owner, repo, token } = getCredentials();
+        if(!owner || !repo || !token) return alert("Bà nhập thiếu thông tin cấu hình rồi!");
+        
+        alert("Đang thực hiện xóa trên GitHub...");
+        // Tích hợp logic gọi API GitHub của bà vào đây
     }
 
     function deleteByName() {
-        const name = document.getElementById('deleteName').value;
-        if(!name) return alert("Nhập tên truyện đi bà!");
-        
-        // Giả sử dataStories là mảng truyện lấy từ file data
-        const confirmDelete = confirm("Bà chắc chắn muốn xóa: " + name + " không?");
-        if(confirmDelete) {
-            // Lọc bỏ truyện
-            // const updatedData = dataStories.filter(s => s.ten !== name);
-            // deleteStory(updatedData);
-        }
+        // Logic lọc dữ liệu và gọi deleteStory
     }
 
     function deleteLatest() {
-        const confirmDelete = confirm("Bà muốn xóa truyện mới đăng gần nhất đúng không?");
-        if(confirmDelete) {
-            // Sắp xếp theo ID giảm dần rồi bỏ thằng đầu tiên
-            // let sorted = [...dataStories].sort((a, b) => b.id - a.id);
-            // sorted.shift();
-            // deleteStory(sorted);
-        }
+        // Logic lọc dữ liệu và gọi deleteStory
     }
 </script>
 </body>
