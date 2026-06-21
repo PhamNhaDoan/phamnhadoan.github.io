@@ -25,11 +25,11 @@
 <body>
 
 <div class="admin-box">
-    <h2>Hệ Thống Đăng Bài & Push Ảnh Lên GitHub</h2>
+    <h2>Hệ Thống Đăng Bài Review Lên GitHub</h2>
     
     <div class="config-section">
         <div class="form-group">
-            <label style="color: #20bf6b;">1. Tên tài khoản GitHub của bà:</label>
+            <label style="color: #20bf6b;">1. Tên tài khoản GitHub:</label>
             <input type="text" id="ghUser" placeholder="Ví dụ: PhamNhaDoan">
         </div>
         <div class="form-group">
@@ -61,13 +61,13 @@
         </div>
         <div class="form-group">
             <label>Review Ngắn:</label>
-            <textarea id="review" rows="3" placeholder="Viết vài dòng cảm nhận siêu ngắn vào đây nha bà..."></textarea>
+            <textarea id="review" rows="3" placeholder="Viết vài dòng cảm nhận siêu ngắn vào đây nha..."></textarea>
         </div>
         <div class="form-group">
             <label>Link Đọc Truyện:</label>
-            <input type="text" id="linkDoc" placeholder="Dán link Wattpad, Wikidich...">
+            <input type="text" id="linkDoc" placeholder="Dán link Wattpad, Wordpress...">
         </div>
-        <button type="submit" id="submitBtn" class="btn-submit">Đăng Bài & Upload Ảnh Lên Web ✨</button>
+        <button type="submit" id="submitBtn" class="btn-submit">Đăng Bài</button>
     </form>
 
     <div class="status-msg" id="statusMsg"></div>
@@ -207,7 +207,7 @@
             });
 
             if (resPutHtml.ok) {
-                showStatus(`✨ Quá tuyệt vời bà ơi! Đã upload ảnh thành công vào folder 'truyendadoc/img/' và cập nhật bài review truyện "${ten}" lên trang chủ thành công rực rỡ rồi nhé!`, "success");
+                showStatus(`Đã upload ảnh thành công và cập nhật bài review truyện "${ten}" lên trang chủ rồi nhé!`, "success");
                 document.getElementById('reviewForm').reset();
             } else {
                 const errData = await resPutHtml.json();
@@ -219,7 +219,7 @@
             showStatus(`❌ Thất bại:\n${error.message}`, "error");
         } finally {
             btnSubmit.disabled = false;
-            btnSubmit.innerText = "Đăng Bài & Upload Ảnh Lên Web ✨";
+            btnSubmit.innerText = "Đăng Bài";
         }
     });
 
