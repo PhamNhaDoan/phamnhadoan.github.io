@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JWE7TQ7DG5"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JWE7TQ7DG5');
+</script>
+    <meta name="description" content="Thư viện truyện đam mỹ chủ công, thụ sủng công, công khống, hỗ sủng thiên công, edit bởi các nhà dịch">
+    <meta name="keywords" content="thụ sủng công, thụ truy công, công khống, cong khong, chucongconvert, dam my sung cong, convert dam my, thu sung cong, thu truy cong, tra công, nhất công đa thụ, ngược thụ, không ngược công, vạn nhân mê công, đam mỹ QT, dam my convert, truyen QT, truyen convert, tổng công, đổi thụ, truy phu, gk">
+    <meta name="google-site-verification" content="pST4o4x4AIh7aJ2DKg7gApDaynndmR4L3R2JFeYNdKY" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Góc Review Truyện Đam Mỹ Thụ Sủng Công, HS Thiên Công, Công Khống</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f7f5f0;
+            --primary-green: #556b2f;
+            --earth-orange: #d97443;
+            --text-dark: #2f3542;
+            --text-muted: #747d8c;
+            --border-color: #ced6e0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-image: url('img/pattern4.jpg'); 
+            background-repeat: repeat;
+            background-size: 400px auto;
+            background-attachment: fixed;
+            color: var(--text-dark);
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .main-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 35px;
+            border-radius: 24px;
+            border: 3px dotted #a4b0be;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01);
+        }
+
+        h1 {
+            font-family: 'Comfortaa', cursive;
+            text-align: center;
+            color: var(--primary-green);
+            margin-bottom: 5px;
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 35px;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            max-width: 400px;
+            margin: 0 auto 35px auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 25px;
+            font-size: 0.95rem;
+            border: 1px solid #dfe4ea;
+            border-radius: 50px;
+            outline: none;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .search-input:focus {
+            border-color: var(--earth-orange);
+        }
+
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .review-card {
+            background: #ffffff;
+            border: 1px solid #f1f2f6;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .review-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.06);
+        }
+
+        .book-img-box {
+            width: 100%;
+            height: 220px;
+            background: #f1f2f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-bottom: 1px solid #f1f2f6;
+        }
+
+        .book-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .book-info {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .book-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0 0 8px 0;
+            font-family: 'Comfortaa', cursive;
+        }
+
+        .book-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .book-meta strong {
+            color: #57606f;
+        }
+
+        .review-text {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #57606f;
+            background: #faf9f6;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            flex-grow: 1;
+            border-left: 3px solid var(--earth-orange);
+        }
+
+        /* Thêm style hiển thị tên người review siêu xinh */
+        .reviewer-name {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: right;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+
+        .btn-read {
+            display: block;
+            text-align: center;
+            background-color: var(--primary-green);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 0;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            font-family: 'Comfortaa', cursive;
+            transition: opacity 0.2s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-read:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .main-wrapper { padding: 20px; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <h1>✿ Nhật Ký Đu Buê Đuê Sủng Công ✿</h1>
+    <div class="subtitle">đu các nhà edit / sáng tác đam mỹ hstc, sủng công công khống</div>
+    
+    <div class="search-container">
+        <input type="text" id="searchBar" class="search-input" placeholder="Tìm tên truyện, tác giả, nhà edit...">
+    </div>
+
+    <div class="review-grid" id="reviewGrid"></div>
+</div>
+
+<script>
+    // DỮ LIỆU REVIEW GỐC CHẠY TỰ ĐỘNG
+    const dataReviews = [
+      {
+  "id": 1782203444337,
+  "ten": "Vài Ba Chuyện Thường Ngày Của Tôi Và Sếp",
+  "tacGia": "Băng Đường R",
+  "nhaEdit": "DenDen",
+  "review": "chuyện tình ngọt ngào, có tác dụng chữa lành,công dê thương đáng yêu lắm lắm, thụ là tổng tài cưng công lên trời, thụ truy công thụ sủng công",
+  "hinhAnh": "img/img-1782203440354.png",
+  "linkDoc": "https://ocuachym.wordpress.com/hoan-vai-ba-chuyen-thuong-ngay-cua-toi-va-sep/",
+  "nguoiReview": "Chính chủ"
+},
+      {
+  "id": 1782202743218,
+  "ten": "Hồng trần khách điếm",
+  "tacGia": "Lý Truyện Ngôn",
+  "nhaEdit": "Thịt bò xào bông cải",
+  "review": "“Ta sẽ thử tiếp nhận tình cảm của đệ, tuy rằng có thể sẽ khiến đệ chờ thật lâu… nhưng đệ nguyện ý chờ không?” Lý Tề Dật nói, “Khách điếm của ta có đầu bếp, có tiểu nhị, có tạp vụ, có chưởng quầy, cũng có lão bản, nhưng dường như vẫn còn thiếu chút gì đó.”\n“…Ta nguyện ý! Cho dù phải chờ thêm mười năm nữa, ta vẫn sẽ chờ!”\nThụ si tình, thụ truy công, thụ sủng công",
+  "hinhAnh": "img/img-1782202737151.png",
+  "linkDoc": "https://thitboxaobongcai.wordpress.com/2021/09/19/hong-tran-khach-diem-ly-truyen-ngon"
+},
+      {
+  "id": 1782202529429,
+  "ten": "Đêm khuya",
+  "tacGia": "Thẩm Gia Đại Viện (Khanh Kiếm)",
+  "nhaEdit": "Thịt bò xào bông cải",
+  "review": "truyện dân quốc hay lắm mn ơi, Khanh Kiếm vốn là 1 điều gì đó tui rất iêu, thụ lưu manh yêu thương chiều chuộng công, HE nha, đừng thấy tình yêu chiến tranh mà sợ",
+  "hinhAnh": "img/img-1782202524057.png",
+  "linkDoc": "https://thitboxaobongcai.wordpress.com/2022/01/25/edit-dm-dem-khuya-tham-gia-dai-vien/"
+},
+      {
+  "id": 1782119580660,
+  "ten": "Người thứ ba",
+  "tacGia": "Soko",
+  "nhaEdit": "ConcertoChel",
+  "review": "thụ lúc đầu hơi tra nhưng mà nguyên khúc sau vả mặt đã luôn, còn kiểu \"công ơi hãy lợi dụng thụ đi miễn là được ở bên cạnh công\", khúc đầu có thể lôi với 1 số bạn sủng công nhưng truyện này từ đầu tới cuối công không yêu thụ nha. Một trong những truyện tui thấy đặc biệt nhất kiểu vả thụ vô địch trong lòng tui, dù truyện đã lâu lắm rồi, nhưng tới giờ chưa truyện nào thay thế được.",
+  "hinhAnh": "img/img-1782119574238.png",
+  "linkDoc": "https://concertochel.wordpress.com/nguoi-thu-ba/"
+},
+      {
+  "id": 1782118842863,
+  "ten": "Chú chó bị tôi bỏ rơi đã trở về",
+  "tacGia": "Tạp Liễu Năng Toa",
+  "nhaEdit": "Thỏ Chê Rau",
+  "review": "Bệnh kiều điên rồ thụ, [Anh trai kính yêu, tôi nguyện quỳ phục dưới chân ngài, hôn lên mặt đất, tựa như ôm trọn lấy thần linh.] thụ said (công thụ không phải côn trùng yên tâm, công lớn hơn thụ 7 tuổi)",
+  "hinhAnh": "img/img-1782118838116.png",
+  "linkDoc": "https://fallntherabbithole.wordpress.com/2025/05/23/cun-con-bi-toi-bo-roi-da-tro-ve-tap-lieu-nang-toa/"
+},
+      {
+  "id": 1782118409410,
+  "ten": "NGHỆ THUẬT LÀM LỐP XE DỰ PHÒNG",
+  "tacGia": "Kiếm Chỉ Thần Châu",
+  "nhaEdit": "Lily",
+  "review": "trước ngược công sau ngược thụ, truy công hỏa táng tràng, ngược thụ tơi tã 80% sau truyện haha, thụ truy công tới cùng trời cuối đất, gần cuối ở cuối cuối truyện công mới hơi chấp nhận",
+  "hinhAnh": "img/img-1782118406289.png",
+  "linkDoc": "https://cherrylily900.wordpress.com/2026/06/09/nghe-thuat-lam-lop-xe-du-phong/"
+},
+      {
+  "id": 1782038307242,
+  "ten": "Ánh trăng trên thành Trường An",
+  "tacGia": "Miêu Lưỡng Chỉ",
+  "nhaEdit": "Chymteo",
+  "review": "nhược cường thụ tô, nữ trang công, cổ đại, văn hayyy, 1 trong những quyển mong được xuất bản ở Việt Nam nhất í, thụ yêu và cưng công lắm",
+  "hinhAnh": "img/img-1782038303311.jpg",
+  "linkDoc": "https://www.wattpad.com/story/412735014-edit-ho%C3%A0n-th%C3%A0nh-%C3%A1nh-tr%C4%83ng-tr%C3%AAn-th%C3%A0nh-tr%C6%B0%E1%BB%9Dng-an"
+},
+      {
+  "id": 1781978720953,
+  "ten": "Chủ nhà béo",
+  "tacGia": "Thẩm Miêu",
+  "nhaEdit": "Một con Capybara tên N.A",
+  "review": "\"Chỉ là cuốn tiểu thuyết dằm khăm, vai chính tổng công, công là chủ nhà trọ, nam nữ ăn hết, bản thân không ra gì nhưng rất vênh văo. Thuê trọ nhà anh toàn mỹ nhân chinh đẹp tuyệt vời, người sau ngon hơn người trước.\" :))",
+  "hinhAnh": "img/chunhabeo.jpg",
+  "linkDoc": "
