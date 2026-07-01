@@ -16,6 +16,29 @@
     <link rel="stylesheet" href="css/tooplate-style.css">
 
     <style>
+        /* 1. THIẾT LẬP NỀN SỔ CHẤM DOT MÀU KÈM GIẤY */
+        body {
+            background-color: #fcfaf2; /* Màu giấy kem vintage */
+            background-image: radial-gradient(#d3cbb6 1.5px, transparent 1.5px); /* Tạo chấm dot màu xám kem */
+            background-size: 24px 24px; /* Khoảng cách giữa các chấm dot */
+        }
+
+        /* Tắt bớt ảnh nền mặc định nếu template cũ có chặn */
+        #work {
+            background: transparent !important;
+            padding: 60px 0;
+        }
+
+        /* 2. KHUNG NỀN TRẮNG MỜ 90% CÓ VIỀN DASHED BAO TOÀN BỘ NỘI DUNG */
+        #work .container {
+            background-color: rgba(255, 255, 255, 0.9); /* Trắng mờ 90% */
+            border: 3px dashed #b5a991; /* Đường viền nét đứt màu vintage */
+            border-radius: 15px; /* Bo tròn các góc cho dễ thương */
+            padding: 40px 30px; /* Tạo khoảng trống bên trong khung */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* Đổ bóng nhẹ sang chảnh */
+        }
+
+        /* 3. ĐẢM BẢO CÁC HÌNH LUÔN DÀN NGANG THẲNG HÀNG */
         #work .row {
             display: flex;
             flex-wrap: wrap;
@@ -23,13 +46,19 @@
         #work .col-md-3 {
             display: flex;
             flex-direction: column;
-            margin-bottom: 30px; /* Tạo khoảng cách dưới mỗi hàng cho đẹp */
+            margin-bottom: 30px;
         }
         #work h4 {
             margin-top: 15px;
-            min-height: 40px; /* Ép tựa truyện có chiều cao tối thiểu để bằng hàng nhau */
+            min-height: 40px; 
             font-size: 14px;
             line-height: 1.4;
+            color: #5c5346; /* Đổi màu chữ tựa truyện sang nâu trầm cho hợp tone sổ tây */
+            text-align: center;
+        }
+        .section-title h2 {
+            color: #4a4133; /* Màu chữ tiêu đề chính */
+            margin-bottom: 30px;
         }
     </style>
 </head>
