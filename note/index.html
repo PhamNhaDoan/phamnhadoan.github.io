@@ -15,57 +15,55 @@
         }
         body {
             font-family: 'Quicksand', sans-serif;
-            /* Nền sổ chấm dot xịn mịn */
             background-color: #fdfaf6;
             background-image: radial-gradient(#e5d1be 1.5px, transparent 1.5px);
             background-size: 24px 24px;
             color: #5c4a3c;
-            padding: 40px 20px;
+            padding: 30px 15px;
             display: flex;
             justify-content: center;
         }
         .notebook-container {
             width: 100%;
-            max-width: 650px;
-            /* Khung trắng kem mềm mại */
-            background-color: rgba(255, 253, 249, 0.95);
-            border: 2px dashed #d4a373; /* Đường dash line pastel cam đất */
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(212, 163, 115, 0.15);
-            padding: 35px;
+            max-width: 600px;
+            background-color: rgba(255, 253, 249, 0.98);
+            border: 2px dashed #d4a373;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(212, 163, 115, 0.12);
+            padding: 30px 25px;
             position: relative;
         }
-        /* Hiệu ứng gáy sổ lò xo mini bên cạnh cho xinh */
         .notebook-container::before {
             content: '';
             position: absolute;
             top: 0;
-            left: 20px;
+            left: 18px;
             width: 2px;
             height: 100%;
             border-left: 2px dotted #cfa47e;
+            opacity: 0.7;
         }
         header {
             text-align: center;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
             padding-left: 15px;
         }
         header h1 {
-            font-size: 28px;
+            font-size: 24px;
             color: #bc6c25;
             font-weight: 700;
-            letter-spacing: 1px;
-            position: relative;
+            letter-spacing: 0.5px;
             display: inline-block;
-            padding-bottom: 8px;
+            position: relative;
+            padding-bottom: 6px;
         }
         header h1::after {
             content: '';
             position: absolute;
             bottom: 0;
-            left: 10%;
-            width: 80%;
-            height: 2px;
+            left: 15%;
+            width: 70%;
+            height: 1.5px;
             background: linear-gradient(to right, transparent, #dda15e, transparent);
         }
         .note-list {
@@ -76,36 +74,43 @@
         }
         .note-item {
             background-color: #fff;
+            border: 1px dashed #e6ccb2;
             border-left: 4px solid #dda15e;
-            border-bottom: 1px dotted #e6ccb2; /* Đường dotted lót chân ghi chú */
-            padding: 15px 20px;
-            border-radius: 0 12px 12px 0;
-            box-shadow: 0 4px 12px rgba(221, 161, 94, 0.05);
-            transition: transform 0.3s ease;
+            padding: 18px;
+            border-radius: 4px 12px 12px 4px;
+            box-shadow: 0 4px 12px rgba(221, 161, 94, 0.04);
         }
-        .note-item:hover {
-            transform: translateY(-2px);
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dotted #e6ccb2;
+            padding-bottom: 6px;
+            margin-bottom: 12px;
         }
         .note-date {
             font-size: 13px;
             color: #b79477;
             font-weight: 600;
-            margin-bottom: 6px;
             display: flex;
             align-items: center;
             gap: 5px;
         }
         .note-content {
-            font-size: 16px;
-            line-height: 1.6;
+            font-size: 15px;
+            line-height: 1.8;
             color: #4a3b2c;
             white-space: pre-wrap;
+            background-image: linear-gradient(transparent 95%, #f2e1d1 95%);
+            background-size: 100% 27px;
+            padding-bottom: 4px;
         }
         .loading, .empty {
             text-align: center;
             color: #b79477;
             font-style: italic;
-            padding: 20px;
+            padding: 30px 10px;
+            font-size: 15px;
         }
     </style>
 </head>
@@ -122,20 +127,15 @@
     </div>
 
     <script>
-        // Đường dẫn đến file chứa dữ liệu ghi chú public trên GitHub của bà
         const dataUrl = 'https://phamnhadoan.github.io/note/notes.json';
 
         async function fetchNotes() {
             try {
-                // Thêm timestamp để tránh trình duyệt lưu cache dữ liệu cũ
                 const response = await fetch(`${dataUrl}?t=${new Date().getTime()}`);
-                if (!response.ok) {
-                    throw new Error("Chưa có file dữ liệu hoặc lỗi mạng");
-                }
+                if (!response.ok) throw new Error("Chưa có file dữ liệu");
                 const notes = await response.json();
                 renderNotes(notes);
             } catch (error) {
-                console.error(error);
                 document.getElementById('note-container').innerHTML = `
                     <div class="empty">Sổ tay hiện đang trống hoặc chưa được khởi tạo ghi chú nào hết á bà ơi! 🤎</div>
                 `;
@@ -149,11 +149,9 @@
                 return;
             }
 
-            // Sắp xếp ghi chú mới nhất nhảy lên đầu trang
             notes.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             container.innerHTML = notes.map(note => {
-                // Định dạng lại ngày hiển thị cho đẹp (DD/MM/YYYY)
                 let displayDate = note.date;
                 try {
                     const d = new Date(note.date);
@@ -164,7 +162,9 @@
 
                 return `
                     <div class="note-item">
-                        <div class="note-date">📅 ${displayDate}</div>
+                        <div class="note-header">
+                            <div class="note-date">📅 Ngày: ${displayDate}</div>
+                        </div>
                         <div class="note-content">${escapeHTML(note.content)}</div>
                     </div>
                 `;
@@ -177,7 +177,6 @@
             );
         }
 
-        // Tự động tải ghi chú khi vừa vào trang
         window.addEventListener('DOMContentLoaded', fetchNotes);
     </script>
 </body>
