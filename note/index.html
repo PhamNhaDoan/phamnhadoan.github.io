@@ -149,6 +149,158 @@
                 return;
             }
 
+            // LOGIC QUAN TRỌNG: Sắp xếp theo id (timestamp lúc tạo), ghi chú nào mới tạo sau cùng sẽ luôn nhảy lên đầu
+            notes.sort((a, b) => {
+                const idA = parseInt(a.id.replace('note_', '')) || 0;
+                const idB = parseInt(b.id.replace('note_', '')) || 0;
+                return idB - idA;
+            });
+
+            container.innerHTML = notes.map(note => {
+                let displayDate = note.date;
+                try {
+                    const d = new Date(note.date);
+                    if(!isNaN(d.getTime())) {
+                        displayDate = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+                    }
+                } catch(e) {}
+
+                return `
+                    <div class="note-item">
+                        <div class="note-header">
+                            <div class="note-date">📅 Ngày: ${displayDate}</div>
+                        </div>
+                        <div class="note-content">${escapeHTML(note.content)}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+
+        window.addEventListener('DOMContentLoaded', fetchNotes);
+    </script>
+</body>
+</html>
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 18px;
+            width: 2px;
+            height: 100%;
+            border-left: 2px dotted #cfa47e;
+            opacity: 0.7;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-left: 15px;
+        }
+        header h1 {
+            font-size: 24px;
+            color: #bc6c25;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            position: relative;
+            padding-bottom: 6px;
+        }
+        header h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 15%;
+            width: 70%;
+            height: 1.5px;
+            background: linear-gradient(to right, transparent, #dda15e, transparent);
+        }
+        .note-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            padding-left: 15px;
+        }
+        .note-item {
+            background-color: #fff;
+            border: 1px dashed #e6ccb2;
+            border-left: 4px solid #dda15e;
+            padding: 18px;
+            border-radius: 4px 12px 12px 4px;
+            box-shadow: 0 4px 12px rgba(221, 161, 94, 0.04);
+        }
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dotted #e6ccb2;
+            padding-bottom: 6px;
+            margin-bottom: 12px;
+        }
+        .note-date {
+            font-size: 13px;
+            color: #b79477;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .note-content {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #4a3b2c;
+            white-space: pre-wrap;
+            background-image: linear-gradient(transparent 95%, #f2e1d1 95%);
+            background-size: 100% 27px;
+            padding-bottom: 4px;
+        }
+        .loading, .empty {
+            text-align: center;
+            color: #b79477;
+            font-style: italic;
+            padding: 30px 10px;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="notebook-container">
+        <header>
+            <h1>My Little Notes 📖</h1>
+        </header>
+
+        <div id="note-container" class="note-list">
+            <div class="loading">Đang mở sổ tay của bà ra nha... ✨</div>
+        </div>
+    </div>
+
+    <script>
+        const dataUrl = 'https://phamnhadoan.github.io/note/notes.json';
+
+        async function fetchNotes() {
+            try {
+                const response = await fetch(`${dataUrl}?t=${new Date().getTime()}`);
+                if (!response.ok) throw new Error("Chưa có file dữ liệu");
+                const notes = await response.json();
+                renderNotes(notes);
+            } catch (error) {
+                document.getElementById('note-container').innerHTML = `
+                    <div class="empty">Sổ tay hiện đang trống hoặc chưa được khởi tạo ghi chú nào hết á bà ơi! 🤎</div>
+                `;
+            }
+        }
+
+        function renderNotes(notes) {
+            const container = document.getElementById('note-container');
+            if (!notes || notes.length === 0) {
+                container.innerHTML = '<div class="empty">Hôm nay chưa có ghi chú nào hết nè... 🛌</div>';
+                return;
+            }
+
             notes.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             container.innerHTML = notes.map(note => {
