@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Sweet Notes ✏️</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Quicksand', sans-serif;
+            /* Nền sổ chấm dot xịn mịn */
+            background-color: #fdfaf6;
+            background-image: radial-gradient(#e5d1be 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            color: #5c4a3c;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .notebook-container {
+            width: 100%;
+            max-width: 650px;
+            /* Khung trắng kem mềm mại */
+            background-color: rgba(255, 253, 249, 0.95);
+            border: 2px dashed #d4a373; /* Đường dash line pastel cam đất */
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(212, 163, 115, 0.15);
+            padding: 35px;
+            position: relative;
+        }
+        /* Hiệu ứng gáy sổ lò xo mini bên cạnh cho xinh */
+        .notebook-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 20px;
+            width: 2px;
+            height: 100%;
+            border-left: 2px dotted #cfa47e;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 35px;
+            padding-left: 15px;
+        }
+        header h1 {
+            font-size: 28px;
+            color: #bc6c25;
+            font-weight: 700;
+            letter-spacing: 1px;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 8px;
+        }
+        header h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #dda15e, transparent);
+        }
+        .note-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            padding-left: 15px;
+        }
+        .note-item {
+            background-color: #fff;
+            border-left: 4px solid #dda15e;
+            border-bottom: 1px dotted #e6ccb2; /* Đường dotted lót chân ghi chú */
+            padding: 15px 20px;
+            border-radius: 0 12px 12px 0;
+            box-shadow: 0 4px 12px rgba(221, 161, 94, 0.05);
+            transition: transform 0.3s ease;
+        }
+        .note-item:hover {
+            transform: translateY(-2px);
+        }
+        .note-date {
+            font-size: 13px;
+            color: #b79477;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .note-content {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #4a3b2c;
+            white-space: pre-wrap;
+        }
+        .loading, .empty {
+            text-align: center;
+            color: #b79477;
+            font-style: italic;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="notebook-container">
+        <header>
+            <h1>My Little Notes 📖</h1>
+        </header>
+
+        <div id="note-container" class="note-list">
+            <div class="loading">Đang mở sổ tay của bà ra nha... ✨</div>
+        </div>
+    </div>
+
+    <script>
+        // Đường dẫn đến file chứa dữ liệu ghi chú public trên GitHub của bà
+        const dataUrl = 'https://phamnhadoan.github.io/note/notes.json';
+
+        async function fetchNotes() {
+            try {
+                // Thêm timestamp để tránh trình duyệt lưu cache dữ liệu cũ
+                const response = await fetch(`${dataUrl}?t=${new Date().getTime()}`);
+                if (!response.ok) {
+                    throw new Error("Chưa có file dữ liệu hoặc lỗi mạng");
+                }
+                const notes = await response.json();
+                renderNotes(notes);
+            } catch (error) {
+                console.error(error);
+                document.getElementById('note-container').innerHTML = `
+                    <div class="empty">Sổ tay hiện đang trống hoặc chưa được khởi tạo ghi chú nào hết á bà ơi! 🤎</div>
+                `;
+            }
+        }
+
+        function renderNotes(notes) {
+            const container = document.getElementById('note-container');
+            if (!notes || notes.length === 0) {
+                container.innerHTML = '<div class="empty">Hôm nay chưa có ghi chú nào hết nè... 🛌</div>';
+                return;
+            }
+
+            // Sắp xếp ghi chú mới nhất nhảy lên đầu trang
+            notes.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            container.innerHTML = notes.map(note => {
+                // Định dạng lại ngày hiển thị cho đẹp (DD/MM/YYYY)
+                let displayDate = note.date;
+                try {
+                    const d = new Date(note.date);
+                    if(!isNaN(d.getTime())) {
+                        displayDate = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+                    }
+                } catch(e) {}
+
+                return `
+                    <div class="note-item">
+                        <div class="note-date">📅 ${displayDate}</div>
+                        <div class="note-content">${escapeHTML(note.content)}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+
+        // Tự động tải ghi chú khi vừa vào trang
+        window.addEventListener('DOMContentLoaded', fetchNotes);
+    </script>
+</body>
+</html>
