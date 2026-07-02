@@ -96,6 +96,194 @@
 <body>
 
     <div class="admin-box">
+        <h2>Thêm Ghi Chú Mới ✏️</h2>
+        <form id="noteForm">
+            <div class="form-group">
+                <label>Tài khoản GitHub</label>
+                <input type="text" id="githubUser" value="PhamNhaDoan" readonly style="background-color: #f3edd9; color: #7f5539;">
+            </div>
+            <div class="form-group">
+                <label>Repository</label>
+                <input type="text" id="githubRepo" value="phamnhadoan.github.io" readonly style="background-color: #f3edd9; color: #7f5539;">
+            </div>
+            <div class="form-group">
+                <label>GitHub Token (Lưu bảo mật tại máy bà)</label>
+                <input type="text" id="githubToken" placeholder="Nhập mã ghp_..." required>
+            </div>
+            <div class="form-group">
+                <label>Ngày ghi chú</label>
+                <input type="date" id="noteDate" required>
+            </div>
+            <div class="form-group">
+                <label>Nội dung ghi chú</label>
+                <textarea id="noteContent" placeholder="Bà muốn lưu lại ghi chú gì hôm nay..." required></textarea>
+            </div>
+            <button type="submit" class="btn-submit" id="submitBtn">Đẩy Lên Sổ Tay Ngay 🚀</button>
+        </form>
+
+        <div id="statusBox" class="status-msg"></div>
+    </div>
+
+    <script>
+        document.getElementById('noteDate').value = new Date().toISOString().split('T')[0];
+
+        if (localStorage.getItem('note_github_token')) {
+            document.getElementById('githubToken').value = localStorage.getItem('note_github_token');
+        }
+
+        document.getElementById('noteForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submitBtn');
+            const statusBox = document.getElementById('statusBox');
+            
+            const user = document.getElementById('githubUser').value.trim();
+            const repo = document.getElementById('githubRepo').value.trim();
+            const token = document.getElementById('githubToken').value.trim();
+            const date = document.getElementById('noteDate').value;
+            const content = document.getElementById('noteContent').value;
+
+            localStorage.setItem('note_github_token', token);
+
+            btn.disabled = true;
+            btn.innerText = 'Đang đồng bộ dữ liệu... ⏳';
+            statusBox.style.display = 'none';
+
+            const filePath = 'note/notes.json';
+            const apiUrl = `https://api.github.com/repos/${user}/${repo}/contents/${filePath}`;
+
+            let currentSha = null;
+            let currentNotes = [];
+
+            try {
+                const res = await fetch(apiUrl, {
+                    headers: { 'Authorization': `token ${token}` }
+                });
+                
+                if (res.ok) {
+                    const fileData = await res.json();
+                    currentSha = fileData.sha;
+                    const decodeContent = decodeURIComponent(atob(fileData.content).split('').map(function(c) {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join(''));
+                    currentNotes = JSON.parse(decodeContent);
+                }
+            } catch (error) {
+                console.log("Khởi tạo file mới tinh.");
+            }
+
+            const newNote = {
+                id: 'note_' + new Date().getTime(),
+                date: date,
+                content: content
+            };
+            
+            // THAY ĐỔI Ở ĐÂY: Thêm ghi chú mới vào ĐẦU MẢNG để dữ liệu thô luôn được ưu tiên lên top
+            currentNotes.unshift(newNote);
+
+            const jsonString = JSON.stringify(currentNotes, null, 2);
+            const base64Content = btoa(encodeURIComponent(jsonString).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+                return String.fromCharCode('0x' + p1);
+            }));
+
+            try {
+                const payload = {
+                    message: `Thêm ghi chú ngày ${date} lên đầu trang`,
+                    content: base64Content
+                };
+                if (currentSha) payload.sha = currentSha;
+
+                const putRes = await fetch(apiUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (putRes.ok) {
+                    statusBox.innerText = 'Đã cập nhật cuốn sổ tay thành công rồi nha bà ơi! 🥰✨';
+                    statusBox.className = 'status-msg status-success';
+                    document.getElementById('noteContent').value = '';
+                } else {
+                    const errData = await putRes.json();
+                    statusBox.innerText = `Lỗi: ${errData.message || 'Token không hợp lệ'}`;
+                    statusBox.className = 'status-msg status-error';
+                }
+            } catch (err) {
+                statusBox.innerText = 'Lỗi kết nối mạng rồi bà ơi!';
+                statusBox.className = 'status-msg status-error';
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Đẩy Lên Sổ Tay Ngay 🚀';
+            }
+        });
+    </script>
+</body>
+</html>
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: #7f5539;
+        }
+        input[type="text"], input[type="date"], textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px dashed #e6ccb2;
+            border-radius: 8px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 14px;
+            background-color: #fff;
+            color: #4a3b2c;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input:focus, textarea:focus {
+            border-color: #dda15e;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.6;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: #dda15e;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 5px;
+        }
+        .btn-submit:hover {
+            background-color: #bc6c25;
+        }
+        .status-msg {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 13px;
+            display: none;
+            border: 1px dashed transparent;
+        }
+        .status-success { display: block; background-color: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }
+        .status-error { display: block; background-color: #ffebee; color: #c62828; border-color: #ef9a9a; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-box">
         <h2>Thêm Ghi Chú Mới ✏—</h2>
         <form id="noteForm">
             <div class="form-group">
