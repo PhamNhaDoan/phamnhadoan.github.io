@@ -120,7 +120,6 @@
 
 <script>
 let generatedUrl = "";
-let fileBlobUrl = "";
 let targetFileName = "";
 
 async function getFilenameAndGenerate() {
@@ -166,14 +165,20 @@ async function getFilenameAndGenerate() {
         }
 
         const tags = resData.data.transaction.tags;
-        const fileNameTag = tags.find(tag => tag.name.toLowerCase() === 'file-name');
         
-        targetFileName = "file_download";
+        // Quét chính xác tag chứa tên file bằng cách chuẩn hóa mọi ký tự về chữ thường
+        const fileNameTag = tags.find(tag => 
+            tag.name.toLowerCase() === 'file-name' || 
+            tag.name.toLowerCase() === 'filename'
+        );
+        
         if (fileNameTag) {
             targetFileName = fileNameTag.value;
             statusBox.innerText = "Đã tìm thấy tên file gốc: " + targetFileName;
         } else {
-            statusBox.innerText = "Không thấy tag tên file gốc, sử dụng tên mặc định.";
+            // Nếu không tìm thấy tag cụ thể, bốc dữ liệu từ metadata mặc định của cổng truyền tải
+            targetFileName = "download_" + txId.substring(0, 6);
+            statusBox.innerText = "Không thấy tag đặt tên riêng. File sẽ được lưu tạm dưới tên: " + targetFileName;
         }
 
         var encodedFileName = encodeURIComponent(targetFileName);
