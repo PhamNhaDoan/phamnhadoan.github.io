@@ -75,6 +75,7 @@
             color: #28a745;
             font-weight: bold;
             text-decoration: none;
+            cursor: pointer;
         }
         .btn-link:hover {
             text-decoration: underline;
@@ -110,7 +111,7 @@
         <label>Link tải trực tiếp (Bấm là tải / Copy để chèn vào web):</label>
         <div class="link-container">
             <div class="url-text">
-                <a id="downloadLink" class="btn-link" href="#"></a>
+                <span id="downloadLink" class="btn-link" onclick="triggerDownload()"></span>
             </div>
             <button id="copyBtn" class="btn-copy" onclick="copyToClipboard()">Copy</button>
         </div>
@@ -119,6 +120,8 @@
 
 <script>
 let generatedUrl = "";
+let fileBlobUrl = "";
+let targetFileName = "";
 
 async function getFilenameAndGenerate() {
     var txId = document.getElementById('txId').value.trim();
@@ -165,28 +168,46 @@ async function getFilenameAndGenerate() {
         const tags = resData.data.transaction.tags;
         const fileNameTag = tags.find(tag => tag.name.toLowerCase() === 'file-name');
         
-        let originFileName = "file_download";
+        targetFileName = "file_download";
         if (fileNameTag) {
-            originFileName = fileNameTag.value;
-            statusBox.innerText = "Đã tìm thấy tên file gốc: " + originFileName;
+            targetFileName = fileNameTag.value;
+            statusBox.innerText = "Đã tìm thấy tên file gốc: " + targetFileName;
         } else {
             statusBox.innerText = "Không thấy tag tên file gốc, sử dụng tên mặc định.";
         }
 
-        var encodedFileName = encodeURIComponent(originFileName);
-        
-        // Tạo đường dẫn với cổng /raw/ chính xác để ép tải xuống kèm tên file
+        var encodedFileName = encodeURIComponent(targetFileName);
         generatedUrl = "https://arweave.net/raw/" + txId + "?filename=" + encodedFileName;
         
-        downloadLink.href = generatedUrl;
-        downloadLink.setAttribute("download", originFileName);
         downloadLink.innerText = generatedUrl;
-        
         resultBox.style.display = "block";
 
     } catch (error) {
         statusBox.innerText = "Lỗi kết nối hoặc mã TX ID sai. Thử lại sau.";
         console.error(error);
+    }
+}
+
+async function triggerDownload() {
+    var statusBox = document.getElementById('statusBox');
+    statusBox.innerText = "Đang tải dữ liệu và chuẩn bị file xuống máy...";
+    
+    try {
+        const fileResponse = await fetch(generatedUrl);
+        const blob = await fileResponse.blob();
+        
+        const tempLink = document.createElement('a');
+        tempLink.href = window.URL.createObjectURL(blob);
+        tempLink.setAttribute('download', targetFileName);
+        document.body.appendChild(tempLink);
+        tempLink.click();
+        
+        document.body.removeChild(tempLink);
+        window.URL.revokeObjectURL(tempLink.href);
+        statusBox.innerText = "Đã tải xong.";
+    } catch (err) {
+        statusBox.innerText = "Trình duyệt chặn tải trực tiếp. Vui lòng chuột phải vào link chọn Save Link As.";
+        console.error(err);
     }
 }
 
