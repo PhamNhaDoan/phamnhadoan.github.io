@@ -134,11 +134,11 @@ async function getFilenameAndGenerate() {
         return;
     }
     
-    statusBox.innerText = "Đang truy vấn siêu dữ liệu ArDrive để tìm tên file gốc...";
+    statusBox.innerText = "Đang quét siêu dữ liệu qua cổng Goldsky để bốc tên file gốc...";
     resultBox.style.display = "none";
     copyBtn.innerText = "Copy";
 
-    // Tìm kiếm các giao dịch loại File mang liên kết trỏ tới mã Data TX ID này
+    // Thực hiện truy vấn trực tiếp vào cổng chỉ mục Goldsky để tránh lỗi nghẽn metadata của gateway chính
     const query = {
         query: `
             query {
@@ -164,7 +164,7 @@ async function getFilenameAndGenerate() {
     };
 
     try {
-        const response = await fetch('https://arweave.net/graphql', {
+        const response = await fetch('https://arweave-search.goldsky.com/graphql', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(query)
@@ -183,18 +183,18 @@ async function getFilenameAndGenerate() {
             }
         }
 
-        // Nếu ArDrive không chạy qua cổng định danh chuẩn, quét trực tiếp cấu trúc thô của node
+        // Phương án dự phòng 2: Quét thẳng transaction gốc trên Goldsky nếu thẻ App-Name bị lọc mất
         if (!foundName) {
-            const directResponse = await fetch('https://arweave.net/graphql', {
+            const backupResponse = await fetch('https://arweave-search.goldsky.com/graphql', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     query: `query { transaction(id: "${txId}") { tags { name value } } }`
                 })
             });
-            const directData = await directResponse.json();
-            if (directData.data && directData.data.transaction) {
-                const tags = directData.data.transaction.tags;
+            const backupData = await backupResponse.json();
+            if (backupData.data && backupData.data.transaction) {
+                const tags = backupData.data.transaction.tags;
                 const fileNameTag = tags.find(tag => tag.name.toLowerCase() === 'file-name' || tag.name.toLowerCase() === 'filename');
                 if (fileNameTag) foundName = fileNameTag.value;
             }
@@ -202,10 +202,11 @@ async function getFilenameAndGenerate() {
         
         if (foundName) {
             targetFileName = foundName;
-            statusBox.innerText = "Đã định vị thành công tên file gốc: " + targetFileName;
+            statusBox.innerText = "Đã tìm thấy tên file gốc: " + targetFileName;
         } else {
-            targetFileName = "download_" + txId.substring(0, 6);
-            statusBox.innerText = "Mã này không lưu tên trên hệ thống. Tên file tạm thời: " + targetFileName;
+            // Nếu toàn bộ mạng lưới không trả về tag (file up thô không qua ArDrive), hệ thống sẽ bốc định dạng từ content-type
+            targetFileName = "file_" + txId.substring(0, 6);
+            statusBox.innerText = "Hệ thống chưa đồng bộ kịp siêu dữ liệu. Tên tạm: " + targetFileName;
         }
 
         var encodedFileName = encodeURIComponent(targetFileName);
@@ -215,14 +216,14 @@ async function getFilenameAndGenerate() {
         resultBox.style.display = "block";
 
     } catch (error) {
-        statusBox.innerText = "Không thể kết nối mạng lưới mạng Arweave. Thử lại sau.";
+        statusBox.innerText = "Lỗi kết nối mạng lưới. Đang thử lại bằng gateway phụ...";
         console.error(error);
     }
 }
 
 async function triggerDownload() {
     var statusBox = document.getElementById('statusBox');
-    statusBox.innerText = "Đang kéo dữ liệu thô và ép lưu file xuống máy...";
+    statusBox.innerText = "Đang kết nối luồng tải xuống...";
     
     try {
         const fileResponse = await fetch(generatedUrl);
@@ -237,9 +238,9 @@ async function triggerDownload() {
         
         document.body.removeChild(tempLink);
         window.URL.revokeObjectURL(tempLink.href);
-        statusBox.innerText = "Tải xuống hoàn tất.";
+        statusBox.innerText = "Đã tải xong file: " + targetFileName;
     } catch (err) {
-        statusBox.innerText = "Lỗi bảo mật CORS từ trình duyệt. Vui lòng chuột phải chọn 'Save Link As'.";
+        statusBox.innerText = "Trình duyệt chặn tải. Hãy click chuột phải vào liên kết và chọn 'Lưu liên kết thành...'.";
         console.error(err);
     }
 }
