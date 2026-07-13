@@ -100,7 +100,7 @@
 <div class="container">
     <div class="form-group">
         <label for="txId">Mã Data TX ID:</label>
-        <input type="text" id="txId" placeholder="Dán mã TX ID của file vào đây">
+        <input type="text" id="txId" placeholder="Dán mã Data TX ID vào đây">
     </div>
     
     <button onclick="getFilenameAndGenerate()">Generate Link</button>
@@ -134,17 +134,29 @@ async function getFilenameAndGenerate() {
         return;
     }
     
-    statusBox.innerText = "Đang truy vấn dữ liệu tên file từ hệ thống Arweave...";
+    statusBox.innerText = "Đang truy vấn siêu dữ liệu ArDrive để tìm tên file gốc...";
     resultBox.style.display = "none";
     copyBtn.innerText = "Copy";
 
+    // Tìm kiếm các giao dịch loại File mang liên kết trỏ tới mã Data TX ID này
     const query = {
         query: `
             query {
-                transaction(id: "${txId}") {
-                    tags {
-                        name
-                        value
+                transactions(
+                    tags: [
+                        { name: "App-Name", values: ["ArDrive"] },
+                        { name: "Type", values: ["file"] },
+                        { name: "Data-Tx-Id", values: ["${txId}"] }
+                    ]
+                    first: 1
+                ) {
+                    edges {
+                        node {
+                            tags {
+                                name
+                                value
+                            }
+                        }
                     }
                 }
             }
@@ -159,26 +171,41 @@ async function getFilenameAndGenerate() {
         });
 
         const resData = await response.json();
+        const edges = resData.data.transactions.edges;
         
-        if (!resData.data || !resData.data.transaction) {
-            throw new Error("Không tìm thấy giao dịch.");
+        let foundName = "";
+        
+        if (edges && edges.length > 0) {
+            const fileTags = edges[0].node.tags;
+            const fileNameTag = fileTags.find(tag => tag.name.toLowerCase() === 'file-name' || tag.name.toLowerCase() === 'filename');
+            if (fileNameTag) {
+                foundName = fileNameTag.value;
+            }
         }
 
-        const tags = resData.data.transaction.tags;
+        // Nếu ArDrive không chạy qua cổng định danh chuẩn, quét trực tiếp cấu trúc thô của node
+        if (!foundName) {
+            const directResponse = await fetch('https://arweave.net/graphql', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    query: `query { transaction(id: "${txId}") { tags { name value } } }`
+                })
+            });
+            const directData = await directResponse.json();
+            if (directData.data && directData.data.transaction) {
+                const tags = directData.data.transaction.tags;
+                const fileNameTag = tags.find(tag => tag.name.toLowerCase() === 'file-name' || tag.name.toLowerCase() === 'filename');
+                if (fileNameTag) foundName = fileNameTag.value;
+            }
+        }
         
-        // Quét chính xác tag chứa tên file bằng cách chuẩn hóa mọi ký tự về chữ thường
-        const fileNameTag = tags.find(tag => 
-            tag.name.toLowerCase() === 'file-name' || 
-            tag.name.toLowerCase() === 'filename'
-        );
-        
-        if (fileNameTag) {
-            targetFileName = fileNameTag.value;
-            statusBox.innerText = "Đã tìm thấy tên file gốc: " + targetFileName;
+        if (foundName) {
+            targetFileName = foundName;
+            statusBox.innerText = "Đã định vị thành công tên file gốc: " + targetFileName;
         } else {
-            // Nếu không tìm thấy tag cụ thể, bốc dữ liệu từ metadata mặc định của cổng truyền tải
             targetFileName = "download_" + txId.substring(0, 6);
-            statusBox.innerText = "Không thấy tag đặt tên riêng. File sẽ được lưu tạm dưới tên: " + targetFileName;
+            statusBox.innerText = "Mã này không lưu tên trên hệ thống. Tên file tạm thời: " + targetFileName;
         }
 
         var encodedFileName = encodeURIComponent(targetFileName);
@@ -188,17 +215,18 @@ async function getFilenameAndGenerate() {
         resultBox.style.display = "block";
 
     } catch (error) {
-        statusBox.innerText = "Lỗi kết nối hoặc mã TX ID sai. Thử lại sau.";
+        statusBox.innerText = "Không thể kết nối mạng lưới mạng Arweave. Thử lại sau.";
         console.error(error);
     }
 }
 
 async function triggerDownload() {
     var statusBox = document.getElementById('statusBox');
-    statusBox.innerText = "Đang tải dữ liệu và chuẩn bị file xuống máy...";
+    statusBox.innerText = "Đang kéo dữ liệu thô và ép lưu file xuống máy...";
     
     try {
         const fileResponse = await fetch(generatedUrl);
+        if (!fileResponse.ok) throw new Error("Tải file thất bại");
         const blob = await fileResponse.blob();
         
         const tempLink = document.createElement('a');
@@ -209,9 +237,9 @@ async function triggerDownload() {
         
         document.body.removeChild(tempLink);
         window.URL.revokeObjectURL(tempLink.href);
-        statusBox.innerText = "Đã tải xong.";
+        statusBox.innerText = "Tải xuống hoàn tất.";
     } catch (err) {
-        statusBox.innerText = "Trình duyệt chặn tải trực tiếp. Vui lòng chuột phải vào link chọn Save Link As.";
+        statusBox.innerText = "Lỗi bảo mật CORS từ trình duyệt. Vui lòng chuột phải chọn 'Save Link As'.";
         console.error(err);
     }
 }
@@ -223,7 +251,7 @@ function copyToClipboard() {
         var copyBtn = document.getElementById('copyBtn');
         copyBtn.innerText = "Copied!";
     }).catch(function(err) {
-        alert("Không thể copy tự động, vui lòng bôi đen link để copy tay.");
+        alert("Lỗi sao chép.");
     });
 }
 </script>
