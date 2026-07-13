@@ -99,11 +99,11 @@
 
 <div class="container">
     <div class="form-group">
-        <label for="txId">Mã Data TX ID:</label>
-        <input type="text" id="txId" placeholder="Dán mã Data TX ID vào đây">
+        <label for="fileTxId">Mã File TX ID (Copy File TX ID từ ArDrive):</label>
+        <input type="text" id="fileTxId" placeholder="Dán mã File TX ID vào đây">
     </div>
     
-    <button onclick="getFilenameAndGenerate()">Generate Link</button>
+    <button onclick="processArDriveFile()">Generate Link</button>
     
     <div id="statusBox" class="status"></div>
     
@@ -122,101 +122,46 @@
 let generatedUrl = "";
 let targetFileName = "";
 
-async function getFilenameAndGenerate() {
-    var txId = document.getElementById('txId').value.trim();
+async function processArDriveFile() {
+    var fileTxId = document.getElementById('fileTxId').value.trim();
     var statusBox = document.getElementById('statusBox');
     var resultBox = document.getElementById('resultBox');
     var downloadLink = document.getElementById('downloadLink');
     var copyBtn = document.getElementById('copyBtn');
     
-    if (txId === "") {
-        alert("Vui lòng nhập mã TX ID.");
+    if (fileTxId === "") {
+        alert("Vui lòng nhập mã File TX ID.");
         return;
     }
     
-    statusBox.innerText = "Đang quét siêu dữ liệu qua cổng Goldsky để bốc tên file gốc...";
+    statusBox.innerText = "Đang đọc metadata để lấy tên file gốc và mã data...";
     resultBox.style.display = "none";
     copyBtn.innerText = "Copy";
 
-    // Thực hiện truy vấn trực tiếp vào cổng chỉ mục Goldsky để tránh lỗi nghẽn metadata của gateway chính
-    const query = {
-        query: `
-            query {
-                transactions(
-                    tags: [
-                        { name: "App-Name", values: ["ArDrive"] },
-                        { name: "Type", values: ["file"] },
-                        { name: "Data-Tx-Id", values: ["${txId}"] }
-                    ]
-                    first: 1
-                ) {
-                    edges {
-                        node {
-                            tags {
-                                name
-                                value
-                            }
-                        }
-                    }
-                }
-            }
-        `
-    };
-
     try {
-        const response = await fetch('https://arweave-search.goldsky.com/graphql', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(query)
-        });
-
-        const resData = await response.json();
-        const edges = resData.data.transactions.edges;
+        // Đọc trực tiếp nội dung JSON metadata lưu trên File TX ID của ArDrive
+        const response = await fetch('https://arweave.net/' + fileTxId);
+        if (!response.ok) throw new Error("Không thể tải metadata của File ID này.");
         
-        let foundName = "";
+        const metadata = await response.json();
         
-        if (edges && edges.length > 0) {
-            const fileTags = edges[0].node.tags;
-            const fileNameTag = fileTags.find(tag => tag.name.toLowerCase() === 'file-name' || tag.name.toLowerCase() === 'filename');
-            if (fileNameTag) {
-                foundName = fileNameTag.value;
-            }
-        }
-
-        // Phương án dự phòng 2: Quét thẳng transaction gốc trên Goldsky nếu thẻ App-Name bị lọc mất
-        if (!foundName) {
-            const backupResponse = await fetch('https://arweave-search.goldsky.com/graphql', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    query: `query { transaction(id: "${txId}") { tags { name value } } }`
-                })
-            });
-            const backupData = await backupResponse.json();
-            if (backupData.data && backupData.data.transaction) {
-                const tags = backupData.data.transaction.tags;
-                const fileNameTag = tags.find(tag => tag.name.toLowerCase() === 'file-name' || tag.name.toLowerCase() === 'filename');
-                if (fileNameTag) foundName = fileNameTag.value;
-            }
-        }
-        
-        if (foundName) {
-            targetFileName = foundName;
-            statusBox.innerText = "Đã tìm thấy tên file gốc: " + targetFileName;
+        // Trích xuất chính xác tên file và mã dữ liệu thô từ cấu trúc JSON của ArDrive
+        if (metadata && metadata.name && metadata.dataTxId) {
+            targetFileName = metadata.name;
+            var dataTxId = metadata.dataTxId;
+            
+            statusBox.innerText = "Đã tìm thấy file gốc: " + targetFileName;
+            
+            var encodedFileName = encodeURIComponent(targetFileName);
+            generatedUrl = "https://arweave.net/raw/" + dataTxId + "?filename=" + encodedFileName;
+            
+            downloadLink.innerText = generatedUrl;
+            resultBox.style.display = "block";
         } else {
-            // Nếu toàn bộ mạng lưới không trả về tag (file up thô không qua ArDrive), hệ thống sẽ bốc định dạng từ content-type
-            targetFileName = "file_" + txId.substring(0, 6);
-            statusBox.innerText = "Hệ thống chưa đồng bộ kịp siêu dữ liệu. Tên tạm: " + targetFileName;
+            statusBox.innerText = "Định dạng JSON của ArDrive không hợp lệ hoặc mã nhập vào không phải File TX ID.";
         }
-
-        var encodedFileName = encodeURIComponent(targetFileName);
-        generatedUrl = "https://arweave.net/raw/" + txId + "?filename=" + encodedFileName;
-        
-        downloadLink.innerText = generatedUrl;
-        resultBox.style.display = "block";
-
     } catch (error) {
-        statusBox.innerText = "Lỗi kết nối mạng lưới. Đang thử lại bằng gateway phụ...";
+        statusBox.innerText = "Lỗi đọc dữ liệu. Đảm bảo bạn đã nhập đúng File TX ID (không phải Data TX ID).";
         console.error(error);
     }
 }
@@ -240,7 +185,7 @@ async function triggerDownload() {
         window.URL.revokeObjectURL(tempLink.href);
         statusBox.innerText = "Đã tải xong file: " + targetFileName;
     } catch (err) {
-        statusBox.innerText = "Trình duyệt chặn tải. Hãy click chuột phải vào liên kết và chọn 'Lưu liên kết thành...'.";
+        statusBox.innerText = "Trình duyệt chặn tải trực tiếp. Hãy chuột phải vào link chọn Save Link As.";
         console.error(err);
     }
 }
