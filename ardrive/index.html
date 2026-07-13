@@ -175,10 +175,9 @@ async function getFilenameAndGenerate() {
 
         var encodedFileName = encodeURIComponent(originFileName);
         
-        // Dùng cổng /raw/ ổn định tuyệt đối, kết hợp tham số tên file
+        // Tạo đường dẫn với cổng /raw/ chính xác để ép tải xuống kèm tên file
         generatedUrl = "https://arweave.net/raw/" + txId + "?filename=" + encodedFileName;
         
-        // Ép thuộc tính download của HTML để kích hoạt cửa sổ Save As của hệ thống
         downloadLink.href = generatedUrl;
         downloadLink.setAttribute("download", originFileName);
         downloadLink.innerText = generatedUrl;
