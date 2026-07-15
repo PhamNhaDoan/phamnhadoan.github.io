@@ -183,20 +183,28 @@
                 // Giải mã nội dung HTML cũ
                 const currentContent = decodeURIComponent(escape(atob(fileData.content)));
 
-                // 2. Xây dựng biểu thức chính quy (Regex) để tìm và xóa chính xác khung <article class="post-card"> chứa tiêu đề truyện đó
-                // Regex này sẽ quét từ thẻ mở <article...> cho tới thẻ đóng </article> mà bên trong có chứa tiêu đề truyện được nhập
-                const escapedTitle = deleteTitle.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'); // Tránh lỗi ký tự đặc biệt trong Regex
-                const regexPattern = new RegExp(
-                    `<article class="post-card">[^]*?<h2 class="book-title">\\s*${escapedTitle}\\s*</h2>[^]*?</article>`, 
-                    'g'
-                );
+                // 2. Phân tích HTML cũ thành dạng tài liệu để tìm và xóa chính xác bằng thẻ DOM
+const parser = new DOMParser();
+const doc = parser.parseFromString(currentContent, 'text/html');
 
-                if (!regexPattern.test(currentContent)) {
-                    throw new Error(`Không tìm thấy bài review nào có tên truyện chính xác là "${deleteTitle}" trong file index.html.`);
-                }
+// Tìm tất cả các bài viết
+const articles = doc.querySelectorAll('.post-card');
+let found = false;
 
-                // Thực hiện xóa (thay thế khung bài viết tìm được bằng chuỗi rỗng)
-                const updatedContent = currentContent.replace(regexPattern, '');
+articles.forEach(article => {
+    const titleEl = article.querySelector('.book-title');
+    if (titleEl && titleEl.textContent.trim() === deleteTitle) {
+        article.remove(); // Xóa đúng khung bài viết này, không ảnh hưởng đến bài khác
+        found = true;
+    }
+});
+
+if (!found) {
+    throw new Error(`Không tìm thấy bài review nào có tên truyện chính xác là "${deleteTitle}" trong file index.html.`);
+}
+
+// Chuyển cấu trúc HTML đã xóa sạch trở lại dạng chuỗi chữ
+const updatedContent = doc.documentElement.outerHTML;
 
                 // 3. Mã hóa base64 nội dung mới
                 const updatedContentBase64 = btoa(unescape(encodeURIComponent(updatedContent)));
