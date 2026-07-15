@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Xóa Bài Review</title>
+    <style>
+        :root {
+            --bg-color: #f5f1eb;
+            --text-color: #2c2c2c;
+            --primary-color: #c05c3e; /* Đỏ cam đất */
+            --accent-green: #4a5d4e;
+            --border-color: #d1c7bd;
+        }
+
+        body {
+            font-family: "Georgia", serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 40px 20px;
+            margin: 0;
+        }
+
+        .admin-box {
+            max-width: 650px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            border-bottom: 2px dashed var(--primary-color);
+            padding-bottom: 15px;
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-weight: normal;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--accent-green);
+            font-size: 0.9rem;
+        }
+
+        input[type="text"], 
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            background-color: #fafaf8;
+            font-family: inherit;
+            box-sizing: border-box;
+            font-size: 0.95rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #ffffff;
+        }
+
+        .btn-delete {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #a94442; /* Màu đỏ đô sang trọng, cảnh báo xóa */
+            color: #ffffff;
+            border: none;
+            font-family: inherit;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 30px;
+            font-weight: bold;
+        }
+
+        .btn-delete:hover {
+            background-color: #822f2e;
+        }
+
+        #status {
+            margin-top: 15px;
+            padding: 10px;
+            text-align: center;
+            font-style: italic;
+            display: none;
+        }
+        
+        .warning-note {
+            font-size: 0.85rem;
+            color: #8a6d3b;
+            background-color: #fcf8e3;
+            border: 1px dotted #faebcc;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-box">
+        <h2>Hệ Thống Xóa Bài Review</h2>
+        
+        <div class="warning-note">
+            Lưu ý: Tên truyện cần nhập chính xác từng ký tự (kể cả chữ hoa, chữ thường và khoảng trắng) giống như tên hiển thị trên trang chủ để hệ thống tìm và xóa đúng khung truyện.
+        </div>
+
+        <form id="deleteForm">
+            <input type="hidden" id="githubUser" value="PhamNhaDoan">
+            <input type="hidden" id="githubRepo" value="reviewconvert">
+
+            <div class="form-group">
+                <label for="token">Github Key Token (Tự động nhớ trên trình duyệt này)</label>
+                <input type="password" id="token" placeholder="Nhập Personal Access Token..." required>
+            </div>
+
+            <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 25px 0;">
+
+            <div class="form-group">
+                <label for="deleteTitle">Nhập chính xác tên truyện muốn xóa</label>
+                <input type="text" id="deleteTitle" placeholder="Ví dụ: Tên Truyện Mẫu" required>
+            </div>
+
+            <button type="submit" class="btn-delete">Xóa Truyện Khỏi Github</button>
+        </form>
+
+        <div id="status"></div>
+    </div>
+
+    <script>
+        // Tự động load token cũ lên từ localStorage khi vừa mở trang
+        document.getElementById('token').value = localStorage.getItem('my_gh_token') || '';
+
+        document.getElementById('deleteForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const statusDiv = document.getElementById('status');
+            statusDiv.style.display = 'block';
+            statusDiv.style.color = '#7a7a7a';
+            statusDiv.innerText = 'Đang kết nối tới Github để thực hiện xóa...';
+
+            const user = document.getElementById('githubUser').value;
+            let repo = document.getElementById('githubRepo').value;
+            let path = 'index.html';
+
+            // Tự động kiểm tra nếu đang chạy thực tế trên Github Pages dạng thư mục con
+            if (window.location.hostname === "phamnhadoan.github.io" && window.location.pathname.includes("/reviewconvert/")) {
+                repo = "phamnhadoan.github.io";
+                path = "reviewconvert/index.html";
+            }
+
+            const token = document.getElementById('token').value;
+            const deleteTitle = document.getElementById('deleteTitle').value.trim();
+
+            // Lưu lại token mới vào bộ nhớ trình duyệt để lần sau khỏi nhập lại
+            localStorage.setItem('my_gh_token', token);
+
+            try {
+                // 1. Lấy file index.html hiện tại từ Github
+                const getFileUrl = `https://api.github.com/repos/${user}/${repo}/contents/${path}`;
+                const getResponse = await fetch(getFileUrl, {
+                    headers: { 'Authorization': `token ${token}` }
+                });
+
+                if (!getResponse.ok) {
+                    throw new Error('Không thể kết nối hoặc sai Token / Tên Repo.');
+                }
+
+                const fileData = await getResponse.json();
+                const sha = fileData.sha;
+                
+                // Giải mã nội dung HTML cũ
+                const currentContent = decodeURIComponent(escape(atob(fileData.content)));
+
+                // 2. Xây dựng biểu thức chính quy (Regex) để tìm và xóa chính xác khung <article class="post-card"> chứa tiêu đề truyện đó
+                // Regex này sẽ quét từ thẻ mở <article...> cho tới thẻ đóng </article> mà bên trong có chứa tiêu đề truyện được nhập
+                const escapedTitle = deleteTitle.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'); // Tránh lỗi ký tự đặc biệt trong Regex
+                const regexPattern = new RegExp(
+                    `<article class="post-card">[^]*?<h2 class="book-title">\\s*${escapedTitle}\\s*</h2>[^]*?</article>`, 
+                    'g'
+                );
+
+                if (!regexPattern.test(currentContent)) {
+                    throw new Error(`Không tìm thấy bài review nào có tên truyện chính xác là "${deleteTitle}" trong file index.html.`);
+                }
+
+                // Thực hiện xóa (thay thế khung bài viết tìm được bằng chuỗi rỗng)
+                const updatedContent = currentContent.replace(regexPattern, '');
+
+                // 3. Mã hóa base64 nội dung mới
+                const updatedContentBase64 = btoa(unescape(encodeURIComponent(updatedContent)));
+
+                // 4. Gửi yêu cầu cập nhật file đã xóa lên GitHub
+                const putResponse = await fetch(getFileUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Xóa bài review truyện: ${deleteTitle}`,
+                        content: updatedContentBase64,
+                        sha: sha
+                    })
+                });
+
+                if (putResponse.ok) {
+                    statusDiv.style.color = '#4a5d4e';
+                    statusDiv.innerText = `Đã xóa thành công truyện "${deleteTitle}"! Trang chủ sẽ cập nhật sau 1-2 phút.`;
+                    document.getElementById('deleteTitle').value = ''; // Reset ô nhập tên truyện
+                } else {
+                    const errData = await putResponse.json();
+                    throw new Error(errData.message || 'Lỗi khi cập nhật file lên Github.');
+                }
+
+            } catch (error) {
+                statusDiv.style.color = '#c05c3e';
+                statusDiv.innerText = 'Lỗi: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>
