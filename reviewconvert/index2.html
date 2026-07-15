@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Đăng Bài Review</title>
+    <style>
+        :root {
+            --bg-color: #f5f1eb;
+            --text-color: #2c2c2c;
+            --primary-color: #c05c3e;
+            --accent-green: #4a5d4e;
+            --border-color: #d1c7bd;
+        }
+
+        body {
+            font-family: "Georgia", serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 40px 20px;
+            margin: 0;
+        }
+
+        .admin-box {
+            max-width: 650px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--accent-green);
+            border-bottom: 2px dashed var(--primary-color);
+            padding-bottom: 15px;
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-weight: normal;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--accent-green);
+            font-size: 0.9rem;
+        }
+
+        input[type="text"], 
+        input[type="password"], 
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            background-color: #fafaf8;
+            font-family: inherit;
+            box-sizing: border-box;
+            font-size: 0.95rem;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #ffffff;
+        }
+
+        .btn-submit {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: #ffffff;
+            border: none;
+            font-family: inherit;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 30px;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--accent-green);
+        }
+
+        #status {
+            margin-top: 15px;
+            padding: 10px;
+            text-align: center;
+            font-style: italic;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-box">
+        <h2>Hệ Thống Đăng Bài Review</h2>
+        <form id="uploadForm">
+            <input type="hidden" id="githubUser" value="PhamNhaDoan">
+            <input type="hidden" id="githubRepo" value="reviewconvert">
+
+            <div class="form-group">
+                <label for="token">Github Key Token (Không lưu lại trên form)</label>
+                <input type="password" id="token" placeholder="Nhập Personal Access Token..." required>
+            </div>
+
+            <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 25px 0;">
+
+            <div class="form-group">
+                <label for="coverUrl">URL Ảnh bìa truyện (Nhập link ảnh trực tiếp)</label>
+                <input type="text" id="coverUrl" placeholder="Ví dụ: https://anh.com/bia.jpg" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="title">Tên truyện</label>
+                    <input type="text" id="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="author">Tác giả</label>
+                    <input type="text" id="author" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="storyUrl">Địa chỉ (Link) truyện</label>
+                    <input type="text" id="storyUrl" required>
+                </div>
+                <div class="form-group">
+                    <label for="reviewer">Tên người review</label>
+                    <input type="text" id="reviewer" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="note">Ghi chú nhanh</label>
+                <input type="text" id="note" placeholder="Ví dụ: Truyện hoàn, sủng ngọt...">
+            </div>
+
+            <div class="form-group">
+                <label for="reviewText">Nội dung review chi tiết</label>
+                <textarea id="reviewText" rows="8" required></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">Đăng Bài Lên Github</button>
+        </form>
+
+        <div id="status"></div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const statusDiv = document.getElementById('status');
+            statusDiv.style.display = 'block';
+            statusDiv.style.color = '#7a7a7a';
+            statusDiv.innerText = 'Đang kết nối tới Github để đăng bài...';
+
+            const user = document.getElementById('githubUser').value;
+            let repo = document.getElementById('githubRepo').value;
+            let path = 'index.html'; // Mặc định ghi đè index.html ở thư mục gốc repo
+
+            // Điều hướng linh hoạt dựa trên cấu trúc thực tế của bạn
+            // Nếu bạn đặt thư mục reviewconvert nằm trong repo phamnhadoan.github.io
+            if (window.location.hostname === "phamnhadoan.github.io" && window.location.pathname.includes("/reviewconvert/")) {
+                repo = "phamnhadoan.github.io";
+                path = "reviewconvert/index.html";
+            }
+
+            const token = document.getElementById('token').value;
+            const coverUrl = document.getElementById('coverUrl').value;
+            const title = document.getElementById('title').value;
+            const author = document.getElementById('author').value;
+            const storyUrl = document.getElementById('storyUrl').value;
+            const reviewer = document.getElementById('reviewer').value;
+            const note = document.getElementById('note').value;
+            const reviewText = document.getElementById('reviewText').value;
+
+            // Đoạn mã HTML mẫu bài post mới sẽ chèn vào index.html
+            const newPostHtml = `
+            <article class="post-card">
+                <div class="book-cover-wrapper">
+                    <img src="${coverUrl}" alt="Bìa truyện" class="book-cover">
+                </div>
+                <div class="book-info">
+                    <h2 class="book-title">${title}</h2>
+                    
+                    <div class="meta-group">
+                        <div class="meta-item"><span class="meta-label">Tác giả:</span> ${author}</div>
+                        <div class="meta-item"><span class="meta-label">Địa chỉ truyện:</span> <a href="${storyUrl}" class="book-link" target="_blank">Đọc tại đây</a></div>
+                        <div class="meta-item"><span class="meta-label">Người review:</span> ${reviewer}</div>
+                    </div>
+
+                    ${note ? `<div class="note-box"><strong>Ghi chú:</strong> ${note}</div>` : ''}
+
+                    <details class="review-details">
+                        <summary class="review-summary">Đọc bài review chi tiết</summary>
+                        <div class="review-content">
+                            ${reviewText.replace(/\n/g, '<br>')}
+                        </div>
+                    </details>
+                </div>
+            </article>`;
+
+            try {
+                // 1. Lấy file index.html hiện tại trên Github để lấy SHA và nội dung cũ
+                const getFileUrl = `https://api.github.com/repos/${user}/${repo}/contents/${path}`;
+                const getResponse = await fetch(getFileUrl, {
+                    headers: { 'Authorization': `token ${token}` }
+                });
+
+                if (!getResponse.ok) {
+                    throw new Error('Không thể tìm thấy file hoặc sai Token / Tên Repo.');
+                }
+
+                const fileData = await getResponse.json();
+                const sha = fileData.sha;
+                
+                // Giải mã nội dung HTML cũ (đang được mã hóa base64 từ github)
+                const currentContent = decodeURIComponent(escape(atob(fileData.content)));
+
+                // 2. Chèn bài post mới vào ngay sau thẻ đầu tiên tìm thấy
+                if (!currentContent.includes('')) {
+                    throw new Error('Không tìm thấy mốc đánh dấu "" trong file index.html.');
+                }
+
+                const updatedContent = currentContent.replace('', newPostHtml);
+
+                // 3. Mã hóa base64 nội dung mới để gửi ngược lại API Github
+                const updatedContentBase64 = btoa(unescape(encodeURIComponent(updatedContent)));
+
+                // 4. Gọi API cập nhật file
+                const putResponse = await fetch(getFileUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Đăng bài review truyện: ${title}`,
+                        content: updatedContentBase64,
+                        sha: sha
+                    })
+                });
+
+                if (putResponse.ok) {
+                    statusDiv.style.color = '#4a5d4e';
+                    statusDiv.innerText = 'Đăng bài thành công! Trang chủ sẽ được Github cập nhật sau khoảng 1-2 phút.';
+                    document.getElementById('uploadForm').reset();
+                    // Reset lại hai giá trị cấu hình ẩn
+                    document.getElementById('githubUser').value = "PhamNhaDoan";
+                    document.getElementById('githubRepo').value = "reviewconvert";
+                } else {
+                    const errData = await putResponse.json();
+                    throw new Error(errData.message || 'Lỗi khi cập nhật file lên Github.');
+                }
+
+            } catch (error) {
+                statusDiv.style.color = '#c05c3e';
+                statusDiv.innerText = 'Lỗi: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>
