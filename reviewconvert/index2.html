@@ -172,10 +172,9 @@
 
             const user = document.getElementById('githubUser').value;
             let repo = document.getElementById('githubRepo').value;
-            let path = 'index.html'; // Mặc định ghi đè index.html ở thư mục gốc repo
+            let path = 'index.html';
 
-            // Điều hướng linh hoạt dựa trên cấu trúc thực tế của bạn
-            // Nếu bạn đặt thư mục reviewconvert nằm trong repo phamnhadoan.github.io
+            // Tự động kiểm tra nếu đang chạy thực tế trên Github Pages dạng thư mục con
             if (window.location.hostname === "phamnhadoan.github.io" && window.location.pathname.includes("/reviewconvert/")) {
                 repo = "phamnhadoan.github.io";
                 path = "reviewconvert/index.html";
@@ -190,7 +189,7 @@
             const note = document.getElementById('note').value;
             const reviewText = document.getElementById('reviewText').value;
 
-            // Đoạn mã HTML mẫu bài post mới sẽ chèn vào index.html
+            // Đoạn mã bài viết mới (không cần bọc mốc START_POST nữa)
             const newPostHtml = `
             <article class="post-card">
                 <div class="book-cover-wrapper">
@@ -217,7 +216,7 @@
             </article>`;
 
             try {
-                // 1. Lấy file index.html hiện tại trên Github để lấy SHA và nội dung cũ
+                // 1. Lấy file index.html từ Github
                 const getFileUrl = `https://api.github.com/repos/${user}/${repo}/contents/${path}`;
                 const getResponse = await fetch(getFileUrl, {
                     headers: { 'Authorization': `token ${token}` }
@@ -230,20 +229,22 @@
                 const fileData = await getResponse.json();
                 const sha = fileData.sha;
                 
-                // Giải mã nội dung HTML cũ (đang được mã hóa base64 từ github)
+                // Giải mã nội dung cũ
                 const currentContent = decodeURIComponent(escape(atob(fileData.content)));
 
-                // 2. Chèn bài post mới vào ngay sau thẻ đầu tiên tìm thấy
-                if (!currentContent.includes('')) {
-                    throw new Error('Không tìm thấy mốc đánh dấu "" trong file index.html.');
+                // 2. Chèn bài post mới vào ngay sau thẻ mở đầu của danh sách bài viết
+                const targetTag = '<main id="reviews-list">';
+                if (!currentContent.includes(targetTag)) {
+                    throw new Error('Không tìm thấy vùng chứa danh sách bài viết <main id="reviews-list"> trong file index.html.');
                 }
 
-                const updatedContent = currentContent.replace('', newPostHtml);
+                // Chèn trực tiếp bài mới vào ngay sau thẻ <main id="reviews-list">
+                const updatedContent = currentContent.replace(targetTag, `${targetTag}\n${newPostHtml}`);
 
-                // 3. Mã hóa base64 nội dung mới để gửi ngược lại API Github
+                // 3. Mã hóa base64 nội dung mới
                 const updatedContentBase64 = btoa(unescape(encodeURIComponent(updatedContent)));
 
-                // 4. Gọi API cập nhật file
+                // 4. Đẩy file đã cập nhật lên Github
                 const putResponse = await fetch(getFileUrl, {
                     method: 'PUT',
                     headers: {
@@ -259,7 +260,7 @@
 
                 if (putResponse.ok) {
                     statusDiv.style.color = '#4a5d4e';
-                    statusDiv.innerText = 'Đăng bài thành công! Trang chủ sẽ được Github cập nhật sau khoảng 1-2 phút.';
+                    statusDiv.innerText = 'Đăng bài thành công! Bài viết mới nhất đã được đẩy lên đầu trang chủ.';
                     document.getElementById('uploadForm').reset();
                     // Reset lại hai giá trị cấu hình ẩn
                     document.getElementById('githubUser').value = "PhamNhaDoan";
