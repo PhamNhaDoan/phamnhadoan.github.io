@@ -181,6 +181,7 @@
             }
 
             const token = document.getElementById('token').value;
+            localStorage.setItem('my_gh_token', token);
             const coverUrl = document.getElementById('coverUrl').value;
             const title = document.getElementById('title').value;
             const author = document.getElementById('author').value;
@@ -275,6 +276,7 @@
                 statusDiv.innerText = 'Lỗi: ' + error.message;
             }
         });
+        document.getElementById('token').value = localStorage.getItem('my_gh_token') || '';
     </script>
 </body>
 </html>
