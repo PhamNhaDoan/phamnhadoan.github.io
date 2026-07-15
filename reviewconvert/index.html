@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Góc Review Sách & Truyện</title>
+    <style>
+        :root {
+            --bg-color: #fbf9f5; /* Màu kem */
+            --text-color: #2c2c2c; /* Đen xám */
+            --primary-color: #c05c3e; /* Cam đất */
+            --accent-green: #4a5d4e; /* Xanh rêu */
+            --border-color: #d1c7bd; /* Xám ấm */
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: "Georgia", serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            border-bottom: 2px dashed var(--primary-color);
+            padding-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: var(--accent-green);
+            margin: 0 0 10px 0;
+            font-weight: normal;
+        }
+
+        header p {
+            font-style: italic;
+            color: #7a7a7a;
+            margin: 0;
+        }
+
+        /* Danh sách bài viết */
+        #reviews-list {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        /* Khung bài post */
+        .post-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            position: relative;
+        }
+
+        @media (max-width: 600px) {
+            .post-card {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Khung ảnh bìa */
+        .book-cover-wrapper {
+            border: 1px dotted var(--primary-color);
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-color);
+            height: fit-content;
+        }
+
+        .book-cover {
+            width: 100%;
+            height: auto;
+            max-height: 280px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Thông tin chi tiết */
+        .book-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .book-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin: 0 0 10px 0;
+            font-weight: normal;
+            line-height: 1.2;
+        }
+
+        .meta-group {
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .meta-item {
+            margin-bottom: 5px;
+        }
+
+        .meta-label {
+            font-weight: bold;
+            color: var(--accent-green);
+        }
+
+        .book-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            border-bottom: 1px solid var(--primary-color);
+        }
+
+        .book-link:hover {
+            color: var(--accent-green);
+            border-bottom-color: var(--accent-green);
+        }
+
+        .note-box {
+            font-style: italic;
+            color: #666;
+            background: #f5f1eb;
+            padding: 10px 15px;
+            border-left: 3px solid var(--accent-green);
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        /* Phần Review ẩn hiện */
+        .review-details {
+            margin-top: 15px;
+        }
+
+        .review-summary {
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: bold;
+            color: var(--accent-green);
+            padding: 10px 0;
+            border-top: 1px solid var(--border-color);
+            user-select: none;
+        }
+
+        .review-summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .review-summary::after {
+            content: "↓";
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+            color: var(--primary-color);
+        }
+
+        .review-details[open] .review-summary::after {
+            transform: rotate(180deg);
+        }
+
+        .review-content {
+            padding-top: 15px;
+            white-space: pre-line;
+            border-top: 1px dotted var(--border-color);
+            color: var(--text-color);
+            text-align: justify;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Trang Review Sách & Truyện</h1>
+            <p>Nơi lưu giữ những cảm nhận và đánh giá cá nhân</p>
+        </header>
+
+        <main id="reviews-list">
+            <article class="post-card">
+                <div class="book-cover-wrapper">
+                    <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=300" alt="Bìa truyện" class="book-cover">
+                </div>
+                <div class="book-info">
+                    <h2 class="book-title">Ví dụ: Tên Truyện Mẫu</h2>
+                    
+                    <div class="meta-group">
+                        <div class="meta-item"><span class="meta-label">Tác giả:</span> Nguyễn Văn A</div>
+                        <div class="meta-item"><span class="meta-label">Địa chỉ truyện:</span> <a href="#" class="book-link" target="_blank">Đọc tại đây</a></div>
+                        <div class="meta-item"><span class="meta-label">Người review:</span> Hoài Nam</div>
+                    </div>
+
+                    <div class="note-box">
+                        <strong>Ghi chú:</strong> Truyện có yếu tố kỳ ảo nhẹ nhàng, thích hợp đọc trước khi đi ngủ.
+                    </div>
+
+                    <details class="review-details">
+                        <summary class="review-summary">Đọc bài review chi tiết</summary>
+                        <div class="review-content">
+                            Đây là nội dung review chi tiết của bạn. Đoạn văn này có thể dài tùy ý. Nó sẽ tự động ẩn đi và chỉ hiện ra khi người đọc click vào nút mũi tên phía bên phải. 
+                            
+                            Màu sắc tổng thể của trang web hướng tới sự mộc mạc, hoài cổ với các đường viền nét đứt (dashed) hoặc chấm nhỏ (dotted), mang lại cảm giác dễ chịu và tập trung tối đa vào nội dung chữ.
+                        </div>
+                    </details>
+                </div>
+            </article>
+            </main>
+    </div>
+
+</body>
+</html>
