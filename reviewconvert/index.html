@@ -150,14 +150,27 @@
         .review-summary {
             cursor: pointer;
             list-style: none;
-            display: flex;
+            display: inline-flex; /* Chuyển thành dạng nút nhỏ gọn */
             align-items: center;
             justify-content: space-between;
             font-weight: bold;
-            color: var(--accent-green);
-            padding: 10px 0;
-            border-top: 1px solid var(--border-color);
+            color: #ffffff; /* Chữ trắng */
+            background-color: var(--accent-green); /* Nền xanh rêu sang trọng */
+            padding: 10px 24px; /* Tạo khoảng cách đệm cho nút */
+            border-radius: 25px; /* Bo tròn hoàn hảo */
             user-select: none;
+            transition: all 0.3s ease; /* Hiệu ứng mượt mà */
+            font-size: 0.9rem;
+            margin-top: 15px;
+            border: 1px solid transparent;
+            gap: 10px;
+        }
+
+        /* Hiệu ứng khi rê chuột vào nút */
+        .review-summary:hover {
+            background-color: var(--primary-color); /* Đổi sang màu cam đất */
+            transform: translateY(-2px); /* Nút nhấc nhẹ lên tạo chiều sâu */
+            box-shadow: 0 4px 12px rgba(192, 92, 62, 0.2); /* Đổ bóng nhẹ mượt mà */
         }
 
         .review-summary::-webkit-details-marker {
@@ -166,9 +179,9 @@
 
         .review-summary::after {
             content: "↓";
-            font-size: 1.2rem;
+            font-size: 1rem;
             transition: transform 0.3s ease;
-            color: var(--primary-color);
+            color: #ffffff; /* Mũi tên màu trắng */
         }
 
         .review-details[open] .review-summary::after {
