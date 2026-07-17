@@ -12,6 +12,7 @@
             --primary-color: #c87a53;  /* Cam đất hoàng hôn */
             --accent-green: #3e5241;   /* Xanh rêu cổ điển */
             --soul-blue: #4a6984;      /* Xanh lam tâm hồn */
+            --fate-purple: #70528c;    /* Tím thạch anh định mệnh */
             --border-color: #d1c7bd;
         }
 
@@ -21,11 +22,10 @@
             background-repeat: repeat;
             background-size: 400px auto;
             background-attachment: fixed;
-            color: var(--text-color); /* Đã sửa biến lỗi --text-dark */
+            color: var(--text-color);
             margin: 0;
             padding: 40px 20px;
             min-height: 100vh;
-            /* Thiết lập hệ thống căn giữa tuyệt đối cho container */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -35,7 +35,7 @@
         .container {
             width: 100%;
             max-width: 580px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.9); /* Độ mờ trắng 90% đã được giữ lại */
             padding: 40px 30px;
             text-align: center;
             border: 1px solid var(--border-color);
@@ -108,20 +108,22 @@
         }
 
         .btn-group {
-            display: block;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .random-btn {
             color: #ffffff;
             border: none;
-            padding: 14px 28px;
-            font-size: 0.95rem;
+            padding: 14px 24px;
+            font-size: 0.9rem;
             font-weight: 600;
             border-radius: 30px;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin: 8px;
+            margin: 6px;
             display: inline-block;
         }
 
@@ -142,6 +144,16 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
+
+        /* Nút 3: Màu Tím Thạch Anh */
+        .btn-fate {
+            background-color: var(--fate-purple);
+        }
+        .btn-fate:hover {
+            background-color: #553b6e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
     </style>
 </head>
 <body>
@@ -149,7 +161,7 @@
     <div class="container">
         <header>
             <h1>Ma Trận Ngôn Ngữ Vạn Năng</h1>
-            <p>Trình giả lập tạo danh từ cổ và mật ngữ cảm xúc vô tận trong vũ trụ</p>
+            <p>Trình giả lập tạo danh từ cổ, mật ngữ và lời tiên tri vô tận trong vũ trụ</p>
         </header>
 
         <div class="result-box" id="displayBox">
@@ -159,8 +171,9 @@
         </div>
 
         <div class="btn-group">
-            <button class="random-btn btn-ancient" onclick="generateInfiniteName()">Tạo Chữ Cổ Kỳ Bí</button>
-            <button class="random-btn btn-soul" onclick="generateInfiniteSoulWord()">Tạo Mật Ngữ Tâm Hồn</button>
+            <button class="random-btn btn-ancient" onclick="generateInfiniteName()">Chữ Cổ Kỳ Bí</button>
+            <button class="random-btn btn-soul" onclick="generateInfiniteSoulWord()">Mật Ngữ Tâm Hồn</button>
+            <button class="random-btn btn-fate" onclick="generateInfiniteOracle()">Mật Mã Định Mệnh</button>
         </div>
     </div>
 
@@ -193,7 +206,7 @@
             }
         ];
 
-        // --- DỮ LIỆU NÚT 2: MẬT NGỮ TÂM HỒN (UNTRANSLATABLE WORDS VÔ TẬN) ---
+        // --- DỮ LIỆU NÚT 2: MẬT NGỮ TÂM HỒN ---
         const soulCivs = [
             {
                 name: "Hệ Tinh Không Phương Tây (Vibe Hà Lan/Đức/Bắc Âu)",
@@ -214,6 +227,22 @@
                 meanings: ["Cú chạm nhẹ nhàng thoáng qua làm lay động tâm thức", "Kẻ lãng du vô định đi tìm cái đẹp ẩn giấu", "Sự thanh thản tuyệt đối vượt qua mọi bão giông", "Vẻ đẹp rực rỡ nhưng mong manh, chỉ tồn tại trong khoảnh khắc", "Nỗi nhớ da diết về một nơi chốn ta chưa từng đặt chân đến", "Sự cô đơn dịu dàng giữa một vùng biển vắng", "Vũ điệu của những hạt bụi vàng dưới ánh nắng hoàng hôn"]
             }
         ];
+
+        // --- DỮ LIỆU NÚT 3: MẬT MÃ ĐỊNH MỆNH (MỚI) ---
+        const oracleCiv = {
+            name: "Lời Sấm Truyền Từ Tinh Vân Cổ",
+            subjects: ["Aethelgard", "Komorebi", "Enmesh", "Louxmorna", "Balamtun", "H₂éwsōs", "Fairguni", "Zielsrust"],
+            verbs: ["vobis monet", "fatum ducit", "ubi tacet", "astra chỉ lối", "vừa thức tỉnh", "đang hồi đáp", "sẽ dẫn bước"],
+            prophecies: [
+                "Những vì tinh tú đã tắt từ vạn năm trước vẫn đang dõi theo hành trình đơn độc của bạn.",
+                "Hào quang của sự cô độc hôm nay chính là chiếc vương miện của ngày mai.",
+                "Khi định mệnh im lặng, đó là lúc một chương sử thi mới sắp sửa bắt đầu.",
+                "Đừng ngoảnh lại, kho báu bạn tìm kiếm vốn chưa từng nằm ở quá khứ.",
+                "Sự hỗn loạn xung quanh bạn thực ra là trật tự mà vũ trụ đang sắp đặt lại.",
+                "Mọi câu trả lời bạn hằng khao khát đều được chôn giấu trong sự tĩnh lặng của tâm hồn.",
+                "Dòng chảy thời gian sẽ xóa nhòa tất cả, ngoại trừ dấu chân của kẻ lãng du kiên định."
+            ]
+        };
 
         function getRandomElement(arr) {
             return arr[Math.floor(Math.random() * arr.length)];
@@ -264,6 +293,26 @@
             originEl.style.color = "var(--soul-blue)";
             originEl.style.background = "#eef4fa";
             originEl.style.border = "1px dotted var(--soul-blue)";
+            originEl.style.display = "inline-block";
+        }
+
+        // Hàm chạy Nút 3 (Mật Mã Định Mệnh)
+        function generateInfiniteOracle() {
+            const subject = getRandomElement(oracleCiv.subjects);
+            const verb = getRandomElement(oracleCiv.verbs);
+            const sentence = `${subject} ${verb}`;
+
+            const prophecy = getRandomElement(oracleCiv.prophecies);
+
+            document.getElementById("nameDisplay").textContent = sentence;
+            document.getElementById("nameDisplay").style.color = "var(--fate-purple)";
+            document.getElementById("meaningDisplay").textContent = `“${prophecy}”`;
+            
+            const originEl = document.getElementById("originDisplay");
+            originEl.textContent = oracleCiv.name;
+            originEl.style.color = "var(--fate-purple)";
+            originEl.style.background = "#f4effa";
+            originEl.style.border = "1px dotted var(--fate-purple)";
             originEl.style.display = "inline-block";
         }
     </script>
