@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trình Khám Phá Cổ Ngữ Vô Tận</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f5f1eb;
+            --text-color: #2b2b2b;
+            --primary-color: #c87a53;
+            --accent-green: #3e5241;
+            --border-color: #d1c7bd;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 550px;
+            background: #ffffff;
+            padding: 40px 30px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            outline: 1px dotted var(--primary-color);
+            outline-offset: -8px;
+            border-radius: 16px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.04);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--accent-green);
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            color: #7a7a7a;
+            font-style: italic;
+            margin-bottom: 35px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .result-box {
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 35px;
+            padding: 20px;
+            background: #faf8f5;
+            border-radius: 8px;
+            border: 1px dashed var(--border-color);
+        }
+
+        .ancient-name {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .meaning {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+
+        .origin-tag {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-green);
+            background: #e6ede7;
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px dotted var(--accent-green);
+        }
+
+        .random-btn {
+            background-color: var(--accent-green);
+            color: #ffffff;
+            border: none;
+            padding: 14px 32px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .random-btn:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Ma Trận Cổ Ngữ Vô Tận</h1>
+            <p>Trình giả lập tự động tạo ra hàng tỷ danh từ cổ hiếm gặp</p>
+        </header>
+
+        <div class="result-box">
+            <div id="nameDisplay" class="ancient-name">---</div>
+            <div id="meaningDisplay" class="meaning">Bấm nút bên dưới để khởi động ma trận văn minh</div>
+            <div id="originDisplay" class="origin-tag" style="display: none;"></div>
+        </div>
+
+        <button class="random-btn" onclick="generateInfiniteName()">Tạo Chữ Cổ Ngẫu Nhiên</button>
+    </div>
+
+    <script>
+        // Cấu trúc dữ liệu ngôn ngữ học giả lập của 6 nền văn minh lớn
+        const civilizations = [
+            {
+                name: "Proto-Indo-European (Ấn-Âu Nguyên Thủy)",
+                prefixes: ["H₂éw", "Lēu", "Ghér", "Kerd", "Bhré", "Wéj", "Mén", "Ped"],
+                suffixes: ["sōs", "kós", "tōr", "mōx", "ghos", "dhós", "wós", "taz"],
+                meanings: ["Bình minh", "Ánh sáng chói", "Ngọn lửa thiêng", "Trái tim", "Ý chí", "Sự vĩnh hằng", "Kẻ bảo hộ", "Đỉnh núi tuyết"]
+            },
+            {
+                name: "Gothic & Old Norse (Bắc Âu Cổ)",
+                prefixes: ["Wul", "Swin", "Fair", "Skad", "Berh", "Ans", "Thor", "Freyd"],
+                suffixes: ["þus", "þs", "guni", "dus", "taz", "stis", "marr", "mund"],
+                meanings: ["Vinh quang đỉnh cao", "Mạnh mẽ kiên cường", "Thần điện bóng râm", "Sự bảo hộ của Odin", "Ý chí thép", "Trăng đêm đông", "Dòng máu chiến binh", "Sấm sét phương Bắc"]
+            },
+            {
+                name: "Proto-Celtic (Celt Cổ Đại)",
+                prefixes: ["Loux", "Breg", "Duno", "Isar", "Catu", "Maro", "Ver", "Ona"],
+                suffixes: ["rix", "val", "magos", "biros", "genos", "bona", "morna", "dunum"],
+                meanings: ["Vua của ánh sáng", "Ngọn đồi linh thiêng", "Dòng sông mạnh mẽ", "Chiến binh bất khuất", "Đại dương bao la", "Người sinh từ đá", "Thung lũng sương mù", "Bảo vật cổ xưa"]
+            },
+            {
+                name: "Ancient Sumerian & Akkadian (Lưỡng Hà Cổ Đại)",
+                prefixes: ["En", "Lug", "Nin", "Gil", "Anu", "Utu", "Esh", "Shar"],
+                suffixes: ["gal", "ki", "kar", "mesh", "kidu", "nam", "ru", "kīn"],
+                meanings: ["Đại vương thượng đế", "Nữ thần bầu trời", "Đất thánh vĩnh cửu", "Ánh sáng công lý", "Người hùng huyền thoại", "Ngôi sao ban mai", "Mãnh thú sa mạc", "Giao ước cổ xưa"]
+            },
+            {
+                name: "Archaic Latin & Etruscan (La Mã/Địa Trung Hải Cổ)",
+                prefixes: ["Aet", "Lumi", "Magn", "Ver", "Faun", "Aura", "Taran", "Vole"],
+                suffixes: ["nus", "trix", "luna", "stis", "cius", "vium", "thor", "sura"],
+                meanings: ["Vĩnh hằng vô tận", "Nữ thần ánh sáng", "Đại ngàn vĩ đại", "Sự thật linh thiêng", "Cơn gió hoang dã", "Hào quang cổ cổ", "Kẻ chế ngự số phận", "Bình minh rực rỡ"]
+            },
+            {
+                name: "Mayan & Mesoamerican (Văn minh Maya cổ)",
+                prefixes: ["Balam", "Kuk", "Itz", "Yax", "Kin", "Pac", "Chil", "Ah"],
+                suffixes: ["al", "kan", "am", "ich", "bal", "na", "kin", "tun"],
+                meanings: ["Báo đốm tâm linh", "Rắn lông vũ", "Ma thuật hắc thạch", "Ngọc bích nguyên thủy", "Mặt trời rực lửa", "Chiến khiên hoàng gia", "Tiên tri vũ trụ", "Đại ngàn thiêngêng"]
+            }
+        ];
+
+        function getRandomElement(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function generateInfiniteName() {
+            // Chọn ngẫu nhiên 1 nền văn minh
+            const civ = getRandomElement(civilizations);
+            
+            // Kết hợp tiền tố và hậu tố ngẫu nhiên để tạo chữ cổ mới
+            const prefix = getRandomElement(civ.prefixes);
+            const suffix = getRandomElement(civ.suffixes);
+            const ancientWord = prefix + suffix;
+
+            // Kết hợp các tầng nghĩa ngẫu nhiên để tạo ra định nghĩa độc đáo
+            const meaningPart1 = getRandomElement(civ.meanings);
+            const meaningPart2 = getRandomElement(["mang lại hy vọng", "ẩn chứa sức mạnh", "ngự trị dòng thời gian", "bị lãng quên", "huyền bí", "vĩnh cửu"]);
+            const fullMeaning = `${meaningPart1} (${meaningPart2})`;
+
+            // Render giao diện
+            document.getElementById("nameDisplay").textContent = ancientWord;
+            document.getElementById("meaningDisplay").textContent = fullMeaning;
+            
+            const originEl = document.getElementById("originDisplay");
+            originEl.textContent = civ.name;
+            originEl.style.display = "inline-block";
+        }
+    </script>
+</body>
+</html>
