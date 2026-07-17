@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trình Khám Phá Cổ Ngữ Vô Tận</title>
+    <title>Trình Khám Phá Cổ Ngữ & Mật Ngữ Vũ Trụ</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #f5f1eb;
             --text-color: #2b2b2b;
-            --primary-color: #c87a53;
-            --accent-green: #3e5241;
+            --primary-color: #c87a53;  /* Cam đất hoàng hôn */
+            --accent-green: #3e5241;   /* Xanh rêu cổ điển */
+            --soul-blue: #4a6984;      /* Xanh lam tâm hồn */
             --border-color: #d1c7bd;
         }
 
@@ -28,7 +29,7 @@
 
         .container {
             width: 90%;
-            max-width: 550px;
+            max-width: 580px;
             background: #ffffff;
             padding: 40px 30px;
             text-align: center;
@@ -57,7 +58,7 @@
         }
 
         .result-box {
-            min-height: 140px;
+            min-height: 150px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -67,6 +68,7 @@
             background: #faf8f5;
             border-radius: 8px;
             border: 1px dashed var(--border-color);
+            transition: all 0.3s ease;
         }
 
         .ancient-name {
@@ -81,7 +83,8 @@
             font-size: 1.1rem;
             color: var(--text-color);
             font-weight: 400;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            line-height: 1.4;
         }
 
         .origin-tag {
@@ -96,21 +99,41 @@
             border: 1px dotted var(--accent-green);
         }
 
+        /* Khung chứa 2 nút bấm */
+        .btn-group {
+            display: block;
+        }
+
         .random-btn {
-            background-color: var(--accent-green);
             color: #ffffff;
             border: none;
-            padding: 14px 32px;
-            font-size: 1rem;
+            padding: 14px 28px;
+            font-size: 0.95rem;
             font-weight: 600;
             border-radius: 30px;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin: 8px;
+            display: inline-block;
         }
 
-        .random-btn:hover {
+        /* Nút 1: Màu xanh rêu */
+        .btn-ancient {
+            background-color: var(--accent-green);
+        }
+        .btn-ancient:hover {
             background-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        /* Nút 2: Màu xanh lam khói */
+        .btn-soul {
+            background-color: var(--soul-blue);
+        }
+        .btn-soul:hover {
+            background-color: #354d63;
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
@@ -120,21 +143,24 @@
 
     <div class="container">
         <header>
-            <h1>Ma Trận Cổ Ngữ Vô Tận</h1>
-            <p>Trình giả lập tự động tạo ra hàng tỷ danh từ cổ hiếm gặp</p>
+            <h1>Ma Trận Ngôn Ngữ Vạn Năng</h1>
+            <p>Trình giả lập tạo danh từ cổ và mật ngữ cảm xúc vô tận trong vũ trụ</p>
         </header>
 
-        <div class="result-box">
+        <div class="result-box" id="displayBox">
             <div id="nameDisplay" class="ancient-name">---</div>
-            <div id="meaningDisplay" class="meaning">Bấm nút bên dưới để khởi động ma trận văn minh</div>
+            <div id="meaningDisplay" class="meaning">Hãy chọn một chiếc chìa khóa năng lượng phía dưới</div>
             <div id="originDisplay" class="origin-tag" style="display: none;"></div>
         </div>
 
-        <button class="random-btn" onclick="generateInfiniteName()">Tạo Chữ Cổ Ngẫu Nhiên</button>
+        <div class="btn-group">
+            <button class="random-btn btn-ancient" onclick="generateInfiniteName()">Tạo Chữ Cổ Kỳ Bí</button>
+            <button class="random-btn btn-soul" onclick="generateInfiniteSoulWord()">Tạo Mật Ngữ Tâm Hồn</button>
+        </div>
     </div>
 
     <script>
-        // Cấu trúc dữ liệu ngôn ngữ học giả lập của 6 nền văn minh lớn
+        // --- DỮ LIỆU NÚT 1: CỔ NGỮ KỲ BÍ ---
         const civilizations = [
             {
                 name: "Proto-Indo-European (Ấn-Âu Nguyên Thủy)",
@@ -159,18 +185,28 @@
                 prefixes: ["En", "Lug", "Nin", "Gil", "Anu", "Utu", "Esh", "Shar"],
                 suffixes: ["gal", "ki", "kar", "mesh", "kidu", "nam", "ru", "kīn"],
                 meanings: ["Đại vương thượng đế", "Nữ thần bầu trời", "Đất thánh vĩnh cửu", "Ánh sáng công lý", "Người hùng huyền thoại", "Ngôi sao ban mai", "Mãnh thú sa mạc", "Giao ước cổ xưa"]
+            }
+        ];
+
+        // --- DỮ LIỆU NÚT 2: MẬT NGỮ TÂM HỒN (UNTRANSLATABLE WORDS VÔ TẬN) ---
+        const soulCivs = [
+            {
+                name: "Hệ Tinh Không Phương Tây (Vibe Hà Lan/Đức/Bắc Âu)",
+                prefixes: ["Ver", "Ziel", "Geborgen", "Samen", "Leven", "Sterren", "Lumi", "Aether", "Sommar", "Vandring"],
+                suffixes: ["langen", "zicht", "heid", "rust", "lust", "klank", "licht", "ning", "vind", "strale"],
+                meanings: ["Khát khao mong mỏi sâu sắc", "Khung cảnh nhìn xa xăm đầy viễn cảnh", "Cảm giác được chở che, an toàn và thuộc về", "Sự bình yên lắng đọng trong sâu thẳm tâm hồn", "Niềm say mê và khao khát cuộc sống", "Sự hòa hợp, đồng điệu giữa hai bản thể", "Ánh sáng dịu dàng phát ra từ những định tinh", "Cơn gió hoang dã thổi qua rừng già ban mai"]
             },
             {
-                name: "Archaic Latin & Etruscan (La Mã/Địa Trung Hải Cổ)",
-                prefixes: ["Aet", "Lumi", "Magn", "Ver", "Faun", "Aura", "Taran", "Vole"],
-                suffixes: ["nus", "trix", "luna", "stis", "cius", "vium", "thor", "sura"],
-                meanings: ["Vĩnh hằng vô tận", "Nữ thần ánh sáng", "Đại ngàn vĩ đại", "Sự thật linh thiêng", "Cơn gió hoang dã", "Hào quang cổ cổ", "Kẻ chế ngự số phận", "Bình minh rực rỡ"]
+                name: "Hệ Tinh Vân Trầm Tích (Vibe Nhật Cổ/Phương Đông hoang sơ)",
+                prefixes: ["Komore", "Yau", "Mora", "Shin", "Natsu", "Tsuku", "Hana", "Kaze", "Umi", "Sora"],
+                suffixes: ["bi", "gure", "kan", "rin", "yomi", "zora", "shimi", "kaze", "nami", "kiri"],
+                meanings: ["Ánh nắng xuyên qua kẽ lá đọng lại trên mặt đất", "Nỗi buồn man mác nhẹ nhàng trước sự đổi thay của thời gian", "Sự cô độc huy hoàng giữa màn sương ban mai", "Tiếng thì thầm của rừng già lúc nửa đêm", "Hào quang huyền ảo của mặt trăng khuất sau mây", "Giọt sương cuối cùng đọng trên cánh hoa úa", "Sự tĩnh lặng tuyệt đối trước khi bình minh ló rạng"]
             },
             {
-                name: "Mayan & Mesoamerican (Văn minh Maya cổ)",
-                prefixes: ["Balam", "Kuk", "Itz", "Yax", "Kin", "Pac", "Chil", "Ah"],
-                suffixes: ["al", "kan", "am", "ich", "bal", "na", "kin", "tun"],
-                meanings: ["Báo đốm tâm linh", "Rắn lông vũ", "Ma thuật hắc thạch", "Ngọc bích nguyên thủy", "Mặt trời rực lửa", "Chiến khiên hoàng gia", "Tiên tri vũ trụ", "Đại ngàn thiêngêng"]
+                name: "Hệ Ngân Hà Lãng Mạn (Vibe Tinh Không Địa Trung Hải/Latin/Pháp)",
+                prefixes: ["Effleu", "Flâ", "Sere", "Epher", "Clar", "Nosta", "Vaga", "Sole", "Rêve", "Amphi"],
+                suffixes: ["rer", "neur", "nitas", "meros", "tude", "gie", "bond", "teil", "rie", "luna"],
+                meanings: ["Cú chạm nhẹ nhàng thoáng qua làm lay động tâm thức", "Kẻ lãng du vô định đi tìm cái đẹp ẩn giấu", "Sự thanh thản tuyệt đối vượt qua mọi bão giông", "Vẻ đẹp rực rỡ nhưng mong manh, chỉ tồn tại trong khoảnh khắc", "Nỗi nhớ da diết về một nơi chốn ta chưa từng đặt chân đến", "Sự cô đơn dịu dàng giữa một vùng biển vắng", "Vũ điệu của những hạt bụi vàng dưới ánh nắng hoàng hôn"]
             }
         ];
 
@@ -178,26 +214,52 @@
             return arr[Math.floor(Math.random() * arr.length)];
         }
 
+        // Hàm chạy Nút 1
         function generateInfiniteName() {
-            // Chọn ngẫu nhiên 1 nền văn minh
             const civ = getRandomElement(civilizations);
-            
-            // Kết hợp tiền tố và hậu tố ngẫu nhiên để tạo chữ cổ mới
             const prefix = getRandomElement(civ.prefixes);
             const suffix = getRandomElement(civ.suffixes);
             const ancientWord = prefix + suffix;
 
-            // Kết hợp các tầng nghĩa ngẫu nhiên để tạo ra định nghĩa độc đáo
             const meaningPart1 = getRandomElement(civ.meanings);
-            const meaningPart2 = getRandomElement(["mang lại hy vọng", "ẩn chứa sức mạnh", "ngự trị dòng thời gian", "bị lãng quên", "huyền bí", "vĩnh cửu"]);
+            const meaningPart2 = getRandomElement(["ngự trị dòng thời gian", "ẩn chứa sức mạnh", "bị lãng quên", "vĩnh cửu", "linh thiêng"]);
             const fullMeaning = `${meaningPart1} (${meaningPart2})`;
 
-            // Render giao diện
             document.getElementById("nameDisplay").textContent = ancientWord;
+            document.getElementById("nameDisplay").style.color = "var(--primary-color)";
             document.getElementById("meaningDisplay").textContent = fullMeaning;
             
             const originEl = document.getElementById("originDisplay");
             originEl.textContent = civ.name;
+            originEl.style.color = "var(--accent-green)";
+            originEl.style.background = "#e6ede7";
+            originEl.style.border = "1px dotted var(--accent-green)";
+            originEl.style.display = "inline-block";
+        }
+
+        // Hàm chạy Nút 2 (Mới thêm)
+        function generateInfiniteSoulWord() {
+            const civ = getRandomElement(soulCivs);
+            const prefix = getRandomElement(civ.prefixes);
+            const suffix = getRandomElement(civ.suffixes);
+            
+            // Xử lý viết hoa chữ cái đầu và nối từ cho mượt
+            let soulWord = prefix + suffix;
+            soulWord = soulWord.charAt(0).toUpperCase() + soulWord.slice(1);
+
+            const meaningPart1 = getRandomElement(civ.meanings);
+            const meaningPart2 = getRandomElement(["khiến trái tim rung động", "mang rung cảm dịu dàng", "vượt lên trên ngôn từ", "chữa lành tâm hồn", "mang tần số an yên"]);
+            const fullMeaning = `${meaningPart1} — ${meaningPart2}.`;
+
+            document.getElementById("nameDisplay").textContent = soulWord;
+            document.getElementById("nameDisplay").style.color = "var(--soul-blue)"; // Đổi màu chữ chữ sang tông lam dịu
+            document.getElementById("meaningDisplay").textContent = fullMeaning;
+            
+            const originEl = document.getElementById("originDisplay");
+            originEl.textContent = civ.name;
+            originEl.style.color = "var(--soul-blue)";
+            originEl.style.background = "#eef4fa";
+            originEl.style.border = "1px dotted var(--soul-blue)";
             originEl.style.display = "inline-block";
         }
     </script>
