@@ -21,14 +21,19 @@
             background-repeat: repeat;
             background-size: 400px auto;
             background-attachment: fixed;
-            color: var(--text-dark);
+            color: var(--text-color); /* Đã sửa biến lỗi --text-dark */
             margin: 0;
             padding: 40px 20px;
             min-height: 100vh;
+            /* Thiết lập hệ thống căn giữa tuyệt đối cho container */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
         }
 
         .container {
-            width: 90%;
+            width: 100%;
             max-width: 580px;
             background: #ffffff;
             padding: 40px 30px;
@@ -38,6 +43,7 @@
             outline-offset: -8px;
             border-radius: 16px;
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.04);
+            box-sizing: border-box;
         }
 
         header h1 {
@@ -69,6 +75,7 @@
             border-radius: 8px;
             border: 1px dashed var(--border-color);
             transition: all 0.3s ease;
+            box-sizing: border-box;
         }
 
         .ancient-name {
@@ -77,6 +84,7 @@
             color: var(--primary-color);
             margin-bottom: 8px;
             letter-spacing: 1px;
+            word-break: break-word;
         }
 
         .meaning {
@@ -99,7 +107,6 @@
             border: 1px dotted var(--accent-green);
         }
 
-        /* Khung chứa 2 nút bấm */
         .btn-group {
             display: block;
         }
@@ -118,7 +125,6 @@
             display: inline-block;
         }
 
-        /* Nút 1: Màu xanh rêu */
         .btn-ancient {
             background-color: var(--accent-green);
         }
@@ -128,7 +134,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
 
-        /* Nút 2: Màu xanh lam khói */
         .btn-soul {
             background-color: var(--soul-blue);
         }
@@ -237,13 +242,12 @@
             originEl.style.display = "inline-block";
         }
 
-        // Hàm chạy Nút 2 (Mới thêm)
+        // Hàm chạy Nút 2
         function generateInfiniteSoulWord() {
             const civ = getRandomElement(soulCivs);
             const prefix = getRandomElement(civ.prefixes);
             const suffix = getRandomElement(civ.suffixes);
             
-            // Xử lý viết hoa chữ cái đầu và nối từ cho mượt
             let soulWord = prefix + suffix;
             soulWord = soulWord.charAt(0).toUpperCase() + soulWord.slice(1);
 
@@ -252,7 +256,7 @@
             const fullMeaning = `${meaningPart1} — ${meaningPart2}.`;
 
             document.getElementById("nameDisplay").textContent = soulWord;
-            document.getElementById("nameDisplay").style.color = "var(--soul-blue)"; // Đổi màu chữ chữ sang tông lam dịu
+            document.getElementById("nameDisplay").style.color = "var(--soul-blue)";
             document.getElementById("meaningDisplay").textContent = fullMeaning;
             
             const originEl = document.getElementById("originDisplay");
