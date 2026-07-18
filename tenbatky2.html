@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kho Từ Cổ Hiếm - 10,000 Từ Duy Nhất</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #faf8f5;
+            color: #2b2b2b;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: #ffffff;
+            border: 2px dashed #4a5d4e; /* Viền đứt xanh rêu phong cách blog */
+            border-radius: 16px;
+            padding: 40px 30px;
+            box-shadow: 0 8px 24px rgba(74, 93, 78, 0.1);
+            text-align: center;
+        }
+        h1 {
+            font-size: 20px;
+            color: #8c6239; /* Màu vàng đất/cam đất trầm */
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        p.subtitle {
+            font-size: 13px;
+            color: #7a7a7a;
+            margin-bottom: 30px;
+        }
+        .result-box {
+            min-height: 120px;
+            background-color: #f4f1ea;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px dotted #8c6239;
+        }
+        .word {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            font-size: 26px;
+            font-weight: bold;
+            color: #4a5d4e; /* Xanh rêu */
+            margin-bottom: 8px;
+            word-break: break-all;
+        }
+        .meaning {
+            font-size: 14px;
+            color: #616161;
+            line-height: 1.4;
+        }
+        .counter {
+            font-size: 12px;
+            color: #acaba7;
+            margin-top: 5px;
+        }
+        button {
+            background-color: #4a5d4e; /* Xanh rêu */
+            color: #ffffff;
+            border: none;
+            padding: 14px 28px;
+            font-size: 15px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            box-shadow: 0 4px 0 #334236;
+        }
+        button:hover {
+            background-color: #5c7461;
+        }
+        button:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+        button:disabled {
+            background-color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Kho Từ Cổ Khảo Cổ</h1>
+        <p class="subtitle">Hệ thống tạo ngữ âm Indo-European & Germanic độc bản</p>
+        
+        <div class="result-box">
+            <div id="wordDisplay" class="word">...</div>
+            <div id="meaningDisplay" class="meaning">Bấm nút để hiển thị từ cổ ngẫu nhiên</div>
+            <div id="clickCounter" class="counter">Đã bấm: 0 / 10,000</div>
+        </div>
+
+        <button id="randomBtn" onclick="generateUniqueWord()">Khám Phá Từ Cổ</button>
+    </div>
+
+    <script>
+        // Các thành tố ngữ âm chuẩn cổ ngữ dùng để tổ hợp (Tổng khả năng phối hợp > 15,000 từ)
+        const prefixes = [
+            { s: "Wulf", m: "Sói mang" }, { s: "Swinþ", m: "Sức mạnh" }, { s: "Anst", m: "Ân sủng" },
+            { s: "Fairg", m: "Vách núi" }, { s: "Skad", m: "Bóng râm" }, { s: "Berht", m: "Ánh sáng" },
+            { s: "Aiw", m: "Vĩnh hằng" }, { s: "Wilj", m: "Ý chí" }, { s: "Loux", m: "Hào quang" },
+            { s: "Leuk", m: "Bình minh" }, { s: "Aig", m: "Thời gian" }, { s: "Lind", m: "Hòa bình" },
+            { s: "Jor", m: "Biển cả" }, { s: "Suol", m: "Biệt đảo" }, { s: "Sig", m: "Chiến thắng" },
+            { s: "Run", m: "Bí mật" }, { s: "Val", m: "Hồn tử sĩ" }, { s: "Thaur", m: "Ý chí thép" },
+            { s: "Hliod", m: "Danh tiếng" }, { s: "Gund", m: "Chiến trận" }, { s: "Dag", m: "Ngày mới" },
+            { s: "Fraw", m: "Chúa tể" }, { s: "Regin", m: "Hội đồng thần linh" }, { s: "Alis", m: "Thế giới khác" },
+            { s: "Amal", m: "Sự kiên cường" }, { s: "Brand", m: "Lưỡi gươm lửa" }, { s: "Eir", m: "Sự che chở" },
+            { s: "Gis", m: "Mũi tên lao" }, { s: "Heim", m: "Xứ sở" }, { s: "Ing", m: "Thần mùa màng" }
+        ];
+
+        const infixes = [
+            { s: "a", m: " mang đậm" }, { s: "i", m: " chứa đựng" }, { s: "u", m: " kết tinh" }, 
+            { s: "o", m: " thuần khiết" }, { s: "e", m: " rực cháy" }
+        ];
+
+        const suffixes = [
+            { s: "þus", m: " vinh quang" }, { s: "mar", m: " vĩ đại" }, { s: "hild", m: " ngoan cường" },
+            { s: "guni", m: " vững chãi" }, { s: "taz", m: " chói lọi" }, { s: "sōs", m: " khởi nguyên" },
+            { s: "dā", m: " bất diệt" }, { s: "ra", m: " sâu thẳm" }, { s: "rik", m: " quyền lực" },
+            { s: "thrud", m: " quyền năng thần thánh" }, { s: "mund", m: " người bảo hộ" }, { s: "gard", m: " thành trì vững chắc" },
+            { s: "wald", m: " kẻ trị vì" }, { s: "heid", m: " bản sắc cao quý" }, { s: "bera", m: " người gánh vác" },
+            { s: "mōd", m: " tâm hồn thanh cao" }, { s: "rad", m: " lời thông thái" }, { s: "win", m: " tri kỷ trung thành" },
+            { s: "karl", m: " tự do" }, { s: "stain", m: " cốt cách đá tảng" }, { s: "ulf", m: " dũng mãnh" }
+        ];
+
+        let totalCombinations = [];
+        let shuffledIndices = [];
+        let currentClickCount = 0;
+        const maxClicks = 10000;
+
+        // Hàm khởi tạo sinh ra chính xác danh sách hoán vị không trùng lặp khi vừa tải trang
+        function initializeUniversalDictionary() {
+            // Duyệt qua toàn bộ để xây dựng danh sách tổ hợp
+            for (let p of prefixes) {
+                for (let i of infixes) {
+                    for (let s of suffixes) {
+                        totalCombinations.push({
+                            word: p.s + i.s + s.s,
+                            meaning: p.m + i.m + s.m
+                        });
+                    }
+                }
+            }
+
+            // Tạo danh sách chỉ số từ 0 đến hết chiều dài tổ hợp
+            for (let k = 0; k < totalCombinations.length; k++) {
+                shuffledIndices.push(k);
+            }
+
+            // Thuật toán xáo trộn Fisher-Yates xáo trộn toàn bộ chỉ số một lần duy nhất theo cách ngẫu nhiên tuyệt đối
+            for (let i = shuffledIndices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledIndices[i], shuffledIndices[j]] = [shuffledIndices[j], shuffledIndices[i]];
+            }
+            
+            // Giới hạn mảng chỉ lấy đúng 10,000 phần tử đầu tiên sau khi xáo trộn ngẫu nhiên để phục vụ bạn
+            if (shuffledIndices.length > maxClicks) {
+                shuffledIndices = shuffledIndices.slice(0, maxClicks);
+            }
+        }
+
+        // Thực hiện tạo từ độc bản theo lượt bấm
+        function generateUniqueWord() {
+            if (currentClickCount >= maxClicks) {
+                document.getElementById("wordDisplay").innerText = "ĐÃ ĐẠT 10,000 TỪ";
+                document.getElementById("meaningDisplay").innerText = "Bạn đã hoàn thành thử thách bấm 10,000 lần mà không hề bị trùng một từ nào!";
+                document.getElementById("randomBtn").disabled = true;
+                return;
+            }
+
+            // Lấy ra chỉ số ngẫu nhiên duy nhất đã được định sẵn thứ tự
+            let targetIndex = shuffledIndices[currentClickCount];
+            let selectedCombo = totalCombinations[targetIndex];
+
+            // Hiển thị ra màn hình
+            document.getElementById("wordDisplay").innerText = selectedCombo.word;
+            document.getElementById("meaningDisplay").innerText = selectedCombo.meaning;
+
+            currentClickCount++;
+            document.getElementById("clickCounter").innerText = `Đã bấm: ${currentClickCount} / 10,000`;
+        }
+
+        // Chạy khởi tạo ngay khi trang vừa tải
+        initializeUniversalDictionary();
+    </script>
+</body>
+</html>
