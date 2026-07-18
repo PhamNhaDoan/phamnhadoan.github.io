@@ -153,22 +153,25 @@
         }
 
         /* TẤT CẢ CÁC NÚT BẤM ĐỀU BO TRÒN 100% */
-        .btn-download {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 62px;
-            padding: 8px 0;
-            margin: 2px;
-            border-radius: 50px; /* Bo góc bong bóng tròn xịn */
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            font-family: 'Comfortaa', cursive;
-            transition: opacity 0.2s ease;
-        }
+  .btn-download {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 62px;
+    padding: 8px 0;
+    margin: 2px;
+    border-radius: 50px;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-family: 'Comfortaa', cursive;
+    transition: opacity 0.2s ease;
+    /* Thêm 2 dòng này để định dạng thẻ button */
+    border: none;
+    cursor: pointer;
+}
 
         .btn-doc { background-color: var(--primary-earth-green); width: 75px; } /* Nút Đọc online to hơn xíu */
         .btn-raw { background-color: var(--earth-orange); }
@@ -282,12 +285,18 @@
             // Xử lý nút Đọc online
             const btnDoc = isValidLink(story.linkDoc) ? `<a href="${story.linkDoc}" target="_blank" class="btn-download btn-doc">Đọc</a>` : '<span style="color:#bbb; font-style:italic;">Chưa có</span>';
 
-            // Xử lý nút Tải về (Raw, QT)
-            const btnRaw = isValidLink(story.linkRaw) ? `<a href="${story.linkRaw}" target="_blank" class="btn-download btn-raw">Raw</a>` : '';
-            const btnQT = isValidLink(story.linkQT) ? `<a href="${story.linkQT}" target="_blank" class="btn-download btn-qt">QT</a>` : '';
-            const downloadCell = (btnRaw || btnQT) 
-  ? `${btnRaw} ${btnQT}` 
-  : '<span style="color:#bbb; font-style:italic;" onclick="triggerDownload()">Chưa có</span>';
+     // Xử lý nút Tải về (Raw, QT) - Đổi thành button để trigger luồng tải ngầm
+const btnRaw = isValidLink(story.linkRaw) 
+    ? `<button onclick="triggerDirectDownload('${story.linkRaw}', '${story.ten.replace(/'/g, "\\'")}.txt')" class="btn-download btn-raw">Raw</button>` 
+    : '';
+
+const btnQT = isValidLink(story.linkQT) 
+    ? `<button onclick="triggerDirectDownload('${story.linkQT}', '${story.ten.replace(/'/g, "\\'")}.epub')" class="btn-download btn-qt">QT</button>` 
+    : '';
+
+const downloadCell = (btnRaw || btnQT) 
+    ? `${btnRaw} ${btnQT}` 
+    : '<span style="color:#bbb; font-style:italic;">Chưa có</span>';
 
             const row = `
                 <tr>
@@ -336,6 +345,49 @@
     }
 
     window.onload = initStories;
+    async function triggerDirectDownload(url, defaultFileName) {
+    let fileName = defaultFileName;
+    
+    try {
+        const urlObj = new URL(url);
+        const params = new URLSearchParams(urlObj.search);
+        
+        // Lấy tên file gốc từ tham số ?filename= nếu có
+        if (params.get('filename')) {
+            fileName = decodeURIComponent(params.get('filename'));
+        } else {
+            // Nếu dính link Google Drive (không fetch blob được do bảo mật CORS), mở tab mới dự phòng
+            if (url.includes('drive.google.com')) {
+                window.open(url, '_blank');
+                return;
+            }
+            fileName = url.substring(url.lastIndexOf('/') + 1) || defaultFileName;
+        }
+    } catch (e) {
+        window.open(url, '_blank');
+        return;
+    }
+
+    try {
+        // Bắt đầu luồng tải ngầm giống hệt công cụ của bà
+        const fileResponse = await fetch(url);
+        if (!fileResponse.ok) throw new Error("Tải file thất bại");
+        const blob = await fileResponse.blob();
+        
+        const tempLink = document.createElement('a');
+        tempLink.href = window.URL.createObjectURL(blob);
+        tempLink.setAttribute('download', fileName);
+        document.body.appendChild(tempLink);
+        tempLink.click();
+        
+        document.body.removeChild(tempLink);
+        window.URL.revokeObjectURL(tempLink.href);
+    } catch (err) {
+        // Nếu trình duyệt chặn do lỗi CORS hoặc lỗi mạng, tự động mở tab mới để chữa cháy
+        window.open(url, '_blank');
+        console.error(err);
+    }
+}
 </script>
 </body>
 </html>
