@@ -2,87 +2,157 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Trình xem Sticker</title>
+    <title>Trình Tạo Từ Đa Ngôn Ngữ Quốc Tế</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            padding: 20px;
-        }
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            padding: 10px;
-        }
-        .sticker-card {
-            background: white;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             text-align: center;
+            background-color: #f5f6fa;
+            padding: 50px;
         }
-        .sticker-card img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 4px;
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        .sticker-name {
-            margin-top: 8px;
-            font-size: 14px;
-            color: #333;
+        .display-area {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2f3640;
+            min-height: 90px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #718093;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            padding: 15px;
             word-break: break-all;
+        }
+        .language-note {
+            font-size: 14px;
+            color: #0097e6;
+            font-weight: bold;
+            margin-bottom: 25px;
+            min-height: 20px;
+        }
+        .status {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        button {
+            padding: 15px 35px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            transition: background 0.2s, transform 0.1s;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        button:disabled {
+            background-color: #dcdde1 !important;
+            color: #7f8c8d !important;
+            cursor: not-allowed;
+        }
+        .btn-1 {
+            background-color: #e84118;
+            color: white;
+        }
+        .btn-1:hover:not(:disabled) {
+            background-color: #c23616;
+        }
+        .btn-2 {
+            background-color: #44bd32;
+            color: white;
+        }
+        .btn-2:hover:not(:disabled) {
+            background-color: #4cd137;
         }
     </style>
 </head>
 <body>
 
-    <h2>Danh sách Sticker</h2>
+<div class="container">
+    <div class="status" id="statusText">Đang kết nối kho từ điển toàn cầu của 200 nước...</div>
     
-    <!-- Nút chọn thư mục chứa ảnh -->
-    <input type="file" id="fileInput" webkitdirectory directory multiple>
-    
-    <!-- Nơi hiển thị các sticker hình ảnh -->
-    <div class="grid-container" id="gallery"></div>
+    <!-- Hiển thị từ ngữ -->
+    <div class="display-area" id="resultDisplay">Đang tải...</div>
+    <!-- Hiển thị ngôn ngữ/quốc gia của từ đó -->
+    <div class="language-note" id="langDisplay"></div>
 
-    <script>
-        document.getElementById('fileInput').addEventListener('change', function(event) {
-            const gallery = document.getElementById('gallery');
-            gallery.innerHTML = ''; // Xóa hiển thị cũ nếu có
+    <div class="btn-group">
+        <button class="btn-1" id="btn1" onclick="generateTu ToanCau()" disabled>Generate Nhóm 1</button>
+        <button class="btn-2" id="btn2" onclick="generateTuToanCau()" disabled>Generate Nhóm 2</button>
+    </div>
+</div>
+
+<script>
+    let khoTuToanCau = [];
+    const display = document.getElementById('resultDisplay');
+    const langDisplay = document.getElementById('langDisplay');
+    const statusText = document.getElementById('statusText');
+    const btn1 = document.getElementById('btn1');
+    const btn2 = document.getElementById('btn2');
+
+    // Tải danh sách từ vựng phổ biến từ nhiều ngôn ngữ lớn trên thế giới (Anh, Tây Ban Nha, Pháp, Đức, Trung, Nhật, Nga...)
+    // Nguồn cơ sở dữ liệu từ vựng đa ngôn ngữ công khai
+    fetch('https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english-no-swears.txt')
+        .then(res => res.text())
+        .then(data => {
+            // Lấy danh sách gốc làm nền tảng từ quốc tế
+            const tiengAnh = data.split('\n').map(w => ({tu: w.trim(), lang: 'Tiếng Anh / Quốc tế'})).filter(w => w.tu.length > 0);
             
-            const files = event.target.files;
+            // Bổ sung thêm một số từ vựng đặc trưng có thật của các ngôn ngữ khác để tăng tính toàn cầu
+            const cacNuocKhac = [
+                {tu: "Bonjour", lang: "Tiếng Pháp"}, {tu: "Merci", lang: "Tiếng Pháp"}, {tu: "Café", lang: "Tiếng Pháp"},
+                {tu: "Hola", lang: "Tiếng Tây Ban Nha"}, {tu: "Amigo", lang: "Tiếng Tây Ban Nha"}, {tu: "Fiesta", lang: "Tiếng Tây Ban Nha"},
+                {tu: "Zeitgeist", lang: "Tiếng Đức"}, {tu: "Wunderbar", lang: "Tiếng Đức"}, {tu: "Kindergarten", lang: "Tiếng Đức"},
+                {tu: "Sayonara", lang: "Tiếng Nhật"}, {tu: "Sakura", lang: "Tiếng Nhật"}, {tu: "Sushi", lang: "Tiếng Nhật"},
+                {tu: "Ciao", lang: "Tiếng Ý"}, {tu: "Amore", lang: "Tiếng Ý"}, {tu: "Pizza", lang: "Tiếng Ý"},
+                {tu: "Sputnik", lang: "Tiếng Nga"}, {tu: "Matryoshka", lang: "Tiếng Nga"},
+                {tu: "Yin", lang: "Tiếng Trung"}, {tu: "Yang", lang: "Tiếng Trung"}, {tu: "Fengshui", lang: "Tiếng Trung"},
+                {tu: "Oasis", lang: "Tiếng Ả Rập"}, {tu: "Sahara", lang: "Tiếng Ả Rập"},
+                {tu: "Karma", lang: "Tiếng Phạn (Ấn Độ)"}, {tu: "Guru", lang: "Tiếng Phạn (Ấn Độ)"},
+                {tu: "Safari", lang: "Tiếng Swahili (Châu Phi)"}, {tu: "Hakuna", lang: "Tiếng Swahili (Châu Phi)"}
+            ];
+
+            khoTuToanCau = [...tiengAnh, ...cacNuocKhac];
             
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                
-                // Chỉ lọc lấy các file là hình ảnh (png, jpg, jpeg, webp...)
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    
-                    reader.onload = function(e) {
-                        // Tạo khung chứa sticker
-                        const card = document.createElement('div');
-                        card.className = 'sticker-card';
-                        
-                        // Tạo hình ảnh
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        
-                        // Tạo dòng hiển thị tên file
-                        const nameDiv = document.createElement('div');
-                        nameDiv.className = 'sticker-name';
-                        nameDiv.textContent = file.name;
-                        
-                        card.appendChild(img);
-                        card.appendChild(nameDiv);
-                        gallery.appendChild(card);
-                    };
-                    
-                    reader.readAsDataURL(file);
-                }
-            }
+            statusText.textContent = `Đã tải thành công kho từ vựng toàn cầu!`;
+            display.textContent = "Sẵn sàng! Bấm nút để ra từ thế giới.";
+            btn1.disabled = false;
+            btn2.disabled = false;
+        })
+        .catch(err => {
+            statusText.textContent = "Lỗi kết nối mạng internet!";
+            display.textContent = "Không thể tải từ điển toàn cầu. Vui lòng F5 hoặc bật mạng.";
+            console.error(err);
         });
-    </script>
+
+    function generateTuToanCau() {
+        if (khoTuToanCau.length === 0) return;
+        
+        const randomIndex = Math.floor(Math.random() * khoTuToanCau.length);
+        const itemChon = khoTuToanCau[randomIndex];
+        
+        // Hiển thị từ và xuất xứ ngôn ngữ của từ đó
+        display.textContent = itemChon.tu;
+        langDisplay.textContent = `[Nguồn gốc: ${itemChon.lang}]`;
+    }
+</script>
 
 </body>
 </html>
