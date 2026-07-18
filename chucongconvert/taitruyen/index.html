@@ -285,7 +285,9 @@
             // Xử lý nút Tải về (Raw, QT)
             const btnRaw = isValidLink(story.linkRaw) ? `<a href="${story.linkRaw}" target="_blank" class="btn-download btn-raw">Raw</a>` : '';
             const btnQT = isValidLink(story.linkQT) ? `<a href="${story.linkQT}" target="_blank" class="btn-download btn-qt">QT</a>` : '';
-            const downloadCell = (btnRaw || btnQT) ? `${btnRaw} ${btnQT}` : '<span style="color:#bbb; font-style:italic;">Chưa có</span>';
+            const downloadCell = (btnRaw || btnQT) 
+  ? `${btnRaw} ${btnQT}` 
+  : '<span style="color:#bbb; font-style:italic;" class="btn-link download-link" onclick="triggerDownload()">Chưa có</span>';
 
             const row = `
                 <tr>
