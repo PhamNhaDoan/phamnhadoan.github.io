@@ -357,11 +357,11 @@
 
      // Xử lý nút Tải về (Raw, QT) - Đổi thành button để trigger luồng tải ngầm
 const btnRaw = isValidLink(story.linkRaw) 
-    ? `<button onclick="triggerDirectDownload('${story.linkRaw}', '${story.ten.replace(/'/g, "\\'")}.txt')" class="btn-download btn-raw">Raw</button>` 
+    ? `<button onclick="triggerDirectDownload('${story.linkRaw}', '${story.ten.replace(/'/g, "\\'")}.txt')" class="btn-download btn-raw">⬇️Raw</button>` 
     : '';
 
 const btnQT = isValidLink(story.linkQT) 
-    ? `<button onclick="triggerDirectDownload('${story.linkQT}', '${story.ten.replace(/'/g, "\\'")}.epub')" class="btn-download btn-qt">QT</button>` 
+    ? `<button onclick="triggerDirectDownload('${story.linkQT}', '${story.ten.replace(/'/g, "\\'")}.epub')" class="btn-download btn-qt">⬇️QT</button>` 
     : '';
 
 const downloadCell = (btnRaw || btnQT) 
