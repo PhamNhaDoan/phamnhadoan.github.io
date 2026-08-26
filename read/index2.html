@@ -326,7 +326,7 @@
             background-color: #f4f1ea;
             background-image: radial-gradient(var(--bg-dots) 1.5px, transparent 1.5px);
             background-size: 18px 18px;
-            line-height: 1.8;
+            line-height: 1.6;
         }
 
         .container { max-width: 850px; margin: 0 auto; }
@@ -454,21 +454,19 @@
             border-color: var(--accent-green);
         }
 
-     /* Khung chứa nội dung chương/truyện */
-.story-content {
-    font-size: 1.2rem !important; /* Tăng cỡ chữ lên một chút cho dễ đọc */
-    line-height: 1.6 !important;  /* Khoảng cách giữa các dòng chữ xích lại gần nhau một chút xíu (cũ là 1.8) */
-    text-align: justify;
-    white-space: pre-wrap;
-    margin-bottom: 25px;
-    min-height: 120px;
-}
+        /* Khung nội dung truyện & Giãn cách đoạn văn */
+        .story-content {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            text-align: justify;
+            white-space: pre-wrap;
+            margin-bottom: 25px;
+            min-height: 120px;
+        }
 
-/* Khoảng cách giữa các đoạn văn hở ra nhẹ nhàng */
-.story-content p, 
-.story-content {
-    margin-bottom: 0.8rem !important; /* Khoảng cách vừa phải giữa đoạn 1, đoạn 2... */
-}
+        .story-content p, .story-content {
+            margin-bottom: 0.8rem;
+        }
 
         /* Khung điều hướng cuối chương */
         .bottom-nav {
@@ -614,7 +612,7 @@
             ${escapeHtml(chapters[0].content)}
         </div>
 
-        <!-- Khung 3 Nút Điều Hướng -->
+        <!-- Khung Điều Hướng Cuối Chương -->
         <div class="bottom-nav">
             <button class="nav-action-btn" id="prevChapBtn" onclick="navigateChapter(-1)">← Chương trước</button>
             <button class="top-scroll-btn" onclick="scrollToNav()">↑ Lên đầu (Mục lục)</button>
@@ -702,12 +700,14 @@
         localStorage.setItem('story_bookmarks', JSON.stringify(bookmarks));
     }
 
+    // Tải bình luận đã lưu từ localStorage lên màn hình
     function loadStoredComments() {
         const storageKey = 'comments_' + storyId;
         const comments = JSON.parse(localStorage.getItem(storageKey) || '[]');
         const listDiv = document.querySelector('.comments-list');
 
         if (listDiv && comments.length > 0) {
+            listDiv.innerHTML = '';
             comments.forEach(c => {
                 const item = document.createElement('div');
                 item.className = 'comment-item';
@@ -717,6 +717,7 @@
         }
     }
 
+    // Lưu bình luận mới vào localStorage
     function addComment(e, form) {
         e.preventDefault();
         const nameInput = form.querySelector('.comment-name-input');
@@ -732,6 +733,7 @@
             item.innerHTML = \`<div class="comment-author">\${escapeHtml(name)}</div><div class="comment-text">\${escapeHtml(text)}</div>\`;
             listDiv.prepend(item);
 
+            // Lưu dữ liệu vào localStorage
             const storageKey = 'comments_' + storyId;
             const comments = JSON.parse(localStorage.getItem(storageKey) || '[]');
             comments.unshift({ name: name, text: text });
