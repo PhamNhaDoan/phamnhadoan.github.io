@@ -34,7 +34,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 850px;
             margin: 0 auto;
         }
 
@@ -76,21 +76,48 @@
             border-bottom: 1px dashed var(--border-dash);
             padding-bottom: 15px;
             margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 600px) {
+            .story-header {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .cover-wrapper {
+            width: 100%;
+            height: 240px;
+            border: 1px dashed var(--border-dash);
+            padding: 5px;
+            border-radius: 10px;
+            background: #fff;
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .cover-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
         }
 
         .story-title-group {
-            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .story-title {
             font-size: 1.8rem;
             color: var(--primary-color);
-            margin: 0 0 6px 0;
+            margin: 0;
             font-weight: 700;
         }
 
@@ -100,8 +127,9 @@
             font-weight: 600;
         }
 
-        /* Nút Bookmark */
         .bookmark-btn {
+            align-self: flex-start;
+            margin-top: 10px;
             background: transparent;
             border: 1px solid var(--primary-color);
             color: var(--primary-color);
@@ -191,10 +219,6 @@
             outline: none;
         }
 
-        .comment-form input:focus, .comment-form textarea:focus {
-            border-color: var(--accent-green);
-        }
-
         .comment-form textarea {
             resize: vertical;
             min-height: 80px;
@@ -211,10 +235,6 @@
             font-family: inherit;
             font-weight: 700;
             transition: background 0.2s;
-        }
-
-        .comment-form button:hover {
-            background: #3b535e;
         }
 
         .comments-list {
@@ -253,16 +273,19 @@
     </header>
 
     <main id="story-list-container">
-        <!-- Khung truyện mẫu -->
+        <!-- Truyện mẫu -->
         <article class="story-container" data-story-id="story-sample">
             <div class="story-header">
+                <div class="cover-wrapper">
+                    <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=400" alt="Bìa truyện" class="cover-img">
+                </div>
                 <div class="story-title-group">
                     <h2 class="story-title">Như Gió 20 Năm</h2>
                     <div class="story-author">Tác giả: Phạm Nhà Đoan</div>
+                    <button class="bookmark-btn" onclick="toggleBookmark('story-sample')">
+                        <span class="bm-icon">★</span> <span class="bm-text">Bookmark</span>
+                    </button>
                 </div>
-                <button class="bookmark-btn" onclick="toggleBookmark('story-sample')">
-                    <span class="bm-icon">★</span> <span class="bm-text">Bookmark</span>
-                </button>
             </div>
 
             <div class="chapter-nav">
@@ -294,7 +317,6 @@ Gió vẫn thổi qua những rặng tre già nơi góc sân nhỏ. 20 năm trô
 </div>
 
 <script>
-    // Xử lý Bookmark
     function initBookmarks() {
         const bookmarks = JSON.parse(localStorage.getItem('story_bookmarks') || '[]');
         document.querySelectorAll('.story-container').forEach(container => {
@@ -328,7 +350,6 @@ Gió vẫn thổi qua những rặng tre già nơi góc sân nhỏ. 20 năm trô
         localStorage.setItem('story_bookmarks', JSON.stringify(bookmarks));
     }
 
-    // Chuyển chương mẫu
     function switchSampleChap(btn, num) {
         const nav = btn.parentElement;
         nav.querySelectorAll('.chapter-btn').forEach(b => b.classList.remove('active'));
@@ -341,7 +362,6 @@ Gió vẫn thổi qua những rặng tre già nơi góc sân nhỏ. 20 năm trô
         }
     }
 
-    // Thêm bình luận đơn giản (Tên khách + Nội dung)
     function addComment(e, form) {
         e.preventDefault();
         const nameInput = form.querySelector('.comment-name-input');
