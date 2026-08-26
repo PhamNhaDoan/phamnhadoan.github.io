@@ -293,7 +293,7 @@
         const filePath = `read/${fileName}.html`;
 
         let chapBtnsHtml = chapters.map((ch, idx) => 
-            `<button class="chapter-btn ${idx === 0 ? 'active' : ''}" onclick="switchChapter(this, '${ch.id}')">${ch.title}</button>`
+            `<button class="chapter-btn ${idx === 0 ? 'active' : ''}" data-chap-id="${ch.id}" onclick="switchChapter(this, '${ch.id}')">${ch.title}</button>`
         ).join('\n                ');
 
         const fullNewPageHtml = `<!DOCTYPE html>
@@ -459,12 +459,66 @@
             line-height: 1.8;
             text-align: justify;
             white-space: pre-wrap;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             min-height: 120px;
         }
 
         .story-content p, .story-content {
             margin-bottom: 1.2rem;
+        }
+
+        /* Khung điều hướng cuối chương */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding-top: 15px;
+            margin-bottom: 30px;
+            border-top: 1px dashed var(--border-dash);
+            flex-wrap: wrap;
+        }
+
+        .nav-action-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--primary-color);
+            background: #fff;
+            color: var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-action-btn:hover:not(:disabled) {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .nav-action-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-color: var(--border-dash);
+            color: var(--border-dash);
+        }
+
+        .top-scroll-btn {
+            background: var(--accent-green);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .top-scroll-btn:hover {
+            background: #3b535e;
         }
 
         .comments-section {
@@ -549,12 +603,19 @@
             </div>
         </div>
 
-        <div class="chapter-nav">
+        <div class="chapter-nav" id="chapterNav">
             ${chapBtnsHtml}
         </div>
 
         <div class="story-content" id="story-content-body">
             ${escapeHtml(chapters[0].content)}
+        </div>
+
+        <!-- Khung 3 Nút Điều Hướng -->
+        <div class="bottom-nav">
+            <button class="nav-action-btn" id="prevChapBtn" onclick="navigateChapter(-1)">← Chương trước</button>
+            <button class="top-scroll-btn" onclick="scrollToNav()">↑ Lên đầu (Mục lục)</button>
+            <button class="nav-action-btn" id="nextChapBtn" onclick="navigateChapter(1)">Chương sau →</button>
         </div>
 
         <div class="comments-section">
@@ -573,13 +634,43 @@
 <script>
     const storyId = '${fileName}';
     const storyData = ${JSON.stringify(chapters)};
+    let currentChapIndex = 0;
+
+    function updateNavButtons() {
+        const prevBtn = document.getElementById('prevChapBtn');
+        const nextBtn = document.getElementById('nextChapBtn');
+        if (prevBtn) prevBtn.disabled = (currentChapIndex <= 0);
+        if (nextBtn) nextBtn.disabled = (currentChapIndex >= storyData.length - 1);
+    }
 
     function switchChapter(btn, cId) {
         document.querySelectorAll('.chapter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        const found = storyData.find(item => item.id === cId);
-        if(found) {
-            document.getElementById('story-content-body').textContent = found.content;
+        
+        const foundIndex = storyData.findIndex(item => item.id === cId);
+        if(foundIndex !== -1) {
+            currentChapIndex = foundIndex;
+            document.getElementById('story-content-body').textContent = storyData[foundIndex].content;
+            updateNavButtons();
+        }
+    }
+
+    function navigateChapter(direction) {
+        const newIndex = currentChapIndex + direction;
+        if (newIndex >= 0 && newIndex < storyData.length) {
+            const targetChap = storyData[newIndex];
+            const targetBtn = document.querySelector(\`.chapter-btn[data-chap-id="\${targetChap.id}"]\`);
+            if (targetBtn) {
+                switchChapter(targetBtn, targetChap.id);
+                scrollToNav();
+            }
+        }
+    }
+
+    function scrollToNav() {
+        const navElem = document.getElementById('chapterNav');
+        if (navElem) {
+            navElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }
 
@@ -608,7 +699,6 @@
         localStorage.setItem('story_bookmarks', JSON.stringify(bookmarks));
     }
 
-    // Tải danh sách bình luận đã lưu từ localStorage khi mở trang
     function loadStoredComments() {
         const storageKey = 'comments_' + storyId;
         const comments = JSON.parse(localStorage.getItem(storageKey) || '[]');
@@ -624,7 +714,6 @@
         }
     }
 
-    // Thêm bình luận mới và ghi vào localStorage
     function addComment(e, form) {
         e.preventDefault();
         const nameInput = form.querySelector('.comment-name-input');
@@ -635,13 +724,11 @@
         const text = textInput.value.trim();
 
         if (name && text) {
-            // Thêm vào giao diện
             const item = document.createElement('div');
             item.className = 'comment-item';
             item.innerHTML = \`<div class="comment-author">\${escapeHtml(name)}</div><div class="comment-text">\${escapeHtml(text)}</div>\`;
             listDiv.prepend(item);
 
-            // Lưu cố định vào localStorage
             const storageKey = 'comments_' + storyId;
             const comments = JSON.parse(localStorage.getItem(storageKey) || '[]');
             comments.unshift({ name: name, text: text });
@@ -658,6 +745,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         initBookmark();
         loadStoredComments();
+        updateNavButtons();
     });
 <\/script>
 
