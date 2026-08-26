@@ -18,9 +18,7 @@
             --card-shadow: rgba(0, 0, 0, 0.05);
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Nunito', sans-serif;
@@ -33,35 +31,8 @@
             line-height: 1.6;
         }
 
-        .container {
-            max-width: 850px;
-            margin: 0 auto;
-        }
+        .container { max-width: 850px; margin: 0 auto; }
 
-        header {
-            text-align: center;
-            margin-bottom: 35px;
-            background: var(--cream-bg);
-            padding: 24px;
-            border-radius: 16px;
-            border: 2px dashed var(--border-dash);
-            box-shadow: 0 4px 12px var(--card-shadow);
-        }
-
-        header h1 {
-            margin: 0 0 8px 0;
-            color: var(--primary-color);
-            font-size: 2.2rem;
-            font-weight: 700;
-        }
-
-        header p {
-            margin: 0;
-            color: #666;
-            font-style: italic;
-        }
-
-        /* Khung chứa truyện - Nền trắng kem mờ, bao quanh bởi đường nét đứt */
         .story-container {
             background-color: var(--cream-bg);
             border: 2px dashed var(--border-dash);
@@ -69,12 +40,11 @@
             padding: 30px;
             margin-bottom: 35px;
             box-shadow: 0 8px 24px var(--card-shadow);
-            position: relative;
         }
 
         .story-header {
             border-bottom: 1px dashed var(--border-dash);
-            padding-bottom: 15px;
+            padding-bottom: 20px;
             margin-bottom: 20px;
             display: grid;
             grid-template-columns: 180px 1fr;
@@ -83,14 +53,12 @@
         }
 
         @media (max-width: 600px) {
-            .story-header {
-                grid-template-columns: 1fr;
-            }
+            .story-header { grid-template-columns: 1fr; }
         }
 
         .cover-wrapper {
             width: 100%;
-            height: 240px;
+            height: 250px;
             border: 1px dashed var(--border-dash);
             padding: 5px;
             border-radius: 10px;
@@ -108,11 +76,7 @@
             border-radius: 6px;
         }
 
-        .story-title-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
+        .story-title-group { display: flex; flex-direction: column; gap: 8px; }
 
         .story-title {
             font-size: 1.8rem;
@@ -121,19 +85,44 @@
             font-weight: 700;
         }
 
-        .story-author {
-            font-size: 1.05rem;
-            color: var(--accent-green);
+        .story-author { font-size: 1.05rem; color: var(--accent-green); font-weight: 600; }
+
+        /* Tags */
+        .story-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .tag-item {
+            background: #e2ddd5;
+            color: var(--text-color);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
             font-weight: 600;
+        }
+
+        /* Giới thiệu truyện */
+        .story-summary {
+            background: rgba(255, 255, 255, 0.7);
+            border-left: 3px solid var(--primary-color);
+            padding: 10px 14px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            color: #555;
+            font-style: italic;
+            margin-top: 6px;
         }
 
         .bookmark-btn {
             align-self: flex-start;
-            margin-top: 10px;
+            margin-top: 8px;
             background: transparent;
             border: 1px solid var(--primary-color);
             color: var(--primary-color);
-            padding: 8px 18px;
+            padding: 6px 16px;
             border-radius: 20px;
             cursor: pointer;
             font-family: inherit;
@@ -149,12 +138,7 @@
             color: #fff;
         }
 
-        .chapter-nav {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+        .chapter-nav { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
 
         .chapter-btn {
             padding: 6px 16px;
@@ -181,22 +165,15 @@
             white-space: pre-line;
             margin-bottom: 30px;
             min-height: 120px;
-            color: var(--text-color);
         }
 
-        /* Phần Bình Luận */
         .comments-section {
             border-top: 1px dashed var(--border-dash);
             padding-top: 25px;
             margin-top: 25px;
         }
 
-        .comments-title {
-            font-size: 1.25rem;
-            color: var(--accent-green);
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
+        .comments-title { font-size: 1.25rem; color: var(--accent-green); margin-bottom: 15px; font-weight: 700; }
 
         .comment-form {
             display: flex;
@@ -219,10 +196,7 @@
             outline: none;
         }
 
-        .comment-form textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
+        .comment-form textarea { resize: vertical; min-height: 80px; }
 
         .comment-form button {
             align-self: flex-start;
@@ -234,14 +208,9 @@
             cursor: pointer;
             font-family: inherit;
             font-weight: 700;
-            transition: background 0.2s;
         }
 
-        .comments-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+        .comments-list { display: flex; flex-direction: column; gap: 12px; }
 
         .comment-item {
             background: #fff;
@@ -250,110 +219,69 @@
             padding: 12px 16px;
         }
 
-        .comment-author {
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 4px;
-            font-size: 0.95rem;
-        }
-
-        .comment-text {
-            font-size: 0.95rem;
-            color: #444;
-            white-space: pre-line;
-        }
+        .comment-author { font-weight: 700; color: var(--primary-color); margin-bottom: 4px; font-size: 0.95rem; }
+        .comment-text { font-size: 0.95rem; color: #444; white-space: pre-line; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
-        <h1>Thư Viện Đọc Truyện</h1>
-        <p>Thư giãn với những trang truyện hấp dẫn</p>
-    </header>
-
-    <main id="story-list-container">
-        <!-- Truyện mẫu -->
-        <article class="story-container" data-story-id="story-sample">
-            <div class="story-header">
-                <div class="cover-wrapper">
-                    <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=400" alt="Bìa truyện" class="cover-img">
-                </div>
-                <div class="story-title-group">
-                    <h2 class="story-title">Như Gió 20 Năm</h2>
-                    <div class="story-author">Tác giả: Phạm Nhà Đoan</div>
-                    <button class="bookmark-btn" onclick="toggleBookmark('story-sample')">
-                        <span class="bm-icon">★</span> <span class="bm-text">Bookmark</span>
-                    </button>
-                </div>
+    <article class="story-container">
+        <div class="story-header">
+            <div class="cover-wrapper">
+                <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=400" alt="Bìa truyện" class="cover-img">
             </div>
+            <div class="story-title-group">
+                <h1 class="story-title">Như Gió 20 Năm</h1>
+                <div class="story-author">Tác giả: Phạm Nhà Đoan</div>
+                
+                <div class="story-tags">
+                    <span class="tag-item">Truyện ngắn</span>
+                    <span class="tag-item">Tình cảm</span>
+                    <span class="tag-item">Hoài niệm</span>
+                </div>
 
-            <div class="chapter-nav">
-                <button class="chapter-btn active" onclick="switchSampleChap(this, 1)">Chương 1</button>
-                <button class="chapter-btn" onclick="switchSampleChap(this, 2)">Chương 2</button>
+                <div class="story-summary">
+                    Giới thiệu: Một câu chuyện nhẹ nhàng về những ký ức tuổi trẻ, thời gian trôi qua lặng lẽ trôi qua như một cơn gió muộn...
+                </div>
+
+                <button class="bookmark-btn" onclick="toggleBookmark()">
+                    <span class="bm-icon">★</span> <span class="bm-text">Bookmark</span>
+                </button>
             </div>
+        </div>
 
-            <div class="story-content" id="sample-content">
+        <div class="chapter-nav">
+            <button class="chapter-btn active" onclick="switchSampleChap(1)">Chương 1</button>
+            <button class="chapter-btn" onclick="switchSampleChap(2)">Chương 2</button>
+        </div>
+
+        <div class="story-content" id="sample-content">
 Gió vẫn thổi qua những rặng tre già nơi góc sân nhỏ. 20 năm trôi qua như một giấc mơ dài, nơi kí ức và hiện thực đan xen lẫn nhau...
-            </div>
+        </div>
 
-            <div class="comments-section">
-                <h3 class="comments-title">Bình luận</h3>
-                <form class="comment-form" onsubmit="addComment(event, this)">
-                    <input type="text" placeholder="Tên khách..." required class="comment-name-input">
-                    <textarea placeholder="Nội dung bình luận..." required class="comment-text-input"></textarea>
-                    <button type="submit">Gửi bình luận</button>
-                </form>
+        <div class="comments-section">
+            <h3 class="comments-title">Bình luận</h3>
+            <form class="comment-form" onsubmit="addComment(event, this)">
+                <input type="text" placeholder="Tên khách..." required class="comment-name-input">
+                <textarea placeholder="Nội dung bình luận..." required class="comment-text-input"></textarea>
+                <button type="submit">Gửi bình luận</button>
+            </form>
 
-                <div class="comments-list">
-                    <div class="comment-item">
-                        <div class="comment-author">Khách Vô Danh</div>
-                        <div class="comment-text">Truyện nhẹ nhàng và sâu lắng quá!</div>
-                    </div>
+            <div class="comments-list">
+                <div class="comment-item">
+                    <div class="comment-author">Khách Vô Danh</div>
+                    <div class="comment-text">Truyện đọc nhẹ nhàng và sâu lắng quá!</div>
                 </div>
             </div>
-        </article>
-    </main>
+        </div>
+    </article>
 </div>
 
 <script>
-    function initBookmarks() {
-        const bookmarks = JSON.parse(localStorage.getItem('story_bookmarks') || '[]');
-        document.querySelectorAll('.story-container').forEach(container => {
-            const id = container.getAttribute('data-story-id');
-            const btn = container.querySelector('.bookmark-btn');
-            if (btn && bookmarks.includes(id)) {
-                btn.classList.add('bookmarked');
-                btn.querySelector('.bm-text').textContent = 'Đã Bookmark';
-            }
-        });
-    }
-
-    function toggleBookmark(storyId) {
-        let bookmarks = JSON.parse(localStorage.getItem('story_bookmarks') || '[]');
-        const container = document.querySelector(`[data-story-id="${storyId}"]`);
-        const btn = container ? container.querySelector('.bookmark-btn') : null;
-
-        if (bookmarks.includes(storyId)) {
-            bookmarks = bookmarks.filter(id => id !== storyId);
-            if (btn) {
-                btn.classList.remove('bookmarked');
-                btn.querySelector('.bm-text').textContent = 'Bookmark';
-            }
-        } else {
-            bookmarks.push(storyId);
-            if (btn) {
-                btn.classList.add('bookmarked');
-                btn.querySelector('.bm-text').textContent = 'Đã Bookmark';
-            }
-        }
-        localStorage.setItem('story_bookmarks', JSON.stringify(bookmarks));
-    }
-
-    function switchSampleChap(btn, num) {
-        const nav = btn.parentElement;
-        nav.querySelectorAll('.chapter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+    function switchSampleChap(num) {
+        document.querySelectorAll('.chapter-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
         const contentDiv = document.getElementById('sample-content');
         if (num === 1) {
             contentDiv.textContent = "Gió vẫn thổi qua những rặng tre già nơi góc sân nhỏ. 20 năm trôi qua như một giấc mơ dài, nơi kí ức và hiện thực đan xen lẫn nhau...";
@@ -374,10 +302,7 @@ Gió vẫn thổi qua những rặng tre già nơi góc sân nhỏ. 20 năm trô
         if (name && text) {
             const item = document.createElement('div');
             item.className = 'comment-item';
-            item.innerHTML = `
-                <div class="comment-author">${escapeHtml(name)}</div>
-                <div class="comment-text">${escapeHtml(text)}</div>
-            `;
+            item.innerHTML = `<div class="comment-author">${escapeHtml(name)}</div><div class="comment-text">${escapeHtml(text)}</div>`;
             listDiv.prepend(item);
             textInput.value = '';
         }
@@ -386,8 +311,6 @@ Gió vẫn thổi qua những rặng tre già nơi góc sân nhỏ. 20 năm trô
     function escapeHtml(str) {
         return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
-
-    document.addEventListener('DOMContentLoaded', initBookmarks);
 </script>
 
 </body>
