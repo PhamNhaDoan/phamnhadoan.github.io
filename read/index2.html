@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Post Truyện - Admin</title>
+    <title>Đăng Truyện Mới - Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
@@ -71,6 +71,10 @@
             background: #fff;
         }
 
+        input:focus {
+            border-color: var(--accent-green);
+        }
+
         .chapter-box {
             background: rgba(255, 255, 255, 0.8);
             border: 1px solid #ddd;
@@ -81,7 +85,7 @@
 
         .chapter-box textarea {
             width: 100%;
-            height: 110px;
+            height: 120px;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 8px;
@@ -134,14 +138,15 @@
             margin-top: 15px;
             text-align: center;
             font-weight: 700;
+            word-break: break-all;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Đăng Truyện Mới Up GitHub</h2>
-    <form id="postStoryForm" onsubmit="handlePostStory(event)">
+    <h2>Tạo Trang Truyện Mới Trên GitHub</h2>
+    <form id="postStoryForm" onsubmit="handleCreateStoryFile(event)">
         
         <div class="form-group">
             <label>Tên Repo</label>
@@ -159,7 +164,7 @@
         </div>
 
         <div class="form-group">
-            <label>Tên Truyện</label>
+            <label>Tên Truyện (Sẽ dùng làm tên file .html)</label>
             <input type="text" id="storyTitle" placeholder="Nhập tên truyện..." required>
         </div>
 
@@ -168,7 +173,6 @@
             <input type="text" id="storyAuthor" placeholder="Nhập tên tác giả..." required>
         </div>
 
-        <!-- Bìa Truyện -->
         <div class="form-group">
             <label>Upload Ảnh Bìa Truyện (Từ máy)</label>
             <input type="file" id="coverFile" accept="image/*">
@@ -196,7 +200,7 @@
 
         <button type="button" class="add-chap-btn" onclick="addChapterBox()">+ Thêm Phần Hoặc Chương</button>
 
-        <button type="submit" class="submit-btn">Đăng Bài Lên GitHub</button>
+        <button type="submit" class="submit-btn">Tạo File Truyện Mới Lên GitHub</button>
         <div id="statusMsg" class="status-msg"></div>
     </form>
 </div>
@@ -204,6 +208,7 @@
 <script>
     let chapterCount = 1;
 
+    // Tự động điền Token đã lưu
     document.addEventListener('DOMContentLoaded', () => {
         const savedToken = localStorage.getItem('gh_token_reviewconvert');
         if (savedToken) {
@@ -243,17 +248,27 @@
             } else if (urlInput !== '') {
                 resolve(urlInput);
             } else {
-                // Bìa mặc định nếu trống
                 resolve('https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=400');
             }
         });
     }
 
-    async function handlePostStory(e) {
+    // Hàm chuyển Tên truyện thành tên file không dấu (VD: "Như Gió 20 Năm" -> "nhu-gio-20-nam")
+    function slugify(text) {
+        return text.toString().toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Bỏ dấu
+            .replace(/[đĐ]/g, 'd')
+            .replace(/[^a-z0-9 -]/g, '') // Bỏ ký tự đặc biệt
+            .trim()
+            .replace(/\s+/g, '-') // Thay khoảng trắng bằng -
+            .replace(/-+/g, '-');
+    }
+
+    async function handleCreateStoryFile(e) {
         e.preventDefault();
         const statusMsg = document.getElementById('statusMsg');
         statusMsg.style.color = '#333';
-        statusMsg.textContent = 'Đang xử lý đăng bài...';
+        statusMsg.textContent = 'Đang khởi tạo file HTML mới...';
 
         const githubAcc = document.getElementById('githubAcc').value.trim();
         const token = document.getElementById('githubToken').value.trim();
@@ -263,8 +278,10 @@
 
         localStorage.setItem('gh_token_reviewconvert', token);
 
-        const repo = "reviewconvert";
+        // Đảm bảo trỏ đúng Repo
+        const repo = "phamnhadoan.github.io"; 
 
+        // Gom danh sách các chương
         const chapBoxes = document.querySelectorAll('.chapter-box');
         const chapters = [];
         chapBoxes.forEach((box, idx) => {
@@ -273,87 +290,320 @@
             chapters.push({ id: `ch${idx + 1}`, title: chapTitle, content: chapContent });
         });
 
-        const storyId = 'story-' + Date.now();
+        // Tạo Tên file chuẩn URL
+        const fileName = slugify(title) || ('truyen-' + Date.now());
+        const filePath = `read/${fileName}.html`; // Tạo file hoàn toàn mới trong thư mục read/
 
+        // Tạo nút chọn chương
         let chapBtnsHtml = chapters.map((ch, idx) => 
-            `<button class="chapter-btn ${idx === 0 ? 'active' : ''}" onclick="switchChapterCustom(this, '${storyId}', '${ch.id}')">${ch.title}</button>`
+            `<button class="chapter-btn ${idx === 0 ? 'active' : ''}" onclick="switchChapter(this, '${ch.id}')">${ch.title}</button>`
         ).join('\n                ');
 
-        let chapDataScript = `
-            <script>
-                if(!window.storyData) window.storyData = {};
-                window.storyData['${storyId}'] = ${JSON.stringify(chapters)};
-                function switchChapterCustom(btn, sId, cId) {
-                    const nav = btn.parentElement;
-                    nav.querySelectorAll('.chapter-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    const contentDiv = nav.parentElement.querySelector('.story-content');
-                    const data = window.storyData[sId] || [];
-                    const found = data.find(item => item.id === cId);
-                    if(found) {
-                        contentDiv.textContent = found.content;
-                    }
-                }
-            <\/script>
-        `;
+        // Tạo MÃ NGUỒN HOÀN CHỈNH CHO FILE HTML MỚI
+        const fullNewPageHtml = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${escapeHtml(title)} - Đọc Truyện</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dots: #c2b280;
+            --cream-bg: rgba(253, 251, 247, 0.94);
+            --border-dash: #a89f91;
+            --primary-color: #d76a03;
+            --accent-green: #4f6d7a;
+            --text-color: #2b2d42;
+            --card-shadow: rgba(0, 0, 0, 0.05);
+        }
 
-        const newPostHtml = `
-        <article class="story-container" data-story-id="${storyId}">
-            <div class="story-header">
-                <div class="cover-wrapper">
-                    <img src="${coverSrc}" alt="Bìa truyện" class="cover-img">
-                </div>
-                <div class="story-title-group">
-                    <h2 class="story-title">${escapeHtml(title)}</h2>
-                    <div class="story-author">Tác giả: ${escapeHtml(author)}</div>
-                    <button class="bookmark-btn" onclick="toggleBookmark('${storyId}')">
-                        <span class="bm-icon">★</span> <span class="bm-text">Bookmark</span>
-                    </button>
-                </div>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 40px 15px;
+            color: var(--text-color);
+            background-color: #f4f1ea;
+            background-image: radial-gradient(var(--bg-dots) 1.5px, transparent 1.5px);
+            background-size: 18px 18px;
+            line-height: 1.6;
+        }
+
+        .container { max-width: 850px; margin: 0 auto; }
+
+        .story-container {
+            background-color: var(--cream-bg);
+            border: 2px dashed var(--border-dash);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 8px 24px var(--card-shadow);
+        }
+
+        .story-header {
+            border-bottom: 1px dashed var(--border-dash);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 600px) {
+            .story-header { grid-template-columns: 1fr; }
+        }
+
+        .cover-wrapper {
+            width: 100%;
+            height: 240px;
+            border: 1px dashed var(--border-dash);
+            padding: 5px;
+            border-radius: 10px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .cover-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .story-title-group { display: flex; flex-direction: column; gap: 6px; }
+
+        .story-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .story-author { font-size: 1.05rem; color: var(--accent-green); font-weight: 600; }
+
+        .bookmark-btn {
+            align-self: flex-start;
+            margin-top: 10px;
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bookmark-btn:hover, .bookmark-btn.bookmarked {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .chapter-nav { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .chapter-btn {
+            padding: 6px 16px;
+            border: 1px solid var(--border-dash);
+            background: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .chapter-btn.active {
+            background: var(--accent-green);
+            color: #fff;
+            border-color: var(--accent-green);
+        }
+
+        .story-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            text-align: justify;
+            white-space: pre-line;
+            margin-bottom: 30px;
+            min-height: 120px;
+        }
+
+        .comments-section {
+            border-top: 1px dashed var(--border-dash);
+            padding-top: 25px;
+            margin-top: 25px;
+        }
+
+        .comments-title { font-size: 1.25rem; color: var(--accent-green); margin-bottom: 15px; font-weight: 700; }
+
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid #e2ddd5;
+        }
+
+        .comment-form input, .comment-form textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .comment-form textarea { resize: vertical; min-height: 80px; }
+
+        .comment-form button {
+            align-self: flex-start;
+            background: var(--accent-green);
+            color: #fff;
+            border: none;
+            padding: 9px 22px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+        }
+
+        .comments-list { display: flex; flex-direction: column; gap: 12px; }
+
+        .comment-item {
+            background: #fff;
+            border: 1px solid #e5e0d8;
+            border-radius: 10px;
+            padding: 12px 16px;
+        }
+
+        .comment-author { font-weight: 700; color: var(--primary-color); margin-bottom: 4px; font-size: 0.95rem; }
+        .comment-text { font-size: 0.95rem; color: #444; white-space: pre-line; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <article class="story-container" id="story-main">
+        <div class="story-header">
+            <div class="cover-wrapper">
+                <img src="${coverSrc}" alt="Bìa truyện" class="cover-img">
             </div>
-
-            <div class="chapter-nav">
-                ${chapBtnsHtml}
+            <div class="story-title-group">
+                <h1 class="story-title">${escapeHtml(title)}</h1>
+                <div class="story-author">Tác giả: ${escapeHtml(author)}</div>
+                <button class="bookmark-btn" onclick="toggleBookmark()">
+                    <span class="bm-icon">★</span> <span class="bm-text">Bookmark</span>
+                </button>
             </div>
+        </div>
 
-            <div class="story-content" id="content-${storyId}">
-                ${escapeHtml(chapters[0].content)}
-            </div>
+        <div class="chapter-nav">
+            ${chapBtnsHtml}
+        </div>
 
-            <div class="comments-section">
-                <h3 class="comments-title">Bình luận</h3>
-                <form class="comment-form" onsubmit="addComment(event, this)">
-                    <input type="text" placeholder="Tên khách..." required class="comment-name-input">
-                    <textarea placeholder="Nội dung bình luận..." required class="comment-text-input"></textarea>
-                    <button type="submit">Gửi bình luận</button>
-                </form>
+        <div class="story-content" id="story-content-body">
+            ${escapeHtml(chapters[0].content)}
+        </div>
 
-                <div class="comments-list"></div>
-            </div>
-            ${chapDataScript}
-        </article>
-        `;
+        <div class="comments-section">
+            <h3 class="comments-title">Bình luận</h3>
+            <form class="comment-form" onsubmit="addComment(event, this)">
+                <input type="text" placeholder="Tên khách..." required class="comment-name-input">
+                <textarea placeholder="Nội dung bình luận..." required class="comment-text-input"></textarea>
+                <button type="submit">Gửi bình luận</button>
+            </form>
+
+            <div class="comments-list"></div>
+        </div>
+    </article>
+</div>
+
+<script>
+    const storyId = '${fileName}';
+    const storyData = ${JSON.stringify(chapters)};
+
+    function switchChapter(btn, cId) {
+        document.querySelectorAll('.chapter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const found = storyData.find(item => item.id === cId);
+        if(found) {
+            document.getElementById('story-content-body').textContent = found.content;
+        }
+    }
+
+    function initBookmark() {
+        const bookmarks = JSON.parse(localStorage.getItem('story_bookmarks') || '[]');
+        const btn = document.querySelector('.bookmark-btn');
+        if (btn && bookmarks.includes(storyId)) {
+            btn.classList.add('bookmarked');
+            btn.querySelector('.bm-text').textContent = 'Đã Bookmark';
+        }
+    }
+
+    function toggleBookmark() {
+        let bookmarks = JSON.parse(localStorage.getItem('story_bookmarks') || '[]');
+        const btn = document.querySelector('.bookmark-btn');
+
+        if (bookmarks.includes(storyId)) {
+            bookmarks = bookmarks.filter(id => id !== storyId);
+            btn.classList.remove('bookmarked');
+            btn.querySelector('.bm-text').textContent = 'Bookmark';
+        } else {
+            bookmarks.push(storyId);
+            btn.classList.add('bookmarked');
+            btn.querySelector('.bm-text').textContent = 'Đã Bookmark';
+        }
+        localStorage.setItem('story_bookmarks', JSON.stringify(bookmarks));
+    }
+
+    function addComment(e, form) {
+        e.preventDefault();
+        const nameInput = form.querySelector('.comment-name-input');
+        const textInput = form.querySelector('.comment-text-input');
+        const listDiv = form.parentElement.querySelector('.comments-list');
+
+        const name = nameInput.value.trim();
+        const text = textInput.value.trim();
+
+        if (name && text) {
+            const item = document.createElement('div');
+            item.className = 'comment-item';
+            item.innerHTML = \`<div class="comment-author">\${escapeHtml(name)}</div><div class="comment-text">\${escapeHtml(text)}</div>\`;
+            listDiv.prepend(item);
+            textInput.value = '';
+        }
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    document.addEventListener('DOMContentLoaded', initBookmark);
+<\/script>
+
+</body>
+</html>`;
 
         try {
-            const apiUrl = `https://api.github.com/repos/${githubAcc}/${repo}/contents/doc_truyen.html`;
-            const getRes = await fetch(apiUrl, {
-                headers: { 'Authorization': `token ${token}` }
-            });
+            const apiUrl = `https://api.github.com/repos/${githubAcc}/${repo}/contents/${filePath}`;
 
-            if (!getRes.ok) {
-                throw new Error('Không thể tải file doc_truyen.html. Vui lòng kiểm tra lại Key Token hoặc tên Repo.');
-            }
-
-            const fileData = await getRes.json();
-            const currentContent = decodeURIComponent(escape(atob(fileData.content)));
-
-            const targetTag = '<main id="story-list-container">';
-            if (!currentContent.includes(targetTag)) {
-                throw new Error('Không tìm thấy vị trí chèn <main id="story-list-container"> trong file doc_truyen.html');
-            }
-
-            const updatedContent = currentContent.replace(targetTag, targetTag + '\n' + newPostHtml);
-
+            // Tạo trực tiếp File Mới Hoàn Toàn qua Github REST API
             const putRes = await fetch(apiUrl, {
                 method: 'PUT',
                 headers: {
@@ -361,18 +611,18 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    message: `Đăng truyện mới: ${title}`,
-                    content: btoa(unescape(encodeURIComponent(updatedContent))),
-                    sha: fileData.sha
+                    message: `Tạo trang truyện mới: ${title}`,
+                    content: btoa(unescape(encodeURIComponent(fullNewPageHtml)))
                 })
             });
 
             if (putRes.ok) {
+                const fullUrl = `https://${githubAcc.toLowerCase()}.github.io/${filePath}`;
                 statusMsg.style.color = 'green';
-                statusMsg.textContent = 'Đã đăng bài thành công lên GitHub!';
+                statusMsg.innerHTML = `Tạo file thành công!<br>Đường dẫn trang truyện mới của bạn:<br><a href="${fullUrl}" target="_blank" style="color:#d76a03;">${fullUrl}</a>`;
             } else {
                 const errData = await putRes.json();
-                throw new Error(errData.message || 'Lỗi khi commit file lên GitHub.');
+                throw new Error(errData.message || 'Lỗi khi đẩy file mới lên GitHub.');
             }
         } catch (err) {
             statusMsg.style.color = 'red';
