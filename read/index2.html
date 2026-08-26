@@ -157,12 +157,12 @@
 
         <div class="form-group">
             <label>Thẻ / Tag (Phân cách bằng dấu phẩy)</label>
-            <input type="text" id="storyTags" placeholder="Ví dụ: Ngôn tình, Cổ đại, Sủng, Huyền huyễn">
+            <input type="text" id="storyTags" placeholder="Ví dụ: Ngôn tình, Cổ đại, Sủng">
         </div>
 
         <div class="form-group">
             <label>Giới Thiệu / Tóm Tắt Truyện</label>
-            <textarea id="storySummary" rows="3" placeholder="Nhập đoạn tóm tắt hoặc lời giới thiệu truyện..."></textarea>
+            <textarea id="storySummary" rows="3" placeholder="Nhập tóm tắt câu chuyện..."></textarea>
         </div>
 
         <div class="form-group">
@@ -272,7 +272,6 @@
 
         const repo = "phamnhadoan.github.io";
 
-        // Biến đổi chuỗi tags thành HTML
         let tagsHtml = '';
         if (rawTags) {
             tagsHtml = rawTags.split(',')
@@ -327,7 +326,7 @@
             background-color: #f4f1ea;
             background-image: radial-gradient(var(--bg-dots) 1.5px, transparent 1.5px);
             background-size: 18px 18px;
-            line-height: 1.6;
+            line-height: 1.8;
         }
 
         .container { max-width: 850px; margin: 0 auto; }
@@ -455,21 +454,19 @@
             border-color: var(--accent-green);
         }
 
-    /* Khung nội dung truyện */
-.story-content {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    text-align: justify;
-    white-space: pre-wrap; /* Đổi pre-line thành pre-wrap */
-    margin-bottom: 30px;
-    min-height: 120px;
-}
+        .story-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            text-align: justify;
+            white-space: pre-wrap;
+            margin-bottom: 30px;
+            min-height: 120px;
+        }
 
-/* Thêm đoạn này để giãn khoảng cách giữa các đoạn văn */
-.story-content p {
-    margin-top: 0;
-    margin-bottom: 1.2rem; /* Tạo khoảng trống nhẹ giữa đoạn 1 và đoạn 2 */
-}
+        .story-content p, .story-content {
+            margin-bottom: 1.2rem;
+        }
+
         .comments-section {
             border-top: 1px dashed var(--border-dash);
             padding-top: 25px;
@@ -611,6 +608,23 @@
         localStorage.setItem('story_bookmarks', JSON.stringify(bookmarks));
     }
 
+    // Tải danh sách bình luận đã lưu từ localStorage khi mở trang
+    function loadStoredComments() {
+        const storageKey = 'comments_' + storyId;
+        const comments = JSON.parse(localStorage.getItem(storageKey) || '[]');
+        const listDiv = document.querySelector('.comments-list');
+
+        if (listDiv && comments.length > 0) {
+            comments.forEach(c => {
+                const item = document.createElement('div');
+                item.className = 'comment-item';
+                item.innerHTML = \`<div class="comment-author">\${escapeHtml(c.name)}</div><div class="comment-text">\${escapeHtml(c.text)}</div>\`;
+                listDiv.appendChild(item);
+            });
+        }
+    }
+
+    // Thêm bình luận mới và ghi vào localStorage
     function addComment(e, form) {
         e.preventDefault();
         const nameInput = form.querySelector('.comment-name-input');
@@ -621,10 +635,18 @@
         const text = textInput.value.trim();
 
         if (name && text) {
+            // Thêm vào giao diện
             const item = document.createElement('div');
             item.className = 'comment-item';
             item.innerHTML = \`<div class="comment-author">\${escapeHtml(name)}</div><div class="comment-text">\${escapeHtml(text)}</div>\`;
             listDiv.prepend(item);
+
+            // Lưu cố định vào localStorage
+            const storageKey = 'comments_' + storyId;
+            const comments = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            comments.unshift({ name: name, text: text });
+            localStorage.setItem(storageKey, JSON.stringify(comments));
+
             textInput.value = '';
         }
     }
@@ -633,7 +655,10 @@
         return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
 
-    document.addEventListener('DOMContentLoaded', initBookmark);
+    document.addEventListener('DOMContentLoaded', () => {
+        initBookmark();
+        loadStoredComments();
+    });
 <\/script>
 
 </body>
