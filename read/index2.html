@@ -132,7 +132,7 @@
         
         <div class="form-group">
             <label>Tên Repo</label>
-            <input type="text" id="repoName" value="https://phamnhadoan.github.io/" required>
+            <input type="text" id="repoName" value="phamnhadoan.github.io" required>
         </div>
 
         <div class="form-group">
@@ -454,7 +454,6 @@
             border-color: var(--accent-green);
         }
 
-        /* Khung nội dung truyện & Giãn cách đoạn văn */
         .story-content {
             font-size: 1.2rem;
             line-height: 1.6;
@@ -468,7 +467,6 @@
             margin-bottom: 0.8rem;
         }
 
-        /* Khung điều hướng cuối chương */
         .bottom-nav {
             display: flex;
             justify-content: space-between;
@@ -576,6 +574,12 @@
 
         .comment-author { font-weight: 700; color: var(--primary-color); margin-bottom: 4px; font-size: 0.95rem; }
         .comment-text { font-size: 0.95rem; color: #444; white-space: pre-line; }
+
+        .comment-status {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-top: -5px;
+        }
     </style>
 </head>
 <body>
@@ -612,7 +616,6 @@
             ${escapeHtml(chapters[0].content)}
         </div>
 
-        <!-- Khung Điều Hướng Cuối Chương -->
         <div class="bottom-nav">
             <button class="nav-action-btn" id="prevChapBtn" onclick="navigateChapter(-1)">← Chương trước</button>
             <button class="top-scroll-btn" onclick="scrollToNav()">↑ Lên đầu (Mục lục)</button>
@@ -624,10 +627,13 @@
             <form class="comment-form" onsubmit="addComment(event, this)">
                 <input type="text" placeholder="Tên khách..." required class="comment-name-input">
                 <textarea placeholder="Nội dung bình luận..." required class="comment-text-input"></textarea>
-                <button type="submit">Gửi bình luận</button>
+                <button type="submit" class="submit-comment-btn">Gửi bình luận</button>
+                <div class="comment-status" id="commentStatus"></div>
             </form>
 
-            <div class="comments-list"></div>
+            <div class="comments-list">
+                <!-- COMMENT_PLACEHOLDER -->
+            </div>
         </div>
     </article>
 </div>
@@ -635,6 +641,9 @@
 <script>
     const storyId = '${fileName}';
     const storyData = ${JSON.stringify(chapters)};
+    const ghUser = '${githubAcc}';
+    const ghRepo = 'phamnhadoan.github.io';
+    const filePath = '${filePath}';
     let currentChapIndex = 0;
 
     function updateNavButtons() {
@@ -700,46 +709,69 @@
         localStorage.setItem('story_bookmarks', JSON.stringify(bookmarks));
     }
 
-    // Tải bình luận đã lưu từ localStorage lên màn hình
-    function loadStoredComments() {
-        const storageKey = 'comments_' + storyId;
-        const comments = JSON.parse(localStorage.getItem(storageKey) || '[]');
-        const listDiv = document.querySelector('.comments-list');
-
-        if (listDiv && comments.length > 0) {
-            listDiv.innerHTML = '';
-            comments.forEach(c => {
-                const item = document.createElement('div');
-                item.className = 'comment-item';
-                item.innerHTML = \`<div class="comment-author">\${escapeHtml(c.name)}</div><div class="comment-text">\${escapeHtml(c.text)}</div>\`;
-                listDiv.appendChild(item);
-            });
-        }
-    }
-
-    // Lưu bình luận mới vào localStorage
-    function addComment(e, form) {
+    // Tự động Commit bình luận trực tiếp lên GitHub
+    async function addComment(e, form) {
         e.preventDefault();
         const nameInput = form.querySelector('.comment-name-input');
         const textInput = form.querySelector('.comment-text-input');
-        const listDiv = form.parentElement.querySelector('.comments-list');
+        const statusDiv = document.getElementById('commentStatus');
+        const submitBtn = form.querySelector('.submit-comment-btn');
 
         const name = nameInput.value.trim();
         const text = textInput.value.trim();
 
-        if (name && text) {
-            const item = document.createElement('div');
-            item.className = 'comment-item';
-            item.innerHTML = \`<div class="comment-author">\${escapeHtml(name)}</div><div class="comment-text">\${escapeHtml(text)}</div>\`;
-            listDiv.prepend(item);
+        if (!name || !text) return;
 
-            // Lưu dữ liệu vào localStorage
-            const storageKey = 'comments_' + storyId;
-            const comments = JSON.parse(localStorage.getItem(storageKey) || '[]');
-            comments.unshift({ name: name, text: text });
-            localStorage.setItem(storageKey, JSON.stringify(comments));
+        statusDiv.style.color = '#d76a03';
+        statusDiv.textContent = 'Đang gửi bình luận công khai...';
+        submitBtn.disabled = true;
 
-            textInput.value = '';
+        const token = '${token}'; // Token sử dụng để commit công khai
+
+        const newCommentHtml = \`<div class="comment-item"><div class="comment-author">\${escapeHtml(name)}</div><div class="comment-text">\${escapeHtml(text)}</div></div>\`;
+
+        try {
+            const apiUrl = \`https://api.github.com/repos/\${ghUser}/\${ghRepo}/contents/\${filePath}\`;
+            const getRes = await fetch(apiUrl, {
+                headers: { 'Authorization': \`token \${token}\` }
+            });
+
+            if (!getRes.ok) throw new Error('Không thể kết nối đến GitHub để lưu bình luận.');
+
+            const fileData = await getRes.json();
+            const currentContent = decodeURIComponent(escape(atob(fileData.content)));
+
+            const targetTag = '<!-- COMMENT_PLACEHOLDER -->';
+            if (!currentContent.includes(targetTag)) {
+                throw new Error('Lỗi cấu trúc trang bình luận.');
+            }
+
+            const updatedContent = currentContent.replace(targetTag, newCommentHtml + '\\n                ' + targetTag);
+
+            const putRes = await fetch(apiUrl, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': \`token \${token}\`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: \`Thêm bình luận từ \${name}\`,
+                    content: btoa(unescape(encodeURIComponent(updatedContent))),
+                    sha: fileData.sha
+                })
+            });
+
+            if (putRes.ok) {
+                statusDiv.style.color = 'green';
+                statusDiv.textContent = 'Đã gửi bình luận thành công! Đang tải lại...';
+                setTimeout(() => window.location.reload(), 1200);
+            } else {
+                throw new Error('Lỗi khi lưu bình luận lên GitHub.');
+            }
+        } catch (err) {
+            statusDiv.style.color = 'red';
+            statusDiv.textContent = 'Lỗi gửi bình luận: ' + err.message;
+            submitBtn.disabled = false;
         }
     }
 
@@ -749,7 +781,6 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         initBookmark();
-        loadStoredComments();
         updateNavButtons();
     });
 <\/script>
