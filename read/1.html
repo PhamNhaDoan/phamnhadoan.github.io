@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đọc Truyện & Bình Luận</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dots: #c2b280;
+            --cream-bg: rgba(253, 251, 247, 0.94);
+            --border-dash: #a89f91;
+            --primary-color: #d76a03;
+            --accent-green: #4f6d7a;
+            --text-color: #2b2d42;
+            --card-shadow: rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 40px 15px;
+            color: var(--text-color);
+            background-color: #f4f1ea;
+            background-image: radial-gradient(var(--bg-dots) 1.5px, transparent 1.5px);
+            background-size: 18px 18px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 35px;
+            background: var(--cream-bg);
+            padding: 24px;
+            border-radius: 16px;
+            border: 2px dashed var(--border-dash);
+            box-shadow: 0 4px 12px var(--card-shadow);
+        }
+
+        header h1 {
+            margin: 0 0 8px 0;
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        header p {
+            margin: 0;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Khung chứa truyện - Nền trắng kem mờ, bao quanh bởi đường nét đứt */
+        .story-container {
+            background-color: var(--cream-bg);
+            border: 2px dashed var(--border-dash);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 8px 24px var(--card-shadow);
+            position: relative;
+        }
+
+        .story-header {
+            border-bottom: 1px dashed var(--border-dash);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .story-title-group {
+            flex: 1;
+        }
+
+        .story-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin: 0 0 6px 0;
+            font-weight: 700;
+        }
+
+        .story-author {
+            font-size: 1.05rem;
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        /* Nút Bookmark */
+        .bookmark-btn {
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bookmark-btn:hover, .bookmark-btn.bookmarked {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .chapter-nav {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .chapter-btn {
+            padding: 6px 16px;
+            border: 1px solid var(--border-dash);
+            background: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .chapter-btn.active {
+            background: var(--accent-green);
+            color: #fff;
+            border-color: var(--accent-green);
+        }
+
+        .story-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            text-align: justify;
+            white-space: pre-line;
+            margin-bottom: 30px;
+            min-height: 120px;
+            color: var(--text-color);
+        }
+
+        /* Phần Bình Luận */
+        .comments-section {
+            border-top: 1px dashed var(--border-dash);
+            padding-top: 25px;
+            margin-top: 25px;
+        }
+
+        .comments-title {
+            font-size: 1.25rem;
+            color: var(--accent-green);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid #e2ddd5;
+        }
+
+        .comment-form input, .comment-form textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .comment-form input:focus, .comment-form textarea:focus {
+            border-color: var(--accent-green);
+        }
+
+        .comment-form textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .comment-form button {
+            align-self: flex-start;
+            background: var(--accent-green);
+            color: #fff;
+            border: none;
+            padding: 9px 22px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            transition: background 0.2s;
+        }
+
+        .comment-form button:hover {
+            background: #3b535e;
+        }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .comment-item {
+            background: #fff;
+            border: 1px solid #e5e0d8;
+            border-radius: 10px;
+            padding: 12px 16px;
+        }
+
+        .comment-author {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 4px;
+            font-size: 0.95rem;
+        }
+
+        .comment-text {
+            font-size: 0.95rem;
+            color: #444;
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Thư Viện Đọc Truyện</h1>
+        <p>Thư giãn với những trang truyện hấp dẫn</p>
+    </header>
+
+    <main id="story-list-container">
+        <!-- Khung truyện mẫu -->
+        <article class="story-container" data-story-id="story-sample">
+            <div class="story-header">
+                <div class="story-title-group">
+                    <h2 class="story-title">Như Gió 20 Năm</h2>
+                    <div class="story-author">Tác giả: Phạm Nhà Đoan</div>
+                </div>
+                <button class="bookmark-btn" onclick="toggleBookmark('story-sample')">
+                    <span class="bm-icon">★</span> <span class="bm-text">Bookmark</span>
+                </button>
+            </div>
+
+            <div class="chapter-nav">
+                <button class="chapter-btn active" onclick="switchSampleChap(this, 1)">Chương 1</button>
+                <button class="chapter-btn" onclick="switchSampleChap(this, 2)">Chương 2</button>
+            </div>
+
+            <div class="story-content" id="sample-content">
+Gió vẫn thổi qua những rặng tre già nơi góc sân nhỏ. 20 năm trôi qua như một giấc mơ dài, nơi kí ức và hiện thực đan xen lẫn nhau...
+            </div>
+
+            <div class="comments-section">
+                <h3 class="comments-title">Bình luận</h3>
+                <form class="comment-form" onsubmit="addComment(event, this)">
+                    <input type="text" placeholder="Tên khách..." required class="comment-name-input">
+                    <textarea placeholder="Nội dung bình luận..." required class="comment-text-input"></textarea>
+                    <button type="submit">Gửi bình luận</button>
+                </form>
+
+                <div class="comments-list">
+                    <div class="comment-item">
+                        <div class="comment-author">Khách Vô Danh</div>
+                        <div class="comment-text">Truyện nhẹ nhàng và sâu lắng quá!</div>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </main>
+</div>
+
+<script>
+    // Xử lý Bookmark
+    function initBookmarks() {
+        const bookmarks = JSON.parse(localStorage.getItem('story_bookmarks') || '[]');
+        document.querySelectorAll('.story-container').forEach(container => {
+            const id = container.getAttribute('data-story-id');
+            const btn = container.querySelector('.bookmark-btn');
+            if (btn && bookmarks.includes(id)) {
+                btn.classList.add('bookmarked');
+                btn.querySelector('.bm-text').textContent = 'Đã Bookmark';
+            }
+        });
+    }
+
+    function toggleBookmark(storyId) {
+        let bookmarks = JSON.parse(localStorage.getItem('story_bookmarks') || '[]');
+        const container = document.querySelector(`[data-story-id="${storyId}"]`);
+        const btn = container ? container.querySelector('.bookmark-btn') : null;
+
+        if (bookmarks.includes(storyId)) {
+            bookmarks = bookmarks.filter(id => id !== storyId);
+            if (btn) {
+                btn.classList.remove('bookmarked');
+                btn.querySelector('.bm-text').textContent = 'Bookmark';
+            }
+        } else {
+            bookmarks.push(storyId);
+            if (btn) {
+                btn.classList.add('bookmarked');
+                btn.querySelector('.bm-text').textContent = 'Đã Bookmark';
+            }
+        }
+        localStorage.setItem('story_bookmarks', JSON.stringify(bookmarks));
+    }
+
+    // Chuyển chương mẫu
+    function switchSampleChap(btn, num) {
+        const nav = btn.parentElement;
+        nav.querySelectorAll('.chapter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const contentDiv = document.getElementById('sample-content');
+        if (num === 1) {
+            contentDiv.textContent = "Gió vẫn thổi qua những rặng tre già nơi góc sân nhỏ. 20 năm trôi qua như một giấc mơ dài, nơi kí ức và hiện thực đan xen lẫn nhau...";
+        } else {
+            contentDiv.textContent = "Chương 2: Căn nhà gỗ đượm mùi trà hoa cúc và tiếng thở dài khe khẽ của thời gian...";
+        }
+    }
+
+    // Thêm bình luận đơn giản (Tên khách + Nội dung)
+    function addComment(e, form) {
+        e.preventDefault();
+        const nameInput = form.querySelector('.comment-name-input');
+        const textInput = form.querySelector('.comment-text-input');
+        const listDiv = form.parentElement.querySelector('.comments-list');
+
+        const name = nameInput.value.trim();
+        const text = textInput.value.trim();
+
+        if (name && text) {
+            const item = document.createElement('div');
+            item.className = 'comment-item';
+            item.innerHTML = `
+                <div class="comment-author">${escapeHtml(name)}</div>
+                <div class="comment-text">${escapeHtml(text)}</div>
+            `;
+            listDiv.prepend(item);
+            textInput.value = '';
+        }
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    document.addEventListener('DOMContentLoaded', initBookmarks);
+</script>
+
+</body>
+</html>
