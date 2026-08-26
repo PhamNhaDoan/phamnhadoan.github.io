@@ -455,20 +455,21 @@
             border-color: var(--accent-green);
         }
 
-      .story-content {
+    /* Khung nội dung truyện */
+.story-content {
     font-size: 1.1rem;
-    line-height: 1.9; /* Giúp dòng chữ thoáng hơn */
+    line-height: 1.8;
     text-align: justify;
-    white-space: pre-line; /* Giữ nguyên các dấu xuống dòng khi nhập từ textarea */
+    white-space: pre-wrap; /* Đổi pre-line thành pre-wrap */
     margin-bottom: 30px;
     min-height: 120px;
 }
 
-/* Thêm đoạn này để giãn cách đoạn văn khi xuống dòng */
-.story-content p, .story-content {
-    margin-bottom: 1.2rem; 
+/* Thêm đoạn này để giãn khoảng cách giữa các đoạn văn */
+.story-content p {
+    margin-top: 0;
+    margin-bottom: 1.2rem; /* Tạo khoảng trống nhẹ giữa đoạn 1 và đoạn 2 */
 }
-
         .comments-section {
             border-top: 1px dashed var(--border-dash);
             padding-top: 25px;
