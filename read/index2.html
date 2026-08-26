@@ -60,7 +60,7 @@
             color: var(--accent-green);
         }
 
-        input[type="text"], input[type="password"] {
+        input[type="text"], input[type="password"], input[type="file"] {
             width: 100%;
             padding: 10px 14px;
             border: 1px solid #ccc;
@@ -68,10 +68,7 @@
             font-family: inherit;
             font-size: 0.95rem;
             outline: none;
-        }
-
-        input:focus {
-            border-color: var(--accent-green);
+            background: #fff;
         }
 
         .chapter-box {
@@ -92,10 +89,6 @@
             resize: vertical;
             margin-top: 6px;
             outline: none;
-        }
-
-        .chapter-box textarea:focus {
-            border-color: var(--accent-green);
         }
 
         .add-chap-btn {
@@ -175,6 +168,17 @@
             <input type="text" id="storyAuthor" placeholder="Nhập tên tác giả..." required>
         </div>
 
+        <!-- Bìa Truyện -->
+        <div class="form-group">
+            <label>Upload Ảnh Bìa Truyện (Từ máy)</label>
+            <input type="file" id="coverFile" accept="image/*">
+        </div>
+
+        <div class="form-group">
+            <label>Hoặc Dán URL Bìa Truyện</label>
+            <input type="text" id="coverUrl" placeholder="https://domain.com/anh-bia.jpg">
+        </div>
+
         <hr style="border: 0; border-top: 1px dashed var(--border-dash); margin: 25px 0;">
 
         <div id="chaptersContainer">
@@ -200,7 +204,6 @@
 <script>
     let chapterCount = 1;
 
-    // Tự động điền Token đã lưu
     document.addEventListener('DOMContentLoaded', () => {
         const savedToken = localStorage.getItem('gh_token_reviewconvert');
         if (savedToken) {
@@ -226,6 +229,26 @@
         container.appendChild(box);
     }
 
+    function getCoverSrc() {
+        return new Promise((resolve) => {
+            const fileInput = document.getElementById('coverFile');
+            const urlInput = document.getElementById('coverUrl').value.trim();
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    resolve(e.target.result);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else if (urlInput !== '') {
+                resolve(urlInput);
+            } else {
+                // Bìa mặc định nếu trống
+                resolve('https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=400');
+            }
+        });
+    }
+
     async function handlePostStory(e) {
         e.preventDefault();
         const statusMsg = document.getElementById('statusMsg');
@@ -236,6 +259,7 @@
         const token = document.getElementById('githubToken').value.trim();
         const title = document.getElementById('storyTitle').value.trim();
         const author = document.getElementById('storyAuthor').value.trim();
+        const coverSrc = await getCoverSrc();
 
         localStorage.setItem('gh_token_reviewconvert', token);
 
@@ -276,13 +300,16 @@
         const newPostHtml = `
         <article class="story-container" data-story-id="${storyId}">
             <div class="story-header">
+                <div class="cover-wrapper">
+                    <img src="${coverSrc}" alt="Bìa truyện" class="cover-img">
+                </div>
                 <div class="story-title-group">
                     <h2 class="story-title">${escapeHtml(title)}</h2>
                     <div class="story-author">Tác giả: ${escapeHtml(author)}</div>
+                    <button class="bookmark-btn" onclick="toggleBookmark('${storyId}')">
+                        <span class="bm-icon">★</span> <span class="bm-text">Bookmark</span>
+                    </button>
                 </div>
-                <button class="bookmark-btn" onclick="toggleBookmark('${storyId}')">
-                    <span class="bm-icon">★</span> <span class="bm-text">Bookmark</span>
-                </button>
             </div>
 
             <div class="chapter-nav">
