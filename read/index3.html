@@ -135,7 +135,6 @@
 <div class="container">
     <h2>Quản Lý Chương Truyện (Thêm / Xóa Chương)</h2>
 
-    <!-- Thông tin kết nối -->
     <div class="form-section">
         <div class="section-title">1. Thông Tin Cấu Hình GitHub</div>
         <div class="form-group">
@@ -144,11 +143,10 @@
         </div>
         <div class="form-group">
             <label>Link Truyện Cần Chỉnh Sửa</label>
-            <input type="text" id="storyUrl" placeholder="Ví dụ: https://phamnhadoan.github.io/read/ten-truyen.html" required>
+            <input type="text" id="storyUrl" placeholder="Ví dụ: https://phamnhadoan.github.io/read/giam-cam-ngay.html" required>
         </div>
     </div>
 
-    <!-- Khung Thêm Chương -->
     <div class="form-section">
         <div class="section-title">2. Thêm Chương Mới</div>
         <form id="addChapterForm" onsubmit="handleAddChapter(event)">
@@ -164,7 +162,6 @@
         </form>
     </div>
 
-    <!-- Khung Xóa Chương -->
     <div class="form-section">
         <div class="section-title" style="color: var(--danger-color);">3. Xóa Chương Cũ</div>
         <form id="deleteChapterForm" onsubmit="handleDeleteChapter(event)">
@@ -190,7 +187,6 @@
         }
     });
 
-    // Lấy đường dẫn file từ URL truyện
     function getFilePathFromUrl(url) {
         url = url.trim();
         if (url.includes('.github.io/')) {
@@ -202,7 +198,6 @@
         return 'read/' + url;
     }
 
-    // Xử lý Thêm Chương Mới
     async function handleAddChapter(e) {
         e.preventDefault();
         const statusMsg = document.getElementById('statusMsg');
@@ -229,31 +224,27 @@
                 headers: { 'Authorization': `token ${token}` }
             });
 
-            if (!getRes.ok) throw new Error('Không thể tìm thấy file truyện trên GitHub. Vui lòng kiểm tra lại link truyện!');
+            if (!getRes.ok) throw new Error(`Không tìm thấy file ${filePath} trên GitHub! Vui lòng kiểm tra lại link.`);
 
             const fileData = await getRes.json();
             let htmlContent = decodeURIComponent(escape(atob(fileData.content)));
 
-            // Tìm vị trí chứa dữ liệu chapters
-           // ✅ Đoạn mới nhận diện được cả const, let, var và khoảng trắng thừa
-const storyDataMatch = htmlContent.match(/(?:const|let|var)\s+storyData\s*=\s*(\[[\s\S]*?\]);/);
-if (!storyDataMatch) throw new Error('Cấu trúc file truyện không hợp lệ hoặc thiếu biến storyData!');
+            // Quét tìm biến storyData nhạy hơn
+            const storyDataMatch = htmlContent.match(/(?:const|let|var)\s+storyData\s*=\s*(\[[\s\S]*?\]);/);
+            if (!storyDataMatch) throw new Error('Cấu trúc file truyện không có biến storyData! Hãy kiểm tra lại file .html của truyện.');
 
             let chapters = JSON.parse(storyDataMatch[1]);
             const newChapId = `ch${chapters.length + 1}`;
 
-            // Thêm chương mới vào mảng
             chapters.push({
                 id: newChapId,
                 title: newTitle,
                 content: newContent
             });
 
-            // Cập nhật lại chuỗi storyData mới
             const updatedStoryDataStr = `const storyData = ${JSON.stringify(chapters)};`;
-            htmlContent = htmlContent.replace(/const storyData = \[.*?\];/s, updatedStoryDataStr);
+            htmlContent = htmlContent.replace(/(?:const|let|var)\s+storyData\s*=\s*\[[\s\S]*?\];/, updatedStoryDataStr);
 
-            // Cập nhật nút danh sách chương (Chapter Nav)
             const newButtonHtml = `<button class="chapter-btn" data-chap-id="${newChapId}" onclick="switchChapter(this, '${newChapId}')">${escapeHtml(newTitle)}</button>`;
             const navTagMatch = htmlContent.match(/<div class="chapter-nav" id="chapterNav">(.*?)<\/div>/s);
             
@@ -262,7 +253,6 @@ if (!storyDataMatch) throw new Error('Cấu trúc file truyện không hợp l�
                 htmlContent = htmlContent.replace(/<div class="chapter-nav" id="chapterNav">.*?<\/div>/s, updatedNavHtml);
             }
 
-            // Đẩy file đã cập nhật lên GitHub
             statusMsg.textContent = 'Đang lưu chương mới lên GitHub...';
             const putRes = await fetch(apiUrl, {
                 method: 'PUT',
@@ -279,11 +269,11 @@ if (!storyDataMatch) throw new Error('Cấu trúc file truyện không hợp l�
 
             if (putRes.ok) {
                 statusMsg.style.color = 'green';
-                statusMsg.innerHTML = `Thêm chương mới thành công!<br>Vào link truyện để xem chương mới: <a href="https://${githubAcc.toLowerCase()}.github.io/${filePath}" target="_blank" style="color:#d76a03;">Xem Truyện</a>`;
+                statusMsg.innerHTML = `Thêm chương mới thành công!<br><a href="https://${githubAcc.toLowerCase()}.github.io/${filePath}" target="_blank" style="color:#d76a03;">Xem Truyện Đã Cập Nhật</a>`;
                 document.getElementById('newChapTitle').value = '';
                 document.getElementById('newChapContent').value = '';
             } else {
-                throw new Error('Lỗi khi cập nhật file lên GitHub.');
+                throw new Error('Lỗi khi ghi đè file lên GitHub.');
             }
 
         } catch (err) {
@@ -292,7 +282,6 @@ if (!storyDataMatch) throw new Error('Cấu trúc file truyện không hợp l�
         }
     }
 
-    // Xử lý Xóa Chương
     async function handleDeleteChapter(e) {
         e.preventDefault();
         const statusMsg = document.getElementById('statusMsg');
@@ -322,7 +311,7 @@ if (!storyDataMatch) throw new Error('Cấu trúc file truyện không hợp l�
             const fileData = await getRes.json();
             let htmlContent = decodeURIComponent(escape(atob(fileData.content)));
 
-            const storyDataMatch = htmlContent.match(/const storyData = (\[.*?\]);/s);
+            const storyDataMatch = htmlContent.match(/(?:const|let|var)\s+storyData\s*=\s*(\[[\s\S]*?\]);/);
             if (!storyDataMatch) throw new Error('Cấu trúc file truyện không hợp lệ!');
 
             let chapters = JSON.parse(storyDataMatch[1]);
@@ -336,14 +325,11 @@ if (!storyDataMatch) throw new Error('Cấu trúc file truyện không hợp l�
                 throw new Error('Truyện chỉ có 1 chương duy nhất, không thể xóa bớt!');
             }
 
-            const deletedChapId = chapters[targetIndex].id;
             chapters.splice(targetIndex, 1);
 
-            // Cập nhật lại dữ liệu JS
             const updatedStoryDataStr = `const storyData = ${JSON.stringify(chapters)};`;
-            htmlContent = htmlContent.replace(/const storyData = \[.*?\];/s, updatedStoryDataStr);
+            htmlContent = htmlContent.replace(/(?:const|let|var)\s+storyData\s*=\s*\[[\s\S]*?\];/, updatedStoryDataStr);
 
-            // Tạo lại toàn bộ HTML danh sách nút chương
             const newChapBtnsHtml = chapters.map((ch, idx) => 
                 `<button class="chapter-btn ${idx === 0 ? 'active' : ''}" data-chap-id="${ch.id}" onclick="switchChapter(this, '${ch.id}')">${escapeHtml(ch.title)}</button>`
             ).join('\n                ');
@@ -353,7 +339,6 @@ if (!storyDataMatch) throw new Error('Cấu trúc file truyện không hợp l�
                 `<div class="chapter-nav" id="chapterNav">\n                ${newChapBtnsHtml}\n        </div>`
             );
 
-            // Đẩy dữ liệu cập nhật lên GitHub
             statusMsg.textContent = 'Đang xóa chương trên GitHub...';
             const putRes = await fetch(apiUrl, {
                 method: 'PUT',
