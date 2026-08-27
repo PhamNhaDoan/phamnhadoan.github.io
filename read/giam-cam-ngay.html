@@ -4555,7 +4555,7 @@ Hà Thanh Lâm dùng tay bóp lấy Ấn Lan Thư cằm, khiến cho hắn ngẩ
         }
     }
 
-    function updateNavButtons() {
+   function updateNavButtons() {
         const prevBtn = document.getElementById('prevChapBtn');
         const nextBtn = document.getElementById('nextChapBtn');
         if (prevBtn) prevBtn.disabled = (currentChapIndex <= 0);
@@ -4593,39 +4593,12 @@ Hà Thanh Lâm dùng tay bóp lấy Ấn Lan Thư cằm, khiến cho hắn ngẩ
         }
     }
 
-    function initBookmark() {
-        const bookmarks = JSON.parse(localStorage.getItem('story_bookmarks') || '[]');
-        const btn = document.querySelector('.bookmark-btn');
-        if (btn && bookmarks.includes(storyId)) {
-            btn.classList.add('bookmarked');
-            btn.querySelector('.bm-text').textContent = 'Đã Bookmark';
-        }
-    }
-
-    function toggleBookmark() {
-        let bookmarks = JSON.parse(localStorage.getItem('story_bookmarks') || '[]');
-        const btn = document.querySelector('.bookmark-btn');
-
-        if (bookmarks.includes(storyId)) {
-            bookmarks = bookmarks.filter(id => id !== storyId);
-            btn.classList.remove('bookmarked');
-            btn.querySelector('.bm-text').textContent = 'Bookmark';
-        } else {
-            bookmarks.push(storyId);
-            btn.classList.add('bookmarked');
-            btn.querySelector('.bm-text').textContent = 'Đã Bookmark';
-        }
-        localStorage.setItem('story_bookmarks', JSON.stringify(bookmarks));
-    }
-
     function escapeHtml(str) {
         return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        initBookmark();
         updateNavButtons();
-        loadReaderSettings();
     });
 </script>
 
