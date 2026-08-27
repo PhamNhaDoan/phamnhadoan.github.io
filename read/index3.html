@@ -152,7 +152,7 @@
         <form id="addChapterForm" onsubmit="handleAddChapter(event)">
             <div class="form-group">
                 <label>Tên / Số Chương Mới</label>
-                <input type="text" id="newChapTitle" placeholder="Ví dụ: Chương 2 hoặc Phần 2" required>
+                <input type="text" id="newChapTitle" placeholder="Ví dụ: Chương 131" required>
             </div>
             <div class="form-group">
                 <label>Nội Dung Chương Mới</label>
@@ -198,11 +198,29 @@
         return 'read/' + url;
     }
 
+    // Hàm trích xuất dữ liệu mảng chương thông minh từ file lớn
+    function extractChaptersData(html) {
+        // Tìm bất kỳ mảng JSON nào được gán cho storyData, chapters, hoặc chapterList
+        const match = html.match(/(?:const|let|var)\s+(?:storyData|chapters|chapterList)\s*=\s*(\[\s*\{[\s\S]*?\}\s*\]);/);
+        if (match) {
+            try {
+                return {
+                    data: JSON.parse(match[1]),
+                    rawMatch: match[0],
+                    varName: match[0].match(/(?:const|let|var)\s+([a-zA-Z0-9_$]+)/)[1]
+                };
+            } catch (e) {
+                console.error("Lỗi parse JSON:", e);
+            }
+        }
+        return null;
+    }
+
     async function handleAddChapter(e) {
         e.preventDefault();
         const statusMsg = document.getElementById('statusMsg');
         statusMsg.style.color = '#333';
-        statusMsg.textContent = 'Đang tải file truyện từ GitHub...';
+        statusMsg.textContent = 'Đang đọc dữ liệu 130 chương từ GitHub...';
 
         const token = document.getElementById('githubToken').value.trim();
         const storyUrl = document.getElementById('storyUrl').value.trim();
@@ -224,16 +242,17 @@
                 headers: { 'Authorization': `token ${token}` }
             });
 
-            if (!getRes.ok) throw new Error(`Không tìm thấy file ${filePath} trên GitHub! Vui lòng kiểm tra lại link.`);
+            if (!getRes.ok) throw new Error(`Không tìm thấy file ${filePath} trên GitHub!`);
 
             const fileData = await getRes.json();
             let htmlContent = decodeURIComponent(escape(atob(fileData.content)));
 
-            // Quét tìm biến storyData nhạy hơn
-            const storyDataMatch = htmlContent.match(/(?:const|let|var)\s+storyData\s*=\s*(\[[\s\S]*?\]);/);
-            if (!storyDataMatch) throw new Error('Cấu trúc file truyện không có biến storyData! Hãy kiểm tra lại file .html của truyện.');
+            const extracted = extractChaptersData(htmlContent);
+            if (!extracted) {
+                throw new Error('Không thể tự động tìm mảng dữ liệu chương trong file. Bạn hãy kiểm tra tên biến lưu chương trong thẻ script!');
+            }
 
-            let chapters = JSON.parse(storyDataMatch[1]);
+            let chapters = extracted.data;
             const newChapId = `ch${chapters.length + 1}`;
 
             chapters.push({
@@ -242,9 +261,11 @@
                 content: newContent
             });
 
+            // Ghi đè lại mảng dữ liệu đã thêm chương mới
             const updatedStoryDataStr = `const storyData = ${JSON.stringify(chapters)};`;
-            htmlContent = htmlContent.replace(/(?:const|let|var)\s+storyData\s*=\s*\[[\s\S]*?\];/, updatedStoryDataStr);
+            htmlContent = htmlContent.replace(extracted.rawMatch, updatedStoryDataStr);
 
+            // Thêm nút chương mới vào thanh chuyển chương
             const newButtonHtml = `<button class="chapter-btn" data-chap-id="${newChapId}" onclick="switchChapter(this, '${newChapId}')">${escapeHtml(newTitle)}</button>`;
             const navTagMatch = htmlContent.match(/<div class="chapter-nav" id="chapterNav">(.*?)<\/div>/s);
             
@@ -269,11 +290,11 @@
 
             if (putRes.ok) {
                 statusMsg.style.color = 'green';
-                statusMsg.innerHTML = `Thêm chương mới thành công!<br><a href="https://${githubAcc.toLowerCase()}.github.io/${filePath}" target="_blank" style="color:#d76a03;">Xem Truyện Đã Cập Nhật</a>`;
+                statusMsg.innerHTML = `Đã thêm chương thành công! Tổng số chương hiện tại: ${chapters.length}<br><a href="https://${githubAcc.toLowerCase()}.github.io/${filePath}" target="_blank" style="color:#d76a03;">Xem Truyện Đã Cập Nhật</a>`;
                 document.getElementById('newChapTitle').value = '';
                 document.getElementById('newChapContent').value = '';
             } else {
-                throw new Error('Lỗi khi ghi đè file lên GitHub.');
+                throw new Error('Lỗi khi lưu file lên GitHub.');
             }
 
         } catch (err) {
@@ -311,24 +332,24 @@
             const fileData = await getRes.json();
             let htmlContent = decodeURIComponent(escape(atob(fileData.content)));
 
-            const storyDataMatch = htmlContent.match(/(?:const|let|var)\s+storyData\s*=\s*(\[[\s\S]*?\]);/);
-            if (!storyDataMatch) throw new Error('Cấu trúc file truyện không hợp lệ!');
+            const extracted = extractChaptersData(htmlContent);
+            if (!extracted) throw new Error('Không đọc được mảng dữ liệu chương!');
 
-            let chapters = JSON.parse(storyDataMatch[1]);
+            let chapters = extracted.data;
             const targetIndex = chapters.findIndex(c => c.title.trim().toLowerCase() === deleteTitle.toLowerCase());
 
             if (targetIndex === -1) {
-                throw new Error(`Không tìm thấy chương nào tên là "${deleteTitle}" trong truyện này!`);
+                throw new Error(`Không tìm thấy chương nào tên là "${deleteTitle}"!`);
             }
 
             if (chapters.length <= 1) {
-                throw new Error('Truyện chỉ có 1 chương duy nhất, không thể xóa bớt!');
+                throw new Error('Truyện chỉ có 1 chương duy nhất, không thể xóa!');
             }
 
             chapters.splice(targetIndex, 1);
 
             const updatedStoryDataStr = `const storyData = ${JSON.stringify(chapters)};`;
-            htmlContent = htmlContent.replace(/(?:const|let|var)\s+storyData\s*=\s*\[[\s\S]*?\];/, updatedStoryDataStr);
+            htmlContent = htmlContent.replace(extracted.rawMatch, updatedStoryDataStr);
 
             const newChapBtnsHtml = chapters.map((ch, idx) => 
                 `<button class="chapter-btn ${idx === 0 ? 'active' : ''}" data-chap-id="${ch.id}" onclick="switchChapter(this, '${ch.id}')">${escapeHtml(ch.title)}</button>`
