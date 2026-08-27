@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Panel - Admin System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dots: #c2b280;
+            --cream-bg: rgba(253, 251, 247, 0.95);
+            --border-dash: #a89f91;
+            --primary-orange: #d76a03;
+            --accent-green: #4f6d7a;
+            --text-color: #2b2d42;
+            --dark-amber: #b55802;
+            --purple-plum: #70528c;
+            --moss-green: #3b535e;
+            --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            background-color: #f4f1ea;
+            background-image: radial-gradient(var(--bg-dots) 1.5px, transparent 1.5px);
+            background-size: 18px 18px;
+            padding: 30px 15px;
+        }
+
+        .cp-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--cream-bg);
+            border: 2px solid var(--border-dash);
+            outline: 2px dashed var(--border-dash);
+            outline-offset: -6px;
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .cp-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .cp-header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--primary-orange);
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .cp-header p {
+            color: var(--accent-green);
+            font-size: 1.05rem;
+            font-weight: 600;
+            font-style: italic;
+        }
+
+        .cp-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Nút thiết kế với bóng đặc (Solid Shadow) */
+        .cp-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 12px;
+            color: #ffffff;
+            border: 2.5px solid #2b2d42;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.15s ease-in-out;
+        }
+
+        /* Các phối màu nổi bật cho từng nút */
+        .btn-edit {
+            background-color: var(--primary-orange);
+            box-shadow: 4px 4px 0px #2b2d42;
+        }
+
+        .btn-convert {
+            background-color: var(--accent-green);
+            box-shadow: 4px 4px 0px #2b2d42;
+        }
+
+        .btn-upload {
+            background-color: var(--moss-green);
+            box-shadow: 4px 4px 0px #2b2d42;
+        }
+
+        .btn-online {
+            background-color: var(--dark-amber);
+            box-shadow: 4px 4px 0px #2b2d42;
+        }
+
+        .btn-ardrive {
+            background-color: var(--purple-plum);
+            box-shadow: 4px 4px 0px #2b2d42;
+        }
+
+        /* Hiệu ứng khi rê chuột & bấm nút */
+        .cp-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #2b2d42;
+        }
+
+        .cp-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #2b2d42;
+        }
+
+        .btn-icon {
+            font-size: 1.2rem;
+            transition: transform 0.2s ease;
+        }
+
+        .cp-btn:hover .btn-icon {
+            transform: translateX(5px);
+        }
+
+        .cp-footer {
+            margin-top: 35px;
+            text-align: center;
+            border-top: 1px dashed var(--border-dash);
+            padding-top: 18px;
+            font-size: 0.9rem;
+            color: #777;
+            font-weight: 600;
+        }
+
+        @media (max-width: 480px) {
+            .cp-container {
+                padding: 30px 20px;
+            }
+            .cp-header h1 {
+                font-size: 1.8rem;
+            }
+            .cp-btn {
+                font-size: 1rem;
+                padding: 14px 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="cp-container">
+    <div class="cp-header">
+        <h1>Control Panel</h1>
+        <p>Hệ thống Quản trị phamnhadoan.github.io</p>
+    </div>
+
+    <div class="cp-grid">
+        <a href="https://phamnhadoan.github.io/truyendadoc/index2.html" class="cp-btn btn-edit" target="_blank" rel="noopener">
+            <span>Admin truyện edit</span>
+            <span class="btn-icon">➔</span>
+        </a>
+
+        <a href="https://phamnhadoan.github.io/reviewconvert/index2.html" class="cp-btn btn-convert" target="_blank" rel="noopener">
+            <span>Admin truyện convert</span>
+            <span class="btn-icon">➔</span>
+        </a>
+
+        <a href="https://phamnhadoan.github.io/chucongconvert/taitruyen/index2.html" class="cp-btn btn-upload" target="_blank" rel="noopener">
+            <span>Admin upload truyện</span>
+            <span class="btn-icon">➔</span>
+        </a>
+
+        <a href="https://phamnhadoan.github.io/read/index2.html" class="cp-btn btn-online" target="_blank" rel="noopener">
+            <span>Admin đăng truyện online</span>
+            <span class="btn-icon">➔</span>
+        </a>
+
+        <a href="https://phamnhadoan.github.io/ardrive/" class="cp-btn btn-ardrive" target="_blank" rel="noopener">
+            <span>Chuyển file Ardrive</span>
+            <span class="btn-icon">➔</span>
+        </a>
+    </div>
+
+    <div class="cp-footer">
+        PhamNhaDoan &copy; Control Panel Management System
+    </div>
+</div>
+
+</body>
+</html>
