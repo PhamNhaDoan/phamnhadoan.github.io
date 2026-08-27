@@ -18,6 +18,7 @@
             --dark-amber: #b55802;
             --purple-plum: #70528c;
             --moss-green: #3b535e;
+            --rose-pink: #9c4153;
             --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
         }
 
@@ -97,7 +98,7 @@
             transition: all 0.15s ease-in-out;
         }
 
-        /* Các phối màu nổi bật cho từng nút */
+        /* Phối màu nút bóng đặc */
         .btn-edit {
             background-color: var(--primary-orange);
             box-shadow: 4px 4px 0px #2b2d42;
@@ -115,6 +116,11 @@
 
         .btn-online {
             background-color: var(--dark-amber);
+            box-shadow: 4px 4px 0px #2b2d42;
+        }
+
+        .btn-note {
+            background-color: var(--rose-pink);
             box-shadow: 4px 4px 0px #2b2d42;
         }
 
@@ -193,6 +199,11 @@
 
         <a href="https://phamnhadoan.github.io/read/index2.html" class="cp-btn btn-online" target="_blank" rel="noopener">
             <span>Admin đăng truyện online</span>
+            <span class="btn-icon">➔</span>
+        </a>
+
+        <a href="https://phamnhadoan.github.io/note/index2.html" class="cp-btn btn-note" target="_blank" rel="noopener">
+            <span>Admin nhật ký đọc sách</span>
             <span class="btn-icon">➔</span>
         </a>
 
