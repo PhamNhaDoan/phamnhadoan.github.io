@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Chương Truyện - Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dots: #c2b280;
+            --cream-bg: rgba(253, 251, 247, 0.95);
+            --border-dash: #a89f91;
+            --primary-color: #d76a03;
+            --accent-green: #4f6d7a;
+            --text-color: #2b2d42;
+            --danger-color: #c0392b;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 40px 15px;
+            color: var(--text-color);
+            background-color: #f4f1ea;
+            background-image: radial-gradient(var(--bg-dots) 1.5px, transparent 1.5px);
+            background-size: 18px 18px;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            background: var(--cream-bg);
+            border: 2px dashed var(--border-dash);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        .form-section {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 1.15rem;
+            color: var(--accent-green);
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed var(--border-dash);
+            padding-bottom: 8px;
+        }
+
+        .form-group { margin-bottom: 18px; }
+
+        label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--accent-green);
+        }
+
+        input[type="text"], input[type="password"], textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            background: #fff;
+        }
+
+        input:focus, textarea:focus { border-color: var(--accent-green); }
+
+        textarea { resize: vertical; min-height: 140px; }
+
+        .submit-btn {
+            width: 100%;
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+
+        .submit-btn:hover { background: #b55802; }
+
+        .delete-btn {
+            width: 100%;
+            background: var(--danger-color);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+
+        .delete-btn:hover { background: #962d22; }
+
+        .status-msg {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 700;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Quản Lý Chương Truyện (Thêm / Xóa Chương)</h2>
+
+    <!-- Thông tin kết nối -->
+    <div class="form-section">
+        <div class="section-title">1. Thông Tin Cấu Hình GitHub</div>
+        <div class="form-group">
+            <label>GitHub Key Token</label>
+            <input type="password" id="githubToken" placeholder="Nhập Personal Access Token..." required>
+        </div>
+        <div class="form-group">
+            <label>Link Truyện Cần Chỉnh Sửa</label>
+            <input type="text" id="storyUrl" placeholder="Ví dụ: https://phamnhadoan.github.io/read/ten-truyen.html" required>
+        </div>
+    </div>
+
+    <!-- Khung Thêm Chương -->
+    <div class="form-section">
+        <div class="section-title">2. Thêm Chương Mới</div>
+        <form id="addChapterForm" onsubmit="handleAddChapter(event)">
+            <div class="form-group">
+                <label>Tên / Số Chương Mới</label>
+                <input type="text" id="newChapTitle" placeholder="Ví dụ: Chương 2 hoặc Phần 2" required>
+            </div>
+            <div class="form-group">
+                <label>Nội Dung Chương Mới</label>
+                <textarea id="newChapContent" placeholder="Nhập nội dung chương mới vào đây..." required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">+ Thêm Chương Vào Truyện</button>
+        </form>
+    </div>
+
+    <!-- Khung Xóa Chương -->
+    <div class="form-section">
+        <div class="section-title" style="color: var(--danger-color);">3. Xóa Chương Cũ</div>
+        <form id="deleteChapterForm" onsubmit="handleDeleteChapter(event)">
+            <div class="form-group">
+                <label>Tên Chương Cần Xóa (Phải trùng khớp hoàn toàn tên chương cũ)</label>
+                <input type="text" id="deleteChapTitle" placeholder="Ví dụ: Chương 2" required>
+            </div>
+            <button type="submit" class="delete-btn">Xóa Chương Này</button>
+        </form>
+    </div>
+
+    <div id="statusMsg" class="status-msg"></div>
+</div>
+
+<script>
+    const githubAcc = "PhamNhaDoan";
+    const repo = "phamnhadoan.github.io";
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedToken = localStorage.getItem('gh_token_reviewconvert');
+        if (savedToken) {
+            document.getElementById('githubToken').value = savedToken;
+        }
+    });
+
+    // Lấy đường dẫn file từ URL truyện
+    function getFilePathFromUrl(url) {
+        url = url.trim();
+        if (url.includes('.github.io/')) {
+            return url.split('.github.io/')[1];
+        }
+        if (url.startsWith('read/')) {
+            return url;
+        }
+        return 'read/' + url;
+    }
+
+    // Xử lý Thêm Chương Mới
+    async function handleAddChapter(e) {
+        e.preventDefault();
+        const statusMsg = document.getElementById('statusMsg');
+        statusMsg.style.color = '#333';
+        statusMsg.textContent = 'Đang tải file truyện từ GitHub...';
+
+        const token = document.getElementById('githubToken').value.trim();
+        const storyUrl = document.getElementById('storyUrl').value.trim();
+        const newTitle = document.getElementById('newChapTitle').value.trim();
+        const newContent = document.getElementById('newChapContent').value.trim();
+
+        if (!token || !storyUrl || !newTitle || !newContent) {
+            statusMsg.style.color = 'red';
+            statusMsg.textContent = 'Vui lòng điền đầy đủ thông tin!';
+            return;
+        }
+
+        localStorage.setItem('gh_token_reviewconvert', token);
+        const filePath = getFilePathFromUrl(storyUrl);
+
+        try {
+            const apiUrl = `https://api.github.com/repos/${githubAcc}/${repo}/contents/${filePath}`;
+            const getRes = await fetch(apiUrl, {
+                headers: { 'Authorization': `token ${token}` }
+            });
+
+            if (!getRes.ok) throw new Error('Không thể tìm thấy file truyện trên GitHub. Vui lòng kiểm tra lại link truyện!');
+
+            const fileData = await getRes.json();
+            let htmlContent = decodeURIComponent(escape(atob(fileData.content)));
+
+            // Tìm vị trí chứa dữ liệu chapters
+            const storyDataMatch = htmlContent.match(/const storyData = (\[.*?\]);/s);
+            if (!storyDataMatch) throw new Error('Cấu trúc file truyện không hợp lệ hoặc thiếu biến storyData!');
+
+            let chapters = JSON.parse(storyDataMatch[1]);
+            const newChapId = `ch${chapters.length + 1}`;
+
+            // Thêm chương mới vào mảng
+            chapters.push({
+                id: newChapId,
+                title: newTitle,
+                content: newContent
+            });
+
+            // Cập nhật lại chuỗi storyData mới
+            const updatedStoryDataStr = `const storyData = ${JSON.stringify(chapters)};`;
+            htmlContent = htmlContent.replace(/const storyData = \[.*?\];/s, updatedStoryDataStr);
+
+            // Cập nhật nút danh sách chương (Chapter Nav)
+            const newButtonHtml = `<button class="chapter-btn" data-chap-id="${newChapId}" onclick="switchChapter(this, '${newChapId}')">${escapeHtml(newTitle)}</button>`;
+            const navTagMatch = htmlContent.match(/<div class="chapter-nav" id="chapterNav">(.*?)<\/div>/s);
+            
+            if (navTagMatch) {
+                const updatedNavHtml = `<div class="chapter-nav" id="chapterNav">${navTagMatch[1].trim()}\n                ${newButtonHtml}\n        </div>`;
+                htmlContent = htmlContent.replace(/<div class="chapter-nav" id="chapterNav">.*?<\/div>/s, updatedNavHtml);
+            }
+
+            // Đẩy file đã cập nhật lên GitHub
+            statusMsg.textContent = 'Đang lưu chương mới lên GitHub...';
+            const putRes = await fetch(apiUrl, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: `Thêm chương mới: ${newTitle}`,
+                    content: btoa(unescape(encodeURIComponent(htmlContent))),
+                    sha: fileData.sha
+                })
+            });
+
+            if (putRes.ok) {
+                statusMsg.style.color = 'green';
+                statusMsg.innerHTML = `Thêm chương mới thành công!<br>Vào link truyện để xem chương mới: <a href="https://${githubAcc.toLowerCase()}.github.io/${filePath}" target="_blank" style="color:#d76a03;">Xem Truyện</a>`;
+                document.getElementById('newChapTitle').value = '';
+                document.getElementById('newChapContent').value = '';
+            } else {
+                throw new Error('Lỗi khi cập nhật file lên GitHub.');
+            }
+
+        } catch (err) {
+            statusMsg.style.color = 'red';
+            statusMsg.textContent = 'Lỗi: ' + err.message;
+        }
+    }
+
+    // Xử lý Xóa Chương
+    async function handleDeleteChapter(e) {
+        e.preventDefault();
+        const statusMsg = document.getElementById('statusMsg');
+        statusMsg.style.color = '#333';
+        statusMsg.textContent = 'Đang kiểm tra chương cần xóa...';
+
+        const token = document.getElementById('githubToken').value.trim();
+        const storyUrl = document.getElementById('storyUrl').value.trim();
+        const deleteTitle = document.getElementById('deleteChapTitle').value.trim();
+
+        if (!token || !storyUrl || !deleteTitle) {
+            statusMsg.style.color = 'red';
+            statusMsg.textContent = 'Vui lòng điền link truyện và tên chương cần xóa!';
+            return;
+        }
+
+        const filePath = getFilePathFromUrl(storyUrl);
+
+        try {
+            const apiUrl = `https://api.github.com/repos/${githubAcc}/${repo}/contents/${filePath}`;
+            const getRes = await fetch(apiUrl, {
+                headers: { 'Authorization': `token ${token}` }
+            });
+
+            if (!getRes.ok) throw new Error('Không thể tìm thấy file truyện trên GitHub!');
+
+            const fileData = await getRes.json();
+            let htmlContent = decodeURIComponent(escape(atob(fileData.content)));
+
+            const storyDataMatch = htmlContent.match(/const storyData = (\[.*?\]);/s);
+            if (!storyDataMatch) throw new Error('Cấu trúc file truyện không hợp lệ!');
+
+            let chapters = JSON.parse(storyDataMatch[1]);
+            const targetIndex = chapters.findIndex(c => c.title.trim().toLowerCase() === deleteTitle.toLowerCase());
+
+            if (targetIndex === -1) {
+                throw new Error(`Không tìm thấy chương nào tên là "${deleteTitle}" trong truyện này!`);
+            }
+
+            if (chapters.length <= 1) {
+                throw new Error('Truyện chỉ có 1 chương duy nhất, không thể xóa bớt!');
+            }
+
+            const deletedChapId = chapters[targetIndex].id;
+            chapters.splice(targetIndex, 1);
+
+            // Cập nhật lại dữ liệu JS
+            const updatedStoryDataStr = `const storyData = ${JSON.stringify(chapters)};`;
+            htmlContent = htmlContent.replace(/const storyData = \[.*?\];/s, updatedStoryDataStr);
+
+            // Tạo lại toàn bộ HTML danh sách nút chương
+            const newChapBtnsHtml = chapters.map((ch, idx) => 
+                `<button class="chapter-btn ${idx === 0 ? 'active' : ''}" data-chap-id="${ch.id}" onclick="switchChapter(this, '${ch.id}')">${escapeHtml(ch.title)}</button>`
+            ).join('\n                ');
+
+            htmlContent = htmlContent.replace(
+                /<div class="chapter-nav" id="chapterNav">.*?<\/div>/s,
+                `<div class="chapter-nav" id="chapterNav">\n                ${newChapBtnsHtml}\n        </div>`
+            );
+
+            // Đẩy dữ liệu cập nhật lên GitHub
+            statusMsg.textContent = 'Đang xóa chương trên GitHub...';
+            const putRes = await fetch(apiUrl, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: `Xóa chương: ${deleteTitle}`,
+                    content: btoa(unescape(encodeURIComponent(htmlContent))),
+                    sha: fileData.sha
+                })
+            });
+
+            if (putRes.ok) {
+                statusMsg.style.color = 'green';
+                statusMsg.innerHTML = `Đã xóa thành công "${deleteTitle}"!<br><a href="https://${githubAcc.toLowerCase()}.github.io/${filePath}" target="_blank" style="color:#d76a03;">Xem Lại Truyện</a>`;
+                document.getElementById('deleteChapTitle').value = '';
+            } else {
+                throw new Error('Lỗi khi lưu thay đổi lên GitHub.');
+            }
+
+        } catch (err) {
+            statusMsg.style.color = 'red';
+            statusMsg.textContent = 'Lỗi: ' + err.message;
+        }
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+</script>
+
+</body>
+</html>
