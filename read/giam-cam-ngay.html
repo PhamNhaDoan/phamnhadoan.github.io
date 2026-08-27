@@ -4600,6 +4600,65 @@ Hà Thanh Lâm dùng tay bóp lấy Ấn Lan Thư cằm, khiến cho hắn ngẩ
     document.addEventListener('DOMContentLoaded', () => {
         updateNavButtons();
     });
+<script>
+    const storyId = 'giam-cam-ngay';
+
+    // ĐÂY CHÍNH LÀ BIẾN STORYDATA MÀ INDEX3.HTML ĐANG TÌM KIẾM:
+    const storyData = [
+        {
+            "id": "ch1",
+            "title": "Chương 1",
+            "content": "Nội dung chương 1 của bạn dán ở đây..."
+        }
+    ];
+
+    let currentChapIndex = 0;
+
+    function updateNavButtons() {
+        const prevBtn = document.getElementById('prevChapBtn');
+        const nextBtn = document.getElementById('nextChapBtn');
+        if (prevBtn) prevBtn.disabled = (currentChapIndex <= 0);
+        if (nextBtn) nextBtn.disabled = (currentChapIndex >= storyData.length - 1);
+    }
+
+    function switchChapter(btn, cId) {
+        document.querySelectorAll('.chapter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const foundIndex = storyData.findIndex(item => item.id === cId);
+        if(foundIndex !== -1) {
+            currentChapIndex = foundIndex;
+            document.getElementById('story-content-body').textContent = storyData[foundIndex].content;
+            updateNavButtons();
+        }
+    }
+
+    function navigateChapter(direction) {
+        const newIndex = currentChapIndex + direction;
+        if (newIndex >= 0 && newIndex < storyData.length) {
+            const targetChap = storyData[newIndex];
+            const targetBtn = document.querySelector(`.chapter-btn[data-chap-id="${targetChap.id}"]`);
+            if (targetBtn) {
+                switchChapter(targetBtn, targetChap.id);
+                scrollToNav();
+            }
+        }
+    }
+
+    function scrollToNav() {
+        const navElem = document.getElementById('chapterNav');
+        if (navElem) {
+            navElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateNavButtons();
+    });
 </script>
 
 </body>
