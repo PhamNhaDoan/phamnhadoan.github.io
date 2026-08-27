@@ -235,8 +235,9 @@
             let htmlContent = decodeURIComponent(escape(atob(fileData.content)));
 
             // Tìm vị trí chứa dữ liệu chapters
-            const storyDataMatch = htmlContent.match(/const storyData = (\[.*?\]);/s);
-            if (!storyDataMatch) throw new Error('Cấu trúc file truyện không hợp lệ hoặc thiếu biến storyData!');
+           // ✅ Đoạn mới nhận diện được cả const, let, var và khoảng trắng thừa
+const storyDataMatch = htmlContent.match(/(?:const|let|var)\s+storyData\s*=\s*(\[.*?\]);/s);
+if (!storyDataMatch) throw new Error('Cấu trúc file truyện không hợp lệ hoặc thiếu biến storyData!');
 
             let chapters = JSON.parse(storyDataMatch[1]);
             const newChapId = `ch${chapters.length + 1}`;
