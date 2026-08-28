@@ -804,7 +804,11 @@
         const foundIndex = storyData.findIndex(item => item.id === cId);
         if(foundIndex !== -1) {
             currentChapIndex = foundIndex;
-          document.getElementById('story-content-body').textContent = storyData[foundIndex].content;
+          document.getElementById('story-content-body').innerHTML = storyData[foundIndex].content
+    .split('\n')
+    .filter(p => p.trim() !== '')
+    .map(p => `<p>${escapeHtml(p)}</p>`)
+    .join('');
             updateNavButtons();
         }
     }
