@@ -258,9 +258,10 @@
         e.preventDefault();
         const statusMsg = document.getElementById('statusMsg');
         statusMsg.style.color = '#333';
-        statusMsg.textContent = 'Đang khởi tạo file HTML mới...';
+        statusMsg.textContent = 'Đang tiến hành tạo file bài viết...';
 
         const githubAcc = document.getElementById('githubAcc').value.trim();
+        const repo = document.getElementById('repoName').value.trim();
         const token = document.getElementById('githubToken').value.trim();
         const title = document.getElementById('storyTitle').value.trim();
         const author = document.getElementById('storyAuthor').value.trim();
@@ -269,8 +270,6 @@
         const coverSrc = await getCoverSrc();
 
         localStorage.setItem('gh_token_reviewconvert', token);
-
-        const repo = "phamnhadoan.github.io";
 
         let tagsHtml = '';
         if (rawTags) {
@@ -291,6 +290,7 @@
 
         const fileName = slugify(title) || ('truyen-' + Date.now());
         const filePath = `read/${fileName}.html`;
+        const storyReadFileName = `${fileName}.html`;
 
         let chapBtnsHtml = chapters.map((ch, idx) => 
             `<button class="chapter-btn ${idx === 0 ? 'active' : ''}" data-chap-id="${ch.id}" onclick="switchChapter(this, '${ch.id}')">${ch.title}</button>`
@@ -317,7 +317,6 @@
             --reader-bg: #f4f1ea;
         }
 
-        /* Đổ màu nền trang theo Theme */
         body.theme-cream {
             background-color: #f4f1ea;
             background-image: radial-gradient(var(--bg-dots) 1.5px, transparent 1.5px);
@@ -473,7 +472,6 @@
             color: #fff;
         }
 
-        /* Thanh Công Cụ Tùy Chỉnh Đọc Truyện (Floating Toolbar) */
         .reader-toolbar {
             display: flex;
             align-items: center;
@@ -680,7 +678,6 @@
             </div>
         </div>
 
-        <!-- Thanh Tùy Chỉnh Đọc Truyện -->
         <div class="reader-toolbar">
             <div class="toolbar-group">
                 <span class="toolbar-label">Cỡ chữ:</span>
@@ -719,7 +716,6 @@
             <button class="nav-action-btn" id="nextChapBtn" onclick="navigateChapter(1)">Chương sau →</button>
         </div>
 
-        <!-- Khung Cbox Chat -->
         <div class="cbox-chat-section">
             <h3 class="cbox-title">Trò Chuyện & Bình Luận Công Khai</h3>
             <div class="cbox-frame-wrapper">
@@ -745,7 +741,6 @@
     let currentChapIndex = 0;
     let currentFontSize = 1.2;
 
-    // Tùy Chỉnh Reader Settings
     function changeFontSize(delta) {
         currentFontSize = Math.max(0.9, Math.min(1.8, currentFontSize + delta));
         const contentElem = document.getElementById('story-content-body');
@@ -871,10 +866,27 @@
 </body>
 </html>`;
 
-        try {
-            const apiUrl = `https://api.github.com/repos/${githubAcc}/${repo}/contents/${filePath}`;
+        const newStoryCardIndexHtml = `<article class="story-card">
+            <div class="cover-wrapper">
+                <img src="${coverSrc}" alt="Bìa truyện" class="cover-img">
+            </div>
+            <div class="story-info">
+                <h2 class="story-title"><a href="${storyReadFileName}">${escapeHtml(title)}</a></h2>
+                <div class="story-author">Tác giả: ${escapeHtml(author)}</div>
+                ${tagsHtml ? `<div class="story-tags">
+                    ${tagsHtml}
+                </div>` : ''}
+                ${summary ? `<div class="story-summary">
+                    Giới thiệu: ${escapeHtml(summary)}
+                </div>` : ''}
+                <a href="${storyReadFileName}" class="read-btn">Đọc Truyện ➔</a>
+            </div>
+        </article>`;
 
-            const putRes = await fetch(apiUrl, {
+        try {
+            // Bước 1: Tạo file truyện chi tiết trong thư mục read/
+            const readPageApiUrl = `https://api.github.com/repos/${githubAcc}/${repo}/contents/${filePath}`;
+            const putReadRes = await fetch(readPageApiUrl, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `token ${token}`,
@@ -886,14 +898,65 @@
                 })
             });
 
-            if (putRes.ok) {
-                const fullUrl = `https://${githubAcc.toLowerCase()}.github.io/${filePath}`;
-                statusMsg.style.color = 'green';
-                statusMsg.innerHTML = `Tạo file thành công!<br>Đường dẫn trang truyện mới của bạn:<br><a href="${fullUrl}" target="_blank" style="color:#d76a03;">${fullUrl}</a>`;
-            } else {
-                const errData = await putRes.json();
-                throw new Error(errData.message || 'Lỗi khi đẩy file mới lên GitHub.');
+            if (!putReadRes.ok) {
+                const errData = await putReadRes.json();
+                throw new Error(errData.message || 'Lỗi khi tạo file truyện mới trong folder read/.');
             }
+
+            // Bước 2: Lấy dữ liệu file read/index.html hiện tại VÀ LẤY MÃ SHA
+            statusMsg.textContent = 'Đang tự động cập nhật bài viết vào danh sách read/index.html...';
+            const indexPath = 'read/index.html';
+            const indexApiUrl = `https://api.github.com/repos/${githubAcc}/${repo}/contents/${indexPath}`;
+
+            const getIndexRes = await fetch(indexApiUrl, {
+                headers: { 'Authorization': `token ${token}` }
+            });
+
+            if (!getIndexRes.ok) {
+                throw new Error('Không thể tải file read/index.html từ GitHub.');
+            }
+
+            const indexFileData = await getIndexRes.json();
+            const currentIndexHtml = decodeURIComponent(escape(atob(indexFileData.content)));
+
+            // Tìm thẻ <main id="story-list"> để chèn card bài mới vào top
+            const match = currentIndexHtml.match(/<main[^>]*id=["']story-list["'][^>]*>/i);
+            if (!match) {
+                throw new Error('Không tìm thấy thẻ <main id="story-list"> trong file read/index.html');
+            }
+
+            const insertPosition = match.index + match[0].length;
+            const updatedIndexHtml = currentIndexHtml.slice(0, insertPosition) + 
+                                     '\n\n        ' + newStoryCardIndexHtml + 
+                                     currentIndexHtml.slice(insertPosition);
+
+            // Bước 3: Gửi lệnh PUT cập nhật read/index.html KÈM THUỘC TÍNH SHA (Đã sửa lỗi "sha wasn't supplied")
+            const putIndexRes = await fetch(indexApiUrl, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: `Thêm truyện "${title}" vào read/index.html`,
+                    content: btoa(unescape(encodeURIComponent(updatedIndexHtml))),
+                    sha: indexFileData.sha // TRUYỀN MÃ SHA ĐỂ GHI ĐÈ FILE CŨ
+                })
+            });
+
+            if (putIndexRes.ok) {
+                const fullReadUrl = `https://${githubAcc.toLowerCase()}.github.io/${filePath}`;
+                const indexUrl = `https://${githubAcc.toLowerCase()}.github.io/read/index.html`;
+
+                statusMsg.style.color = 'green';
+                statusMsg.innerHTML = `Đã tạo truyện thành công!<br>
+                • Trang danh sách: <a href="${indexUrl}" target="_blank" style="color:#d76a03;">${indexUrl}</a><br>
+                • Trang đọc chi tiết: <a href="${fullReadUrl}" target="_blank" style="color:#d76a03;">${fullReadUrl}</a>`;
+            } else {
+                const putErrData = await putIndexRes.json();
+                throw new Error(putErrData.message || 'Lỗi khi ghi đè danh sách read/index.html.');
+            }
+
         } catch (err) {
             statusMsg.style.color = 'red';
             statusMsg.textContent = 'Lỗi: ' + err.message;
