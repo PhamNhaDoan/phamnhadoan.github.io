@@ -571,6 +571,7 @@
         }
 
         .story-content p, .story-content {
+            margin-top: 0;
             margin-bottom: 1.5rem;
         }
 
@@ -803,8 +804,7 @@
         const foundIndex = storyData.findIndex(item => item.id === cId);
         if(foundIndex !== -1) {
             currentChapIndex = foundIndex;
-            const formattedContent = storyData[foundIndex].content.split('\n').filter(p => p.trim() !== '').map(p => `<p>${escapeHtml(p)}</p>`).join('');
-document.getElementById('story-content-body').innerHTML = formattedContent;
+          document.getElementById('story-content-body').textContent = storyData[foundIndex].content;
             updateNavButtons();
         }
     }
