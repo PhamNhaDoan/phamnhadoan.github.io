@@ -127,7 +127,7 @@
 <body>
 
 <div class="container">
-    <h2>Tạo Trang Truyện Mới Trên GitHub</h2>
+    <h2>Đăng Truyện Mới - Admin</h2>
     <form id="postStoryForm" onsubmit="handleCreateStoryFile(event)">
         
         <div class="form-group">
@@ -192,7 +192,7 @@
 
         <button type="button" class="add-chap-btn" onclick="addChapterBox()">+ Thêm Phần Hoặc Chương</button>
 
-        <button type="submit" class="submit-btn">Tạo File Truyện Mới Lên GitHub</button>
+        <button type="submit" class="submit-btn">Đăng Bài Lên GitHub</button>
         <div id="statusMsg" class="status-msg"></div>
     </form>
 </div>
@@ -258,7 +258,7 @@
         e.preventDefault();
         const statusMsg = document.getElementById('statusMsg');
         statusMsg.style.color = '#333';
-        statusMsg.textContent = 'Đang khởi tạo bài viết mới...';
+        statusMsg.textContent = 'Đang đăng bài...';
 
         const githubAcc = document.getElementById('githubAcc').value.trim();
         const token = document.getElementById('githubToken').value.trim();
@@ -295,7 +295,6 @@
             `<button class="chapter-btn ${idx === 0 ? 'active' : ''}" data-chap-id="${ch.id}" onclick="switchChapter(this, '${ch.id}')">${ch.title}</button>`
         ).join('\n            ');
 
-        // Mã HTML cho trang đọc chi tiết
         const fullNewPageHtml = `<!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -862,7 +861,6 @@
 </body>
 </html>`;
 
-        // Khung HTML truyện để chèn vào file index.html ở gốc
         const newStoryCardIndexHtml = `<article class="story-card">
             <div class="cover-wrapper">
                 <img src="${coverSrc}" alt="Bìa truyện" class="cover-img">
@@ -881,7 +879,6 @@
         </article>`;
 
         try {
-            // Bước 1: Tạo file đọc truyện mới vào thư mục read/
             const readPageApiUrl = `https://api.github.com/repos/${githubAcc}/${repo}/contents/${filePath}`;
             const putReadRes = await fetch(readPageApiUrl, {
                 method: 'PUT',
@@ -890,18 +887,17 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    message: `Tạo trang truyện mới: ${title}`,
+                    message: `Đăng truyện mới: ${title}`,
                     content: btoa(unescape(encodeURIComponent(fullNewPageHtml)))
                 })
             });
 
             if (!putReadRes.ok) {
                 const errData = await putReadRes.json();
-                throw new Error(errData.message || 'Lỗi khi tạo file truyện mới trong folder read/.');
+                throw new Error(errData.message || 'Lỗi khi đăng bài mới vào folder read/.');
             }
 
-            // Bước 2: Cập nhật chèn truyện mới lên file index.html ở thư mục gốc
-            statusMsg.textContent = 'Đang cập nhật truyện mới lên trang chủ index.html...';
+            statusMsg.textContent = 'Đang cập nhật bài viết lên trang chủ index.html...';
             const indexPath = 'index.html';
             const indexApiUrl = `https://api.github.com/repos/${githubAcc}/${repo}/contents/${indexPath}`;
 
@@ -933,7 +929,7 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    message: `Thêm truyện "${title}" vào index.html`,
+                    message: `Đăng bài "${title}" vào index.html`,
                     content: btoa(unescape(encodeURIComponent(updatedIndexHtml))),
                     sha: indexFileData.sha
                 })
@@ -944,9 +940,9 @@
                 const indexUrl = `https://${githubAcc.toLowerCase()}.github.io/index.html`;
 
                 statusMsg.style.color = 'green';
-                statusMsg.innerHTML = `Đã cập nhật thành công!<br>
-                1. Trang chủ đã thêm truyện: <a href="${indexUrl}" target="_blank" style="color:#d76a03;">Xem index.html</a><br>
-                2. Trang đọc chi tiết: <a href="${fullReadUrl}" target="_blank" style="color:#d76a03;">Xem ${title}</a>`;
+                statusMsg.innerHTML = `Đăng bài thành công!<br>
+                1. Đã đưa lên trang chủ: <a href="${indexUrl}" target="_blank" style="color:#d76a03;">Xem index.html</a><br>
+                2. Trang đọc bài viết: <a href="${fullReadUrl}" target="_blank" style="color:#d76a03;">Xem ${title}</a>`;
             } else {
                 throw new Error('Lỗi khi ghi đè file index.html lên GitHub.');
             }
