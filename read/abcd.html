@@ -761,11 +761,16 @@ Còn ta, vì để thoát khỏi nỗi đau giằng xé mà dứt bỏ hết nh�
         const foundIndex = storyData.findIndex(item => item.id === cId);
         if(foundIndex !== -1) {
             currentChapIndex = foundIndex;
-            document.getElementById('story-content-body').innerHTML =
-    storyData[foundIndex].content
-        .split(/\n\s*\n/)
-        .map(p => `<p>${p.trim()}</p>`)
-        .join('');
+            const contentElem = document.getElementById('story-content-body');
+
+const paragraphs = storyData[foundIndex].content
+    .split(/\n/)
+    .map(p => p.trim())
+    .filter(p => p.length > 0);
+
+contentElem.innerHTML = paragraphs
+    .map(p => `<p>${p}</p>`)
+    .join('');
             updateNavButtons();
         }
     }
