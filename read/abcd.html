@@ -278,7 +278,7 @@
 }
 
 .story-content p {
-    margin-bottom: 2rem;
+    margin: 0 0 0.8rem 0;
 }
 
         .bottom-nav {
@@ -761,7 +761,11 @@ Còn ta, vì để thoát khỏi nỗi đau giằng xé mà dứt bỏ hết nh�
         const foundIndex = storyData.findIndex(item => item.id === cId);
         if(foundIndex !== -1) {
             currentChapIndex = foundIndex;
-            document.getElementById('story-content-body').textContent = storyData[foundIndex].content;
+            document.getElementById('story-content-body').innerHTML =
+    storyData[foundIndex].content
+        .split(/\n\s*\n/)
+        .map(p => `<p>${p.trim()}</p>`)
+        .join('');
             updateNavButtons();
         }
     }
