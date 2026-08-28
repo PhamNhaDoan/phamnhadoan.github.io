@@ -272,7 +272,6 @@
     font-size: 1.2rem;
     line-height: 1.65;
     text-align: justify;
-    white-space: pre-wrap;
     margin-bottom: 25px;
     min-height: 120px;
 }
@@ -764,12 +763,12 @@ Còn ta, vì để thoát khỏi nỗi đau giằng xé mà dứt bỏ hết nh�
             const contentElem = document.getElementById('story-content-body');
 
 const paragraphs = storyData[foundIndex].content
-    .split(/\n/)
+    .split(/\n\s*\n/)
     .map(p => p.trim())
     .filter(p => p.length > 0);
 
 contentElem.innerHTML = paragraphs
-    .map(p => `<p>${p}</p>`)
+    .map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`)
     .join('');
             updateNavButtons();
         }
