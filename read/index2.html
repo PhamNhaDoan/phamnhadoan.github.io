@@ -270,7 +270,7 @@
 
         localStorage.setItem('gh_token_reviewconvert', token);
 
-        const repo = document.getElementById('repoName').value.trim() || "phamnhadoan.github.io";
+        const repo = "phamnhadoan.github.io";
 
         let tagsHtml = '';
         if (rawTags) {
@@ -278,7 +278,7 @@
                 .map(t => t.trim())
                 .filter(t => t.length > 0)
                 .map(t => `<span class="tag-item">${escapeHtml(t)}</span>`)
-                .join('\n                ');
+                .join('\n                    ');
         }
 
         const chapBoxes = document.querySelectorAll('.chapter-box');
@@ -866,7 +866,7 @@
         updateNavButtons();
         loadReaderSettings();
     });
-</script>
+<\/script>
 
 </body>
 </html>`;
