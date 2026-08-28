@@ -866,7 +866,7 @@
 </body>
 </html>`;
 
-        // 2. Khung HTML truyện hàng ngang để chèn tự động vào index.html
+        // 2. Khung HTML truyện hàng ngang để chèn tự động vào read/index.html
         const newStoryCardIndexHtml = `<article class="story-card">
             <div class="cover-wrapper">
                 <img src="${coverSrc}" alt="Bìa truyện" class="cover-img">
@@ -904,9 +904,9 @@
                 throw new Error(errData.message || 'Lỗi khi tạo file truyện mới trong folder read/.');
             }
 
-            // ĐƯỜNG DẪN BƯỚC 2: Cập nhật chèn truyện mới lên trang chủ index.html
-            statusMsg.textContent = 'Đang cập nhật truyện mới lên trang chủ index.html...';
-            const indexPath = 'index.html';
+            // ĐƯỜNG DẪN BƯỚC 2: Cập nhật chèn truyện mới lên trang chủ read/index.html
+            statusMsg.textContent = 'Đang cập nhật truyện mới lên trang chủ read/index.html...';
+            const indexPath = 'read/index.html';
             const indexApiUrl = `https://api.github.com/repos/${githubAcc}/${repo}/contents/${indexPath}`;
 
             const getIndexRes = await fetch(indexApiUrl, {
@@ -914,7 +914,7 @@
             });
 
             if (!getIndexRes.ok) {
-                throw new Error('Không thể đọc file index.html từ GitHub để cập nhật.');
+                throw new Error('Không thể đọc file read/index.html từ GitHub để cập nhật.');
             }
 
             const indexFileData = await getIndexRes.json();
@@ -922,7 +922,7 @@
 
             const targetTag = '<main id="story-list">';
             if (!currentIndexHtml.includes(targetTag)) {
-                throw new Error('Không tìm thấy vị trí <main id="story-list"> trong file index.html');
+                throw new Error('Không tìm thấy vị trí <main id="story-list"> trong file read/index.html');
             }
 
             // Chèn truyện mới lên ngay phía dưới <main id="story-list">
@@ -938,7 +938,7 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    message: `Thêm truyện "${title}" vào index.html`,
+                    message: `Thêm truyện "${title}" vào read/index.html`,
                     content: btoa(unescape(encodeURIComponent(updatedIndexHtml))),
                     sha: indexFileData.sha
                 })
@@ -946,14 +946,14 @@
 
             if (putIndexRes.ok) {
                 const fullReadUrl = `https://${githubAcc.toLowerCase()}.github.io/${filePath}`;
-                const indexUrl = `https://${githubAcc.toLowerCase()}.github.io/index.html`;
+                const indexUrl = `https://${githubAcc.toLowerCase()}.github.io/read/index.html`;
 
                 statusMsg.style.color = 'green';
                 statusMsg.innerHTML = `Đã cập nhật thành công!<br>
-                1. Truyện mới đã được thêm vào trang chủ: <a href="${indexUrl}" target="_blank" style="color:#d76a03;">Xem index.html</a><br>
+                1. Truyện mới đã được thêm vào trang chủ: <a href="${indexUrl}" target="_blank" style="color:#d76a03;">Xem read/index.html</a><br>
                 2. Trang đọc truyện chi tiết: <a href="${fullReadUrl}" target="_blank" style="color:#d76a03;">Xem ${title}</a>`;
             } else {
-                throw new Error('Lỗi khi ghi đè file index.html lên GitHub.');
+                throw new Error('Lỗi khi ghi đè file read/index.html lên GitHub.');
             }
 
         } catch (err) {
