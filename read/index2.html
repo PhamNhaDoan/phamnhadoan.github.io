@@ -1,302 +1,46 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Truyện Mới - Admin</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-dots: #c2b280;
-            --cream-bg: rgba(253, 251, 247, 0.95);
-            --border-dash: #a89f91;
-            --primary-color: #d76a03;
-            --accent-green: #4f6d7a;
-            --text-color: #2b2d42;
-        }
+async function handleCreateStoryFile(e) {
+    e.preventDefault();
+    const statusMsg = document.getElementById('statusMsg');
+    statusMsg.style.color = '#333';
+    statusMsg.textContent = 'Đang khởi tạo bài viết...';
 
-        * { box-sizing: border-box; }
+    const githubAcc = document.getElementById('githubAcc').value.trim();
+    const repo = document.getElementById('repoName').value.trim();
+    const token = document.getElementById('githubToken').value.trim();
+    const title = document.getElementById('storyTitle').value.trim();
+    const author = document.getElementById('storyAuthor').value.trim();
+    const rawTags = document.getElementById('storyTags').value.trim();
+    const summary = document.getElementById('storySummary').value.trim();
+    const coverSrc = await getCoverSrc();
 
-        body {
-            font-family: 'Nunito', sans-serif;
-            margin: 0;
-            padding: 40px 15px;
-            color: var(--text-color);
-            background-color: #f4f1ea;
-            background-image: radial-gradient(var(--bg-dots) 1.5px, transparent 1.5px);
-            background-size: 18px 18px;
-        }
+    localStorage.setItem('gh_token_reviewconvert', token);
 
-        .container {
-            max-width: 680px;
-            margin: 0 auto;
-            background: var(--cream-bg);
-            border: 2px dashed var(--border-dash);
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-        }
+    let tagsHtml = '';
+    if (rawTags) {
+        tagsHtml = rawTags.split(',')
+            .map(t => t.trim())
+            .filter(t => t.length > 0)
+            .map(t => `<span class="tag-item">${escapeHtml(t)}</span>`)
+            .join('\n                    ');
+    }
 
-        h2 {
-            text-align: center;
-            color: var(--primary-color);
-            margin-top: 0;
-            margin-bottom: 25px;
-            font-weight: 700;
-        }
-
-        .form-group { margin-bottom: 18px; }
-
-        label {
-            display: block;
-            font-weight: 700;
-            margin-bottom: 6px;
-            color: var(--accent-green);
-        }
-
-        input[type="text"], input[type="password"], input[type="file"], textarea {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 0.95rem;
-            outline: none;
-            background: #fff;
-        }
-
-        input:focus, textarea:focus { border-color: var(--accent-green); }
-
-        textarea { resize: vertical; }
-
-        .chapter-box {
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 16px;
-            margin-bottom: 15px;
-        }
-
-        .chapter-box textarea { height: 120px; margin-top: 6px; }
-
-        .add-chap-btn {
-            background: var(--accent-green);
-            color: #fff;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-family: inherit;
-            font-weight: 700;
-            font-size: 0.95rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 22px;
-            transition: background 0.2s;
-        }
-
-        .add-chap-btn:hover { background: #3b535e; }
-
-        .submit-btn {
-            width: 100%;
-            background: var(--primary-color);
-            color: #fff;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: inherit;
-            transition: background 0.2s;
-        }
-
-        .submit-btn:hover { background: #b55802; }
-
-        .status-msg {
-            margin-top: 15px;
-            text-align: center;
-            font-weight: 700;
-            word-break: break-all;
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h2>Tạo Trang Truyện Mới Trên GitHub</h2>
-    <form id="postStoryForm" onsubmit="handleCreateStoryFile(event)">
-        
-        <div class="form-group">
-            <label>Tên Repo</label>
-            <input type="text" id="repoName" value="phamnhadoan.github.io" required>
-        </div>
-
-        <div class="form-group">
-            <label>Tên Tài Khoản GitHub</label>
-            <input type="text" id="githubAcc" value="PhamNhaDoan" required>
-        </div>
-
-        <div class="form-group">
-            <label>GitHub Key Token</label>
-            <input type="password" id="githubToken" placeholder="Nhập Personal Access Token..." required>
-        </div>
-
-        <div class="form-group">
-            <label>Tên Truyện (Sẽ dùng làm tên file .html)</label>
-            <input type="text" id="storyTitle" placeholder="Nhập tên truyện..." required>
-        </div>
-
-        <div class="form-group">
-            <label>Tác Giả</label>
-            <input type="text" id="storyAuthor" placeholder="Nhập tên tác giả..." required>
-        </div>
-
-        <div class="form-group">
-            <label>Thẻ / Tag (Phân cách bằng dấu phẩy)</label>
-            <input type="text" id="storyTags" placeholder="Ví dụ: Ngôn tình, Cổ đại, Sủng">
-        </div>
-
-        <div class="form-group">
-            <label>Giới Thiệu / Tóm Tắt Truyện</label>
-            <textarea id="storySummary" rows="3" placeholder="Nhập tóm tắt câu chuyện..."></textarea>
-        </div>
-
-        <div class="form-group">
-            <label>Upload Ảnh Bìa Truyện (Từ máy)</label>
-            <input type="file" id="coverFile" accept="image/*">
-        </div>
-
-        <div class="form-group">
-            <label>Hoặc Dán URL Bìa Truyện</label>
-            <input type="text" id="coverUrl" placeholder="https://domain.com/anh-bia.jpg">
-        </div>
-
-        <hr style="border: 0; border-top: 1px dashed var(--border-dash); margin: 25px 0;">
-
-        <div id="chaptersContainer">
-            <div class="chapter-box">
-                <div class="form-group" style="margin-bottom: 6px;">
-                    <label>Tên / Số Chương (Phần 1)</label>
-                    <input type="text" class="chap-title" value="Chương 1" required>
-                </div>
-                <div class="form-group" style="margin-bottom: 0;">
-                    <label>Nội Dung</label>
-                    <textarea class="chap-content" placeholder="Nhập nội dung chương 1..." required></textarea>
-                </div>
-            </div>
-        </div>
-
-        <button type="button" class="add-chap-btn" onclick="addChapterBox()">+ Thêm Phần Hoặc Chương</button>
-
-        <button type="submit" class="submit-btn">Tạo File Truyện Mới Lên GitHub</button>
-        <div id="statusMsg" class="status-msg"></div>
-    </form>
-</div>
-
-<script>
-    let chapterCount = 1;
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const savedToken = localStorage.getItem('gh_token_reviewconvert');
-        if (savedToken) {
-            document.getElementById('githubToken').value = savedToken;
-        }
+    const chapBoxes = document.querySelectorAll('.chapter-box');
+    const chapters = [];
+    chapBoxes.forEach((box, idx) => {
+        const chapTitle = box.querySelector('.chap-title').value.trim();
+        const chapContent = box.querySelector('.chap-content').value.trim();
+        chapters.push({ id: `ch${idx + 1}`, title: chapTitle, content: chapContent });
     });
 
-    function addChapterBox() {
-        chapterCount++;
-        const container = document.getElementById('chaptersContainer');
-        const box = document.createElement('div');
-        box.className = 'chapter-box';
-        box.innerHTML = `
-            <div class="form-group" style="margin-bottom: 6px;">
-                <label>Tên / Số Chương (Phần ${chapterCount})</label>
-                <input type="text" class="chap-title" value="Chương ${chapterCount}" required>
-            </div>
-            <div class="form-group" style="margin-bottom: 0;">
-                <label>Nội Dung</label>
-                <textarea class="chap-content" placeholder="Nhập nội dung chương ${chapterCount}..." required></textarea>
-            </div>
-        `;
-        container.appendChild(box);
-    }
+    const fileName = slugify(title) || ('truyen-' + Date.now());
+    const filePath = `read/${fileName}.html`;
+    const storyReadFileName = `${fileName}.html`;
 
-    function getCoverSrc() {
-        return new Promise((resolve) => {
-            const fileInput = document.getElementById('coverFile');
-            const urlInput = document.getElementById('coverUrl').value.trim();
+    let chapBtnsHtml = chapters.map((ch, idx) => 
+        `<button class="chapter-btn ${idx === 0 ? 'active' : ''}" data-chap-id="${ch.id}" onclick="switchChapter(this, '${ch.id}')">${ch.title}</button>`
+    ).join('\n                ');
 
-            if (fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    resolve(e.target.result);
-                };
-                reader.readAsDataURL(fileInput.files[0]);
-            } else if (urlInput !== '') {
-                resolve(urlInput);
-            } else {
-                resolve('https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=400');
-            }
-        });
-    }
-
-    function slugify(text) {
-        return text.toString().toLowerCase()
-            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-            .replace(/[đĐ]/g, 'd')
-            .replace(/[^a-z0-9 -]/g, '')
-            .trim()
-            .replace(/\s+/g, '-')
-            .replace(/-+/g, '-');
-    }
-
-    async function handleCreateStoryFile(e) {
-        e.preventDefault();
-        const statusMsg = document.getElementById('statusMsg');
-        statusMsg.style.color = '#333';
-        statusMsg.textContent = 'Đang tiến hành tạo file bài viết...';
-
-        const githubAcc = document.getElementById('githubAcc').value.trim();
-        const repo = document.getElementById('repoName').value.trim();
-        const token = document.getElementById('githubToken').value.trim();
-        const title = document.getElementById('storyTitle').value.trim();
-        const author = document.getElementById('storyAuthor').value.trim();
-        const rawTags = document.getElementById('storyTags').value.trim();
-        const summary = document.getElementById('storySummary').value.trim();
-        const coverSrc = await getCoverSrc();
-
-        localStorage.setItem('gh_token_reviewconvert', token);
-
-        let tagsHtml = '';
-        if (rawTags) {
-            tagsHtml = rawTags.split(',')
-                .map(t => t.trim())
-                .filter(t => t.length > 0)
-                .map(t => `<span class="tag-item">${escapeHtml(t)}</span>`)
-                .join('\n                    ');
-        }
-
-        const chapBoxes = document.querySelectorAll('.chapter-box');
-        const chapters = [];
-        chapBoxes.forEach((box, idx) => {
-            const chapTitle = box.querySelector('.chap-title').value.trim();
-            const chapContent = box.querySelector('.chap-content').value.trim();
-            chapters.push({ id: `ch${idx + 1}`, title: chapTitle, content: chapContent });
-        });
-
-        const fileName = slugify(title) || ('truyen-' + Date.now());
-        const filePath = `read/${fileName}.html`;
-        const storyReadFileName = `${fileName}.html`;
-
-        let chapBtnsHtml = chapters.map((ch, idx) => 
-            `<button class="chapter-btn ${idx === 0 ? 'active' : ''}" data-chap-id="${ch.id}" onclick="switchChapter(this, '${ch.id}')">${ch.title}</button>`
-        ).join('\n                ');
-
-        const fullNewPageHtml = `<!DOCTYPE html>
+    const fullNewPageHtml = `<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -866,107 +610,116 @@
 </body>
 </html>`;
 
-        const newStoryCardIndexHtml = `<article class="story-card">
-            <div class="cover-wrapper">
-                <img src="${coverSrc}" alt="Bìa truyện" class="cover-img">
-            </div>
-            <div class="story-info">
-                <h2 class="story-title"><a href="${storyReadFileName}">${escapeHtml(title)}</a></h2>
-                <div class="story-author">Tác giả: ${escapeHtml(author)}</div>
-                ${tagsHtml ? `<div class="story-tags">
-                    ${tagsHtml}
-                </div>` : ''}
-                ${summary ? `<div class="story-summary">
-                    Giới thiệu: ${escapeHtml(summary)}
-                </div>` : ''}
-                <a href="${storyReadFileName}" class="read-btn">Đọc Truyện ➔</a>
-            </div>
-        </article>`;
+    const newStoryCardIndexHtml = `<article class="story-card">
+        <div class="cover-wrapper">
+            <img src="${coverSrc}" alt="Bìa truyện" class="cover-img">
+        </div>
+        <div class="story-info">
+            <h2 class="story-title"><a href="${storyReadFileName}">${escapeHtml(title)}</a></h2>
+            <div class="story-author">Tác giả: ${escapeHtml(author)}</div>
+            ${tagsHtml ? `<div class="story-tags">
+                ${tagsHtml}
+            </div>` : ''}
+            ${summary ? `<div class="story-summary">
+                Giới thiệu: ${escapeHtml(summary)}
+            </div>` : ''}
+            <a href="${storyReadFileName}" class="read-btn">Đọc Truyện ➔</a>
+        </div>
+    </article>`;
 
-        try {
-            // Bước 1: Tạo file truyện chi tiết trong thư mục read/
-            const readPageApiUrl = `https://api.github.com/repos/${githubAcc}/${repo}/contents/${filePath}`;
-            const putReadRes = await fetch(readPageApiUrl, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: `Tạo trang truyện mới: ${title}`,
-                    content: btoa(unescape(encodeURIComponent(fullNewPageHtml)))
-                })
-            });
-
-            if (!putReadRes.ok) {
-                const errData = await putReadRes.json();
-                throw new Error(errData.message || 'Lỗi khi tạo file truyện mới trong folder read/.');
-            }
-
-            // Bước 2: Lấy dữ liệu file read/index.html hiện tại VÀ LẤY MÃ SHA
-            statusMsg.textContent = 'Đang tự động cập nhật bài viết vào danh sách read/index.html...';
-            const indexPath = 'read/index.html';
-            const indexApiUrl = `https://api.github.com/repos/${githubAcc}/${repo}/contents/${indexPath}`;
-
-            const getIndexRes = await fetch(indexApiUrl, {
-                headers: { 'Authorization': `token ${token}` }
-            });
-
-            if (!getIndexRes.ok) {
-                throw new Error('Không thể tải file read/index.html từ GitHub.');
-            }
-
-            const indexFileData = await getIndexRes.json();
-            const currentIndexHtml = decodeURIComponent(escape(atob(indexFileData.content)));
-
-            // Tìm thẻ <main id="story-list"> để chèn card bài mới vào top
-            const match = currentIndexHtml.match(/<main[^>]*id=["']story-list["'][^>]*>/i);
-            if (!match) {
-                throw new Error('Không tìm thấy thẻ <main id="story-list"> trong file read/index.html');
-            }
-
-            const insertPosition = match.index + match[0].length;
-            const updatedIndexHtml = currentIndexHtml.slice(0, insertPosition) + 
-                                     '\n\n        ' + newStoryCardIndexHtml + 
-                                     currentIndexHtml.slice(insertPosition);
-
-            // Bước 3: Gửi lệnh PUT cập nhật read/index.html KÈM THUỘC TÍNH SHA (Đã sửa lỗi "sha wasn't supplied")
-            const putIndexRes = await fetch(indexApiUrl, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: `Thêm truyện "${title}" vào read/index.html`,
-                    content: btoa(unescape(encodeURIComponent(updatedIndexHtml))),
-                    sha: indexFileData.sha // TRUYỀN MÃ SHA ĐỂ GHI ĐÈ FILE CŨ
-                })
-            });
-
-            if (putIndexRes.ok) {
-                const fullReadUrl = `https://${githubAcc.toLowerCase()}.github.io/${filePath}`;
-                const indexUrl = `https://${githubAcc.toLowerCase()}.github.io/read/index.html`;
-
-                statusMsg.style.color = 'green';
-                statusMsg.innerHTML = `Đã tạo truyện thành công!<br>
-                • Trang danh sách: <a href="${indexUrl}" target="_blank" style="color:#d76a03;">${indexUrl}</a><br>
-                • Trang đọc chi tiết: <a href="${fullReadUrl}" target="_blank" style="color:#d76a03;">${fullReadUrl}</a>`;
-            } else {
-                const putErrData = await putIndexRes.json();
-                throw new Error(putErrData.message || 'Lỗi khi ghi đè danh sách read/index.html.');
-            }
-
-        } catch (err) {
-            statusMsg.style.color = 'red';
-            statusMsg.textContent = 'Lỗi: ' + err.message;
+    try {
+        // BƯỚC 1: Tạo/Cập nhật file truyện đọc chi tiết trong thư mục read/
+        const readPageApiUrl = `https://api.github.com/repos/${githubAcc}/${repo}/contents/${filePath}`;
+        
+        // Kiểm tra xem file truyện chi tiết này đã tồn tại chưa để lấy sha (nếu có)
+        let existingStorySha = null;
+        const checkStoryRes = await fetch(readPageApiUrl, {
+            headers: { 'Authorization': `token ${token}` }
+        });
+        if (checkStoryRes.ok) {
+            const storyData = await checkStoryRes.json();
+            existingStorySha = storyData.sha;
         }
-    }
 
-    function escapeHtml(str) {
-        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-    }
-</script>
+        const putStoryPayload = {
+            message: `Tạo trang truyện mới: ${title}`,
+            content: btoa(unescape(encodeURIComponent(fullNewPageHtml)))
+        };
+        if (existingStorySha) {
+            putStoryPayload.sha = existingStorySha;
+        }
 
-</body>
-</html>
+        const putReadRes = await fetch(readPageApiUrl, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(putStoryPayload)
+        });
+
+        if (!putReadRes.ok) {
+            const errData = await putReadRes.json();
+            throw new Error(errData.message || 'Lỗi khi tạo file truyện mới trong folder read/.');
+        }
+
+        // BƯỚC 2: Cập nhật file read/index.html (Lấy SHA trước rồi mới ghi đè)
+        statusMsg.textContent = 'Đang tự động cập nhật bài viết vào danh sách read/index.html...';
+        const indexPath = 'read/index.html';
+        const indexApiUrl = `https://api.github.com/repos/${githubAcc}/${repo}/contents/${indexPath}`;
+
+        const getIndexRes = await fetch(indexApiUrl, {
+            headers: { 'Authorization': `token ${token}` }
+        });
+
+        if (!getIndexRes.ok) {
+            throw new Error('Không thể tải file read/index.html từ GitHub.');
+        }
+
+        const indexFileData = await getIndexRes.json();
+        const currentSha = indexFileData.sha; // Lấy mã SHA của read/index.html
+        const currentIndexHtml = decodeURIComponent(escape(atob(indexFileData.content)));
+
+        // Tìm vị trí thẻ <main id="story-list">
+        const match = currentIndexHtml.match(/<main[^>]*id=["']story-list["'][^>]*>/i);
+        if (!match) {
+            throw new Error('Không tìm thấy thẻ <main id="story-list"> trong file read/index.html');
+        }
+
+        const insertPosition = match.index + match[0].length;
+        const updatedIndexHtml = currentIndexHtml.slice(0, insertPosition) + 
+                                 '\n\n        ' + newStoryCardIndexHtml + 
+                                 currentIndexHtml.slice(insertPosition);
+
+        // BƯỚC 3: Gửi PUT để ghi đè read/index.html kèm mã SHA thu được
+        const putIndexRes = await fetch(indexApiUrl, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: `Thêm truyện "${title}" vào read/index.html`,
+                content: btoa(unescape(encodeURIComponent(updatedIndexHtml))),
+                sha: currentSha // ĐÃ TRUYỀN MÃ SHA
+            })
+        });
+
+        if (putIndexRes.ok) {
+            const fullReadUrl = `https://${githubAcc.toLowerCase()}.github.io/${filePath}`;
+            const indexUrl = `https://${githubAcc.toLowerCase()}.github.io/read/index.html`;
+
+            statusMsg.style.color = 'green';
+            statusMsg.innerHTML = `Đã tạo truyện thành công!<br>
+            • Trang danh sách: <a href="${indexUrl}" target="_blank" style="color:#d76a03;">${indexUrl}</a><br>
+            • Trang đọc chi tiết: <a href="${fullReadUrl}" target="_blank" style="color:#d76a03;">${fullReadUrl}</a>`;
+        } else {
+            const putErrData = await putIndexRes.json();
+            throw new Error(putErrData.message || 'Lỗi khi ghi đè danh sách read/index.html.');
+        }
+
+    } catch (err) {
+        statusMsg.style.color = 'red';
+        statusMsg.textContent = 'Lỗi: ' + err.message;
+    }
+}
