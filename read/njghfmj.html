@@ -267,20 +267,15 @@
 
 .story-content {
     font-size: 1.2rem;
-    line-height: 1.65; /* Giữ nguyên khoảng cách các dòng của bạn */
+    line-height: 1.65; /* Giữ nguyên khoảng cách dòng của bạn */
     text-align: justify;
     margin-bottom: 25px;
     min-height: 120px;
-
-    /* Thêm 2 dòng này dưới đây */
-    white-space: pre-line;
-    word-spacing: 100vw; 
 }
 
-/* Đoạn này tạo khoảng trống thưa ra giữa các đoạn */
-.story-content::before {
-    content: "";
-    margin-bottom: 1.5rem; /* Muốn các đoạn xa nhau bao nhiêu thì chỉnh số này */
+/* Thêm đoạn này để chỉnh khoảng cách riêng cho các đoạn văn */
+.story-content p {
+    margin-bottom: 20px; /* Càng tăng số này thì các đoạn càng thưa xa nhau */
     display: block;
 }
 
