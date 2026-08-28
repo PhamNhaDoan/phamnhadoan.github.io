@@ -43,7 +43,7 @@
 
         .cp-container {
             width: 100%;
-            max-width: 600px;
+            max-width: 720px;
             background-color: var(--cream-bg);
             border: 2px solid var(--border-dash);
             outline: 2px dashed var(--border-dash);
@@ -77,59 +77,34 @@
         .cp-grid {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 16px;
         }
 
-        /* Nút thiết kế với bóng đặc (Solid Shadow) */
+        /* Khung chứa hàng 2 nút bấm */
+        .cp-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        /* Nút cơ bản phong cách bóng đặc */
         .cp-btn {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px 24px;
+            padding: 14px 18px;
             font-family: inherit;
-            font-size: 1.1rem;
+            font-size: 0.98rem;
             font-weight: 700;
             text-decoration: none;
             border-radius: 12px;
             color: #ffffff;
             border: 2.5px solid #2b2d42;
             cursor: pointer;
-            position: relative;
+            box-shadow: 4px 4px 0px #2b2d42;
             transition: all 0.15s ease-in-out;
         }
 
-        /* Phối màu nút bóng đặc */
-        .btn-edit {
-            background-color: var(--primary-orange);
-            box-shadow: 4px 4px 0px #2b2d42;
-        }
-
-        .btn-convert {
-            background-color: var(--accent-green);
-            box-shadow: 4px 4px 0px #2b2d42;
-        }
-
-        .btn-upload {
-            background-color: var(--moss-green);
-            box-shadow: 4px 4px 0px #2b2d42;
-        }
-
-        .btn-online {
-            background-color: var(--dark-amber);
-            box-shadow: 4px 4px 0px #2b2d42;
-        }
-
-        .btn-note {
-            background-color: var(--rose-pink);
-            box-shadow: 4px 4px 0px #2b2d42;
-        }
-
-        .btn-ardrive {
-            background-color: var(--purple-plum);
-            box-shadow: 4px 4px 0px #2b2d42;
-        }
-
-        /* Hiệu ứng khi rê chuột & bấm nút */
         .cp-btn:hover {
             transform: translate(-2px, -2px);
             box-shadow: 6px 6px 0px #2b2d42;
@@ -141,12 +116,26 @@
         }
 
         .btn-icon {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             transition: transform 0.2s ease;
         }
 
         .cp-btn:hover .btn-icon {
-            transform: translateX(5px);
+            transform: translateX(4px);
+        }
+
+        /* Phối màu Nút Admin chính */
+        .btn-edit { background-color: var(--primary-orange); }
+        .btn-convert { background-color: var(--accent-green); }
+        .btn-upload { background-color: var(--moss-green); }
+        .btn-online { background-color: var(--dark-amber); }
+        .btn-note { background-color: var(--rose-pink); }
+        .btn-ardrive { background-color: var(--purple-plum); }
+
+        /* Phối màu Nút Trang chính (Giao diện phụ) */
+        .btn-site {
+            background-color: #ffffff;
+            color: #2b2d42;
         }
 
         .cp-footer {
@@ -159,58 +148,104 @@
             font-weight: 600;
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 580px) {
+            .cp-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
             .cp-container {
-                padding: 30px 20px;
+                padding: 30px 18px;
             }
             .cp-header h1 {
                 font-size: 1.8rem;
             }
             .cp-btn {
-                font-size: 1rem;
-                padding: 14px 18px;
+                font-size: 0.92rem;
+                padding: 12px 16px;
             }
         }
     </style>
 </head>
 <body>
 
-<div class="cp-container">
+<div class="container cp-container">
     <div class="cp-header">
         <h1>Control Panel</h1>
-        <p>Hệ thống Quản trị phamnhadoan.github.io</p>
+        <p>Hệ thống Quản trị & Điều khiển phamnhadoan.github.io</p>
     </div>
 
     <div class="cp-grid">
-        <a href="https://phamnhadoan.github.io/truyendadoc/index2.html" class="cp-btn btn-edit" target="_blank" rel="noopener">
-            <span>Admin rv truyện edit (https://thusungcong.vercel.app)</span>
-            <span class="btn-icon">➔</span>
-        </a>
+        <!-- Hàng 1: Truyện Edit -->
+        <div class="cp-row">
+            <a href="https://phamnhadoan.github.io/truyendadoc/index2.html" class="cp-btn btn-edit" target="_blank" rel="noopener">
+                <span>Admin RV Truyện Edit</span>
+                <span class="btn-icon">➔</span>
+            </a>
+            <a href="https://thusungcong.vercel.app" class="cp-btn btn-site" target="_blank" rel="noopener">
+                <span>Trang Chủ RV Edit</span>
+                <span class="btn-icon">🌐</span>
+            </a>
+        </div>
 
-        <a href="https://phamnhadoan.github.io/reviewconvert/index2.html" class="cp-btn btn-convert" target="_blank" rel="noopener">
-            <span>Admin rv truyện convert (https://thusungcongcv.vercel.app)</span>
-            <span class="btn-icon">➔</span>
-        </a>
+        <!-- Hàng 2: Truyện Convert -->
+        <div class="cp-row">
+            <a href="https://phamnhadoan.github.io/reviewconvert/index2.html" class="cp-btn btn-convert" target="_blank" rel="noopener">
+                <span>Admin RV Convert</span>
+                <span class="btn-icon">➔</span>
+            </a>
+            <a href="https://thusungcongcv.vercel.app" class="cp-btn btn-site" target="_blank" rel="noopener">
+                <span>Trang Chủ RV Convert</span>
+                <span class="btn-icon">🌐</span>
+            </a>
+        </div>
 
-        <a href="https://phamnhadoan.github.io/chucongconvert/taitruyen/index2.html" class="cp-btn btn-upload" target="_blank" rel="noopener">
-            <span>Admin upload truyện (https://chucongconvert.vercel.app/taitruyen</span>
-            <span class="btn-icon">➔</span>
-        </a>
+        <!-- Hàng 3: Upload Truyện -->
+        <div class="cp-row">
+            <a href="https://phamnhadoan.github.io/chucongconvert/taitruyen/index2.html" class="cp-btn btn-upload" target="_blank" rel="noopener">
+                <span>Admin Upload Truyện</span>
+                <span class="btn-icon">➔</span>
+            </a>
+            <a href="https://chucongconvert.vercel.app/taitruyen" class="cp-btn btn-site" target="_blank" rel="noopener">
+                <span>Trang Tải Truyện</span>
+                <span class="btn-icon">🌐</span>
+            </a>
+        </div>
 
-        <a href="https://phamnhadoan.github.io/read/index2.html" class="cp-btn btn-online" target="_blank" rel="noopener">
-            <span>Admin đăng truyện online (https://phamnhadoan.github.io/read/</span>
-            <span class="btn-icon">➔</span>
-        </a>
+        <!-- Hàng 4: Đăng Truyện Online -->
+        <div class="cp-row">
+            <a href="https://phamnhadoan.github.io/read/index2.html" class="cp-btn btn-online" target="_blank" rel="noopener">
+                <span>Admin Đăng Online</span>
+                <span class="btn-icon">➔</span>
+            </a>
+            <a href="https://phamnhadoan.github.io/read/" class="cp-btn btn-site" target="_blank" rel="noopener">
+                <span>Trang Chủ Đọc Online</span>
+                <span class="btn-icon">🌐</span>
+            </a>
+        </div>
 
-        <a href="https://phamnhadoan.github.io/note/index2.html" class="cp-btn btn-note" target="_blank" rel="noopener">
-            <span>Admin nhật ký đọc sách (https://phamnhadoan.github.io/note/</span>
-            <span class="btn-icon">➔</span>
-        </a>
+        <!-- Hàng 5: Nhật Ký Đọc Sách -->
+        <div class="cp-row">
+            <a href="https://phamnhadoan.github.io/note/index2.html" class="cp-btn btn-note" target="_blank" rel="noopener">
+                <span>Admin Nhật Ký Đọc</span>
+                <span class="btn-icon">➔</span>
+            </a>
+            <a href="https://phamnhadoan.github.io/note/" class="cp-btn btn-site" target="_blank" rel="noopener">
+                <span>Trang Nhật Ký Đọc</span>
+                <span class="btn-icon">🌐</span>
+            </a>
+        </div>
 
-        <a href="https://phamnhadoan.github.io/ardrive/" class="cp-btn btn-ardrive" target="_blank" rel="noopener">
-            <span>Chuyển file Ardrive (https://chucongconvert.vercel.app/taitruyen)</span>
-            <span class="btn-icon">➔</span>
-        </a>
+        <!-- Hàng 6: Chuyển File Ardrive -->
+        <div class="cp-row">
+            <a href="https://phamnhadoan.github.io/ardrive/" class="cp-btn btn-ardrive" target="_blank" rel="noopener">
+                <span>Admin Ardrive</span>
+                <span class="btn-icon">➔</span>
+            </a>
+            <a href="https://chucongconvert.vercel.app/taitruyen" class="cp-btn btn-site" target="_blank" rel="noopener">
+                <span>Trang Chuyển Ardrive</span>
+                <span class="btn-icon">🌐</span>
+            </a>
+        </div>
     </div>
 
     <div class="cp-footer">
