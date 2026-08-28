@@ -265,18 +265,25 @@
             border-color: var(--accent-green);
         }
 
-        .story-content {
-            font-size: 1.2rem;
-            line-height: 1.65;
-            text-align: justify;
-            margin-bottom: 25px;
-            min-height: 120px;
-        }
+   .story-content {
+    font-size: 1.2rem;
+    line-height: 1.65;
+    text-align: justify;
+    
+    /* 1. Đổi sang pre-line */
+    white-space: pre-line; 
+    
+    /* 2. Tăng line-height hoặc chỉnh khoảng cách dòng */
+    margin-bottom: 25px;
+    min-height: 120px;
+}
 
-        .story-content p, .story-content {
-           margin-top: 0;
-            margin-bottom: 1.2rem;
-        }
+/* Thêm đoạn này để ép các khoảng xuống dòng (\n) rộng ra như một đoạn văn */
+.story-content::after {
+    content: "";
+    display: block;
+}
+
 
         .bottom-nav {
             display: flex;
