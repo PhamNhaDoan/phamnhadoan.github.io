@@ -276,7 +276,7 @@
         let tagsHtml = '';
         if (rawTags) {
             tagsArray = rawTags.split(',').map(t => t.trim()).filter(t => t.length > 0);
-            tagsHtml = tagsArray.map(t => `<span class="tag-item">${escapeHtml(t)}</span>`).join('\n                    ');
+            tagsHtml = tagsArray.map(t => `<span class="tag-item">${escapeHtml(t)}</span>`).join('\n                ');
         }
 
         const chapBoxes = document.querySelectorAll('.chapter-box');
@@ -293,9 +293,9 @@
 
         let chapBtnsHtml = chapters.map((ch, idx) => 
             `<button class="chapter-btn ${idx === 0 ? 'active' : ''}" data-chap-id="${ch.id}" onclick="switchChapter(this, '${ch.id}')">${ch.title}</button>`
-        ).join('\n                ');
+        ).join('\n            ');
 
-        // 1. Mã HTML cho file đọc truyện mới
+        // Mã HTML cho trang đọc chi tiết
         const fullNewPageHtml = `<!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -568,10 +568,6 @@
             white-space: pre-wrap;
             margin-bottom: 25px;
             min-height: 120px;
-        }
-
-        .story-content p, .story-content {
-            margin-bottom: 0.8rem;
         }
 
         .bottom-nav {
@@ -861,12 +857,12 @@
         updateNavButtons();
         loadReaderSettings();
     });
-<\/script>
+</script>
 
 </body>
 </html>`;
 
-        // 2. Khung HTML truyện hàng ngang để chèn tự động vào index.html
+        // Khung HTML truyện để chèn vào file index.html ở gốc
         const newStoryCardIndexHtml = `<article class="story-card">
             <div class="cover-wrapper">
                 <img src="${coverSrc}" alt="Bìa truyện" class="cover-img">
@@ -885,7 +881,7 @@
         </article>`;
 
         try {
-            // ĐƯỜNG DẪN BƯỚC 1: Tạo file .html đọc truyện mới trong thư mục read/
+            // Bước 1: Tạo file đọc truyện mới vào thư mục read/
             const readPageApiUrl = `https://api.github.com/repos/${githubAcc}/${repo}/contents/${filePath}`;
             const putReadRes = await fetch(readPageApiUrl, {
                 method: 'PUT',
@@ -904,7 +900,7 @@
                 throw new Error(errData.message || 'Lỗi khi tạo file truyện mới trong folder read/.');
             }
 
-            // ĐƯỜNG DẪN BƯỚC 2: Cập nhật chèn truyện mới lên trang chủ index.html
+            // Bước 2: Cập nhật chèn truyện mới lên file index.html ở thư mục gốc
             statusMsg.textContent = 'Đang cập nhật truyện mới lên trang chủ index.html...';
             const indexPath = 'index.html';
             const indexApiUrl = `https://api.github.com/repos/${githubAcc}/${repo}/contents/${indexPath}`;
@@ -925,7 +921,6 @@
                 throw new Error('Không tìm thấy vị trí <main id="story-list"> trong file index.html');
             }
 
-            // Chèn truyện mới lên ngay phía dưới <main id="story-list">
             const updatedIndexHtml = currentIndexHtml.replace(
                 targetTag,
                 targetTag + '\n\n        ' + newStoryCardIndexHtml
@@ -950,8 +945,8 @@
 
                 statusMsg.style.color = 'green';
                 statusMsg.innerHTML = `Đã cập nhật thành công!<br>
-                1. Truyện mới đã được thêm vào trang chủ: <a href="${indexUrl}" target="_blank" style="color:#d76a03;">Xem index.html</a><br>
-                2. Trang đọc truyện chi tiết: <a href="${fullReadUrl}" target="_blank" style="color:#d76a03;">Xem ${title}</a>`;
+                1. Trang chủ đã thêm truyện: <a href="${indexUrl}" target="_blank" style="color:#d76a03;">Xem index.html</a><br>
+                2. Trang đọc chi tiết: <a href="${fullReadUrl}" target="_blank" style="color:#d76a03;">Xem ${title}</a>`;
             } else {
                 throw new Error('Lỗi khi ghi đè file index.html lên GitHub.');
             }
