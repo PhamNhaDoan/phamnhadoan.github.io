@@ -3,95 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh Sách Truyện Mới Nhất</title>
+    <title>Danh Sách Truyện Online - PhamNhaDoan</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-dots: #c2b280;
-            --cream-bg: rgba(253, 251, 247, 0.94);
+            --cream-bg: rgba(253, 251, 247, 0.95);
             --border-dash: #a89f91;
-            --primary-color: #d76a03;
+            --primary-orange: #d76a03;
             --accent-green: #4f6d7a;
             --text-color: #2b2d42;
-            --card-shadow: rgba(0, 0, 0, 0.05);
+            --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             font-family: 'Nunito', sans-serif;
-            margin: 0;
-            padding: 40px 15px;
+            min-height: 100vh;
             color: var(--text-color);
             background-color: #f4f1ea;
             background-image: radial-gradient(var(--bg-dots) 1.5px, transparent 1.5px);
             background-size: 18px 18px;
+            padding: 40px 15px;
             line-height: 1.6;
         }
 
         .container {
-            max-width: 850px;
+            max-width: 800px;
             margin: 0 auto;
         }
 
         header {
             text-align: center;
             margin-bottom: 35px;
-            border-bottom: 2px dashed var(--border-dash);
-            padding-bottom: 20px;
+            background-color: var(--cream-bg);
+            border: 2px dashed var(--border-dash);
+            border-radius: 16px;
+            padding: 25px 20px;
+            box-shadow: var(--card-shadow);
         }
 
         header h1 {
             font-size: 2.2rem;
-            color: var(--primary-color);
-            margin: 0 0 8px 0;
-            font-weight: 700;
+            color: var(--primary-orange);
+            margin-bottom: 6px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
         }
 
         header p {
             color: var(--accent-green);
             font-weight: 600;
-            margin: 0;
             font-style: italic;
+            font-size: 1.05rem;
         }
 
-        /* Danh sách chứa các khung truyện */
+        /* Thẻ danh sách chứa truyện */
         #story-list {
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 22px;
         }
 
-        /* Khung truyện hàng ngang (Card) */
+        /* Khung bài đăng hàng ngang */
         .story-card {
             background-color: var(--cream-bg);
             border: 2px dashed var(--border-dash);
             border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 6px 18px var(--card-shadow);
+            padding: 22px;
+            box-shadow: var(--card-shadow);
             display: grid;
-            grid-template-columns: 160px 1fr;
-            gap: 22px;
+            grid-template-columns: 150px 1fr;
+            gap: 20px;
             align-items: start;
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .story-card:hover {
             transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 580px) {
             .story-card {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* Khung ảnh bìa */
+        /* Bìa truyện */
         .cover-wrapper {
             width: 100%;
-            height: 220px;
+            height: 210px;
             border: 1px dashed var(--border-dash);
             padding: 4px;
             border-radius: 10px;
@@ -109,7 +119,7 @@
             border-radius: 6px;
         }
 
-        /* Khung thông tin truyện */
+        /* Cụm thông tin */
         .story-info {
             display: flex;
             flex-direction: column;
@@ -117,13 +127,14 @@
         }
 
         .story-title {
-            font-size: 1.5rem;
+            font-size: 1.45rem;
             margin: 0;
-            font-weight: 700;
+            font-weight: 800;
+            line-height: 1.3;
         }
 
         .story-title a {
-            color: var(--primary-color);
+            color: var(--primary-orange);
             text-decoration: none;
             transition: color 0.2s;
         }
@@ -156,7 +167,7 @@
 
         .story-summary {
             background: rgba(255, 255, 255, 0.75);
-            border-left: 3px solid var(--primary-color);
+            border-left: 3px solid var(--primary-orange);
             padding: 8px 12px;
             border-radius: 4px;
             font-size: 0.92rem;
@@ -166,21 +177,44 @@
             line-height: 1.5;
         }
 
+        /* Nút Đọc Truyện có bóng đặc */
         .read-btn {
             align-self: flex-start;
             margin-top: 10px;
             background: var(--accent-green);
             color: #fff;
             text-decoration: none;
-            padding: 7px 18px;
+            padding: 8px 20px;
             border-radius: 20px;
             font-weight: 700;
             font-size: 0.9rem;
-            transition: background 0.2s;
+            border: 1.5px solid #2b2d42;
+            box-shadow: 2.5px 2.5px 0px #2b2d42;
+            transition: all 0.15s ease-in-out;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .read-btn:hover {
             background: #3b535e;
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px #2b2d42;
+        }
+
+        .read-btn:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0px #2b2d42;
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            border-top: 1px dashed var(--border-dash);
+            padding-top: 20px;
+            font-size: 0.9rem;
+            color: #777;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -188,34 +222,38 @@
 
 <div class="container">
     <header>
-        <h1>Đọc truyện online</h1>
-        <p>Cập nhật truyện convert thụ sủng công, hstc, công khống</p>
+        <h1>Tủ Truyện Đọc Online</h1>
+        <p>Hệ thống đăng bài chọn lọc tại phamnhadoan.github.io/read/</p>
     </header>
 
-    <!-- Thẻ chứa danh sách truyện -->
+    <!-- Thẻ chứa danh sách bài: Truyện đăng từ Admin sẽ tự động chèn ngay sau thẻ này -->
     <main id="story-list">
 
-        <!-- Mẫu 1 khung truyện (Bài mới đăng qua Admin sẽ tự động chèn lên phía trên dòng này) -->
+        <!-- Mẫu 1 khung truyện khởi tạo -->
         <article class="story-card">
             <div class="cover-wrapper">
                 <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=400" alt="Bìa truyện" class="cover-img">
             </div>
             <div class="story-info">
-                <h2 class="story-title"><a href="read/truyen-mau.html">Tên Truyện Mẫu Khởi Đầu</a></h2>
-                <div class="story-author">Tác giả: Doan Pham</div>
+                <h2 class="story-title"><a href="detail-mau.html">Nam nam thụ thụ đứt dây thun quần</a></h2>
+                <div class="story-author">Tác giả: PhamNhaDoan</div>
                 <div class="story-tags">
                     <span class="tag-item">Thụ sủng công</span>
                     <span class="tag-item">Thụ truy công</span>
                     <span class="tag-item">Ngược thụ</span>
                 </div>
                 <div class="story-summary">
-                    Giới thiệu: Yêu công bảo muôn đời.
+                    Giới thiệu: Yêu công bảo muôn đời. Trang danh sách chỉ hiển thị tóm tắt thông tin thế này để dễ lướt tìm truyện.
                 </div>
-                <a href="read/truyen-mau.html" class="read-btn">Đọc Truyện →</a>
+                <a href="detail-mau.html" class="read-btn">Đọc Truyện ➔</a>
             </div>
         </article>
 
     </main>
+
+    <footer>
+        PhamNhaDoan &copy; Read Online System Catalog
+    </footer>
 </div>
 
 </body>
