@@ -761,20 +761,9 @@ Còn ta, vì để thoát khỏi nỗi đau giằng xé mà dứt bỏ hết nh�
         const foundIndex = storyData.findIndex(item => item.id === cId);
         if(foundIndex !== -1) {
             currentChapIndex = foundIndex;
-         const contentElem = document.getElementById('story-content-body');
+const contentElem = document.getElementById('story-content-body');
 
-const content = storyData[foundIndex].content
-    .replace(/\r\n/g, '\n')
-    .replace(/\r/g, '\n');
-
-const paragraphs = content
-    .split(/\n\s*\n/)
-    .map(p => p.trim())
-    .filter(p => p.length > 0);
-
-contentElem.innerHTML = paragraphs
-    .map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`)
-    .join('');
+contentElem.textContent = storyData[foundIndex].content;
             updateNavButtons();
         }
     }
