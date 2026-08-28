@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quá thông minh 5 - Đọc Truyện</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dots: #c2b280;
+            --cream-bg: rgba(253, 251, 247, 0.94);
+            --border-dash: #a89f91;
+            --primary-color: #d76a03;
+            --accent-green: #4f6d7a;
+            --text-color: #2b2d42;
+            --card-shadow: rgba(0, 0, 0, 0.05);
+            --reader-bg: #f4f1ea;
+        }
+
+        body.theme-cream {
+            background-color: #f4f1ea;
+            background-image: radial-gradient(var(--bg-dots) 1.5px, transparent 1.5px);
+            background-size: 18px 18px;
+            color: #2b2d42;
+        }
+
+        body.theme-white {
+            background-color: #ffffff;
+            background-image: none;
+            color: #111111;
+        }
+
+        body.theme-dark {
+            background-color: #1a1a1a;
+            background-image: none;
+            color: #d1d5db;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 40px 15px;
+            line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .container { max-width: 850px; margin: 0 auto; }
+
+        .story-container {
+            background-color: var(--cream-bg);
+            border: 2px dashed var(--border-dash);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 8px 24px var(--card-shadow);
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        body.theme-white .story-container {
+            background-color: #ffffff;
+            border-color: #d0d0d0;
+        }
+
+        body.theme-dark .story-container {
+            background-color: #262626;
+            border-color: #444444;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+
+        .story-header {
+            border-bottom: 1px dashed var(--border-dash);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 600px) {
+            .story-header { grid-template-columns: 1fr; }
+        }
+
+        .cover-wrapper {
+            width: 100%;
+            height: 250px;
+            border: 1px dashed var(--border-dash);
+            padding: 5px;
+            border-radius: 10px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .cover-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .story-title-group { display: flex; flex-direction: column; gap: 8px; }
+
+        .story-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .story-author { font-size: 1.05rem; color: var(--accent-green); font-weight: 600; }
+        body.theme-dark .story-author { color: #8ab4f8; }
+
+        .story-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .tag-item {
+            background: #e2ddd5;
+            color: var(--text-color);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        body.theme-dark .tag-item {
+            background: #3a3a3a;
+            color: #ccc;
+        }
+
+        .story-summary {
+            background: rgba(255, 255, 255, 0.7);
+            border-left: 3px solid var(--primary-color);
+            padding: 10px 14px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            color: #555;
+            font-style: italic;
+            margin-top: 6px;
+        }
+        body.theme-dark .story-summary {
+            background: rgba(0, 0, 0, 0.3);
+            color: #aaa;
+        }
+
+        .bookmark-btn {
+            align-self: flex-start;
+            margin-top: 8px;
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 6px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bookmark-btn:hover, .bookmark-btn.bookmarked {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .reader-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--border-dash);
+            padding: 10px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        body.theme-dark .reader-toolbar {
+            background: #333333;
+            border-color: #555;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toolbar-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+        body.theme-dark .toolbar-label { color: #8ab4f8; }
+
+        .tool-btn {
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .tool-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        body.theme-dark .tool-btn { background: #444; color: #fff; border-color: #666; }
+
+        .font-select {
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-family: inherit;
+            font-size: 0.88rem;
+            outline: none;
+            background: #fff;
+        }
+        body.theme-dark .font-select { background: #444; color: #fff; border-color: #666; }
+
+        .theme-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s;
+        }
+        .theme-circle:hover { transform: scale(1.15); }
+        .theme-circle.active { border-color: var(--primary-color); }
+        .theme-circle.cream { background: #f4f1ea; border: 1px solid #ccc; }
+        .theme-circle.white { background: #ffffff; border: 1px solid #ccc; }
+        .theme-circle.dark { background: #1a1a1a; }
+
+        .chapter-nav { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .chapter-btn {
+            padding: 6px 16px;
+            border: 1px solid var(--border-dash);
+            background: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        body.theme-dark .chapter-btn { background: #333; color: #ddd; border-color: #555; }
+
+        .chapter-btn.active {
+            background: var(--accent-green);
+            color: #fff;
+            border-color: var(--accent-green);
+        }
+
+        .story-content {
+            font-size: 1.2rem;
+            line-height: 1.65;
+            text-align: justify;
+            white-space: pre-line;
+            margin-bottom: 25px;
+            min-height: 120px;
+        }
+
+        .story-content p, .story-content {
+            margin-bottom: 1.5rem;
+        }
+
+        .bottom-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding-top: 15px;
+            margin-bottom: 30px;
+            border-top: 1px dashed var(--border-dash);
+            flex-wrap: wrap;
+        }
+
+        .nav-action-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--primary-color);
+            background: #fff;
+            color: var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        body.theme-dark .nav-action-btn { background: #333; }
+
+        .nav-action-btn:hover:not(:disabled) {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .nav-action-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-color: var(--border-dash);
+            color: var(--border-dash);
+        }
+
+        .top-scroll-btn {
+            background: var(--accent-green);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .top-scroll-btn:hover {
+            background: #3b535e;
+        }
+
+        .cbox-chat-section {
+            border-top: 1px dashed var(--border-dash);
+            padding-top: 25px;
+            margin-top: 30px;
+        }
+
+        .cbox-title {
+            font-size: 1.25rem;
+            color: var(--accent-green);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        body.theme-dark .cbox-title { color: #8ab4f8; }
+
+        .cbox-frame-wrapper {
+            background: #fff;
+            padding: 6px;
+            border-radius: 12px;
+            border: 1px dashed var(--border-dash);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="theme-cream">
+
+<div class="container">
+    <article class="story-container">
+        <div class="story-header">
+            <div class="cover-wrapper">
+                <img src="https://picsum.photos/200/300" alt="Bìa truyện" class="cover-img">
+            </div>
+            <div class="story-title-group">
+                <h1 class="story-title">Quá thông minh 5</h1>
+                <div class="story-author">Tác giả: A Chinh Cửu Y</div>
+                
+                <div class="story-tags">
+                    <span class="tag-item">chủ công</span>
+                    <span class="tag-item">thụ sủng công</span>
+                </div>
+
+                <div class="story-summary">
+                    Giới thiệu: Ngươi đã giết chết người bạn thân nhất của ta.
+Về chuyện người bạn tốt nhất lại thích ta ấy à…
+CP: Nhan Thư x Phó Ước
+Có tình bạn song phương rõ ràng, và tình yêu đơn phương (thụ → công).
+                </div>
+
+                <button class="bookmark-btn" onclick="toggleBookmark()">
+                    <span class="bm-icon">★</span> <span class="bm-text">Bookmark</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="reader-toolbar">
+            <div class="toolbar-group">
+                <span class="toolbar-label">Cỡ chữ:</span>
+                <button class="tool-btn" onclick="changeFontSize(-0.1)">A-</button>
+                <button class="tool-btn" onclick="changeFontSize(0.1)">A+</button>
+            </div>
+
+            <div class="toolbar-group">
+                <span class="toolbar-label">Font:</span>
+                <select class="font-select" onchange="changeFontFamily(this.value)">
+                    <option value="'Nunito', sans-serif">Nunito (Trẻ trung)</option>
+                    <option value="'Merriweather', serif">Merriweather (Truyện giấy)</option>
+                    <option value="'Inter', sans-serif">Inter (Tối giản)</option>
+                </select>
+            </div>
+
+            <div class="toolbar-group">
+                <span class="toolbar-label">Giao diện:</span>
+                <div class="theme-circle cream active" onclick="setTheme('cream')" title="Vàng kem"></div>
+                <div class="theme-circle white" onclick="setTheme('white')" title="Trắng tinh"></div>
+                <div class="theme-circle dark" onclick="setTheme('dark')" title="Ban đêm"></div>
+            </div>
+        </div>
+
+        <div class="chapter-nav" id="chapterNav">
+            <button class="chapter-btn active" data-chap-id="ch1" onclick="switchChapter(this, 'ch1')">Phần 1</button>
+        </div>
+
+        <div class="story-content" id="story-content-body">
+            **Best tổn hữu**
+==================
+Vừa bước ra khỏi nhà thi đấu nơi vừa kết thúc buổi biểu diễn, đi theo dòng người khá lâu mà vẫn chưa thấy ngã rẽ.
+Vì khu vực lân cận đang bị kiểm soát giao thông, nên quãng đường phải đi bộ cũng không tính là quá xa, từng lớp từng lớp bóng dáng đổ xuống những bậc thềm chồng chất trước mặt, liếc mắt nhìn không thấy điểm cuối, lại như đem thời gian ở bên nhau kéo dài vô tận.
+Bên cạnh có rất nhiều người mang theo vật dụng cổ vũ đi ngang qua, có lẽ vẫn còn chìm đắm trong cơn sốt cuồng nhiệt tại nhà thi đấu, nên không có nhiều tiếng trò chuyện truyền ra. Nhan Thư cũng giống như bọn họ, cùng người bạn đi chung im lặng bước đi.
+Hắn và Tần Mục thật ra chỉ mới gặp mặt vài lần, vẫn là nhờ đồng nghiệp quen biết giới thiệu. Tính từ lúc Nhan Thư kết thúc mối tình thất bại trước đó đến giờ đã hơn một tháng, đồng nghiệp vì vậy cho rằng thời cơ đã chín muồi, có thể giới thiệu cho hắn người mà nghe nói từ rất lâu trước, trong một buổi tiệc cuối tuần, đã có ấn tượng và hảo cảm với hắn.
+&quot;Ta cũng không bảo các ngươi bây giờ phải ở bên nhau.&quot; Đồng nghiệp nói như vậy, &quot;Chỉ là trước tiên làm bạn bè, tìm hiểu nhau một chút, chẳng phải rất tốt sao?&quot;
+Tần Mục đại khái cũng đã tiếp nhận chỉ thị của đồng nghiệp, trước mặt hắn chỉ rất kiềm chế, sự thiên vị vượt quá giới hạn chỉ vô tình lộ ra trong những lời nói thường ngày kiểu bạn bè, không đến mức lộ vẻ gấp gáp ép người.
+Kẻ theo đuổi Từ Từ Đồ Chi lúc này đã đuổi theo đến bên cạnh Nhan Thư, bọn họ ở trong dòng người chen chúc cách nhau vài bước đi trước đi sau, thỉnh thoảng lại phải dừng lại nhìn nhau để phòng bị lạc mất.
+Nhan Thư trước đây cũng từng trải qua khoảnh khắc tan hàng náo nhiệt như thế này, nhà thi đấu tương tự, ca sĩ còn yêu thích hơn một chút, khi tan hàng Phó Ước nắm lấy cổ tay hắn, hai người giữa biển người như những vị khách vừa trốn thoát khỏi buổi lễ long trọng, chật vật mà thú vị luồn lách chạy qua những khe hở giữa dòng người.
+Hơi ấm gần kề truyền đến cảm giác tự do và khoan khoái, vốn dĩ trông có vẻ thân mật, nhưng so với những cặp tình nhân đan tay nhau thì lại chẳng đến mức dính dớp, cho nên dùng bằng hữu, dùng tri kỷ để giải thích cho hành động này cũng hoàn toàn có thể nói thông...
+
+---
+
+Hơi ấm gần kề truyền đến cảm giác tự do và khoan khoái, vốn dĩ trông có vẻ thân mật, nhưng so với những cặp tình nhân đan tay nhau thì lại chẳng đến mức dính dớp, cho nên dùng bằng hữu, dùng tri kỷ để giải thích cho hành động này cũng hoàn toàn có thể nói thông...
+Kỳ lạ thật, lúc đó hắn vậy mà lại tin.
+Tần Mục lúc này lên tiếng, hỏi hắn, tối nay muốn đăng lên vòng bạn bè thì có thể kèm theo tấm ảnh chụp chung của hai người không?
+Nhan Thư theo bản năng đáp: “Được chứ.”
+Sao lại còn phải hỏi qua ta chứ? Khi theo đuổi suy nghĩ về vấn đề này, hắn lại cảm thấy có chút ý vị khác. Cùng bạn bè đi xem concert, rồi đăng ảnh chụp chung lên mạng vốn dĩ là chuyện rất bình thường, trừ khi người này thực sự có lòng riêng, có cái lòng riêng mà cả hai đều hiểu rõ mà không nói ra.
+Nhưng lời đã nói ra thì không thể thu hồi lại được. Việc đăng ảnh chung lên vòng bạn bè xem như ít nhất cũng tuyên bố rằng quan hệ giữa hai người đã trở nên thân mật hơn một chút. Một mối quan hệ dường như nên tiến triển theo cách này - thông qua từng lần tiếp xúc mà dần dần đi sâu, ở mỗi giai đoạn phát ra tín hiệu tiến thêm một bước, còn người nhận được tín hiệu ấy sẽ phải hồi đáp lại.
+Nhan Thư suy nghĩ một chút, &quot;Vậy ta cũng đăng một tấm ảnh chụp chung của chúng ta.&quot;
+Khi chọn ảnh không hề thấy khó khăn. Ảnh chụp chung với Tần Mục giống như kiểu ảnh điểm danh theo thói quen, hai người rất khách sáo, trông cứ như đôi bạn đi concert thuần túy, nhưng thực chất lại là mối quan hệ khiến Nhan Thư có chút không thoải mái.
+Hắn vốn không có ý định nhanh chóng bắt đầu một đoạn tình cảm nào, dù là tình bạn hay tình yêu, chỉ cần nghĩ đến những từ ngữ liên quan trong khoảng thời gian này đã khiến hắn cảm thấy mệt mỏi, chán chường với việc phải ứng phó. Lúc này hắn khiến bản thân ngừng suy nghĩ về những chuyện tương tự. Kéo tiếp vòng bạn bè chỉ hiện trong ba ngày lên trên, có thể lật ra những buổi biểu diễn và hoạt động khác mà chỉ mình hắn thấy được, cùng xem với Phó Ước, hoặc là Phó Ước cùng những người bạn khác.
+Trong ảnh chụp chung, rốt cuộc vẫn có thể nhìn ra ai thân ai sơ. Tấm ảnh lục ra từ đáy tủ, hắn tựa vào người Phó Ước, gần như dựa hẳn lên người đối phương, nụ cười thả lỏng đến lạ thường. Phó Ước khẽ vòng tay ôm lấy hắn, động tác chụp ảnh phối hợp ăn ý đến mức gần như chẳng để lộ ra một kẽ hở nào.
+Luôn là hai người họ chen chúc cùng nhau, bạn bè chung cũng như chính bọn họ đều hiểu rõ: hai người này thân thiết, đặc biệt hơn hết thảy. Nhan Thư theo bản năng phân chia Phó Ước với những người bạn khác, khác với bạn bè bình thường, Phó Ước chính là người quen biết lâu nhất, thân thuộc nhất với hắn, hầu như chuyện gì cũng có thể nói, chưa từng giữ bí mật nào với nhau... một người bạn.
+Ngươi thật sự không nhìn ra sơ hở nào sao?
+Nhan Thư đột nhiên không muốn xem nữa. Hắn vuốt qua bức ảnh, rồi khi định đăng lên bạn bè thì chợt khựng lại, do dự một lúc trong lựa chọn có nên chặn Phó Ước hay không. Hắn không muốn cố tình chọc vào tim người khác, nhất là khi đối phương là người bạn tốt nhất của hắn... người bạn từng tốt nhất. Nhưng sau một hồi do dự, hắn lại nhận ra sự giả tạo của chính mình, rõ ràng ngay từ đầu, từ lần đầu hắn nhận lời mời của Tần Mục, từ khi hắn nghĩ rằng tốt nhất nên có một mối tình mới trước khi Phó Ước đi công tác trở về, rõ ràng ngay từ đầu đã chứa đầy sự nhắm vào cố ý.
+Loại trạng thái bạn bè này luôn thu về không ít lượt thích ủng hộ. Mấy đồng nghiệp thích làm mai mối sau khi bấm like lại nhắn tin riêng qua chọc ghẹo, trông còn hớn hở hơn cả đương sự được mai mối: &quot;Tiến triển khá đấy chứ.&quot;
+Nhan Thư đang lướt qua những biểu cảm xua tay phủ nhận, thì tin nhắn từ Phó Ước bỗng hiện lên phía trên màn hình.
+Phó Ước: Bạn mới à? Nói chuyện hợp gu lắm sao?
+Hắn nghĩ Phó Ước nhất định đã thấy bài đăng trên vòng bạn bè của hắn, vừa có chút khó chịu lại vừa thấy buồn cười. Rõ ràng trước đây bọn họ chưa từng có lúc phải dựa vào vòng bạn bè mới có thể biết được hành tung của đối phương.
+Nhan Thư: Là đối tượng mập mờ.
+Gần như có thể tưởng tượng được đối phương im lặng một lúc lâu.
+Phó Ước: Mới quen à?
+Nhan Thư: Thật ra đã hẹn hò vài lần rồi, quên nói với ngươi.
+Phó Ước gọi điện thoại tới. Cử chỉ này có phần ngược đời, trước đây khi hắn trải qua những buổi hẹn hò không mấy vui vẻ, hoặc kết thúc một mối tình tệ hại, hắn luôn nhịn không được chủ động kể với Phó Ước, có khi chỉ là một tin nhắn: &quot;Tệ quá.&quot; Có khi lại thêm vài câu oán trách nữa. Phó Ước nghe không mấy nhiệt tình, nhưng dù sao cũng coi như cùng chung kẻ thù.
+Như lúc này, nếu như chuyện hơn một tháng trước chưa từng xảy ra, hắn gần như có thể tưởng tượng ra giọng nói của chính mình trong ống nghe, nói rằng chẳng nói chuyện được với nhau đâu, mỗi lần đi riêng với Tần Mục đều cảm thấy có chút ngượng ngùng, may mà buổi hòa nhạc chỉ cần nghe nhạc, nghe không thấy tiếng của nhau…
+Chuyện đã xảy ra thì cũng đã xảy ra rồi. Lúc này, hắn chỉ im lặng.
+Phó Ước hỏi hắn đã đi xem concert chưa?
+Nhan Thư buồn bực đáp lời.
+Rồi giọng nói của Phó Ước vừa quen thuộc vừa đã lâu không được nghe lại tiếp tục hỏi: &quot;...Cho nên ngươi thích hắn sao? Người đi cùng ngươi, đối tượng mới ấy?&quot;
+Nhan Thư cụp mắt xuống: &quot;Không nói chuyện này nữa.&quot;
+Vậy nếu hắn nói không thích thì ngươi định làm gì? Hắn không muốn nghĩ tiếp.
+&quot;Dù sao thì nghe concert cũng rất vui mà. Tuy không phải ca sĩ quen thuộc lắm, nhưng lúc an cô hát bài ta thích, không khí hiện trường cũng rất tốt.&quot;
+Dù là bài hát không mấy thuộc, bên cạnh là người bạn chưa đủ thân quen, nhưng trong bầu không khí như thế, cũng sẽ không khỏi bị cuốn theo mà thôi.
+Con người vốn là sinh vật dễ bị bầu không khí cuốn theo, khi bầu không khí được đẩy lên đến một mức độ nào đó, dù trong lòng không hề có thứ tình cảm dồi dào như vậy, cũng sẽ sinh ra ảo giác thăng hoa ít nhất là trong khoảnh khắc đó.
+Nhan Thư trong lòng khẽ động, gần như muốn đối phương thừa nhận, &quot;Bởi vì khi bầu không khí đến rồi, thì rất dễ sinh ra ảo giác. Giống như việc thích một người cũng vậy thôi...&quot;
+Phó Ước cười nhạt một tiếng, không rõ cảm xúc. Nhan Thư chắc chắn hắn đã hiểu ẩn ý trong lời mình, nhưng lại không có ý định bước lên bậc thang mà mình đưa ra. &quot;Nếu đã thích một người từ rất lâu, đến mức không nhớ nổi thời điểm bắt đầu, thì có thể loại trừ khả năng đó không? Hay là cần thêm nhiều bằng chứng hơn, mới khiến đối phương tin rằng sự thích này không phải nhất thời nổi hứng, mà đang thật sự tồn tại.&quot;
+“……Ta không hề phủ nhận thứ tình cảm này.” Hắn đáp, giọng không mấy vững vàng, có lẽ chính vì đủ tin tưởng và thừa nhận nó, “Nhưng một thứ tình cảm không thể đáp lại, thì tại sao nhất định phải nhấn mạnh sự tồn tại của nó chứ?”
+Sao ngươi không thể giả vờ như chưa từng có chuyện gì xảy ra?
+Nhan Thư gần như muốn nói vậy, che đậy sự bình yên là đối sách duy nhất mà hắn nghĩ ra. Nhưng Phó Ước lại từng lần từng lần xé nát nó. &quot;Bởi vì cả hai chúng ta đều biết,&quot; hắn đáp lại, &quot;không thể nào tiếp tục giả vờ như không nhìn thấy sự thật 'ta thích ngươi'... cái sự thật này.&quot;
+Exile (Phần trên)
+=====================
+“Hay là chúng ta đến với nhau đi.”
+Nhớ về Phó Ước, rõ ràng nên có rất nhiều hình ảnh, nhưng lại luôn bắt đầu từ câu nói này.
+Nhan Thư giả vờ thản nhiên, vừa nói đừng đùa kiểu đó vừa siết chặt điện thoại. Rõ ràng đối phương đang nói chuyện ở bên nhau, vậy mà trong lòng hắn lại như rơi xuống một bức tường ngăn cách nặng nề, đột ngột - đó chính là khởi đầu của đường ai nấy đi.
+Sau này, khi hắn lại cùng Phó Ước nhắc đến khoảnh khắc ấy, dường như đã tách bản thân mình và cả Phó Ước ra khỏi câu chuyện, chỉ tự nhiên như một lão bằng hữu trò chuyện than vãn, như thể đang đứng trên góc nhìn của Thượng Đế để đối diện với lời tỏ tình kinh thiên động địa kia, “Ta chỉ là chia tay thôi mà. Đâu cần phải chịu đựng một phen kinh hãi như vậy……”
+Vào ngày mối tình tồi tệ trước đó của hắn chấm dứt hoàn toàn, người bạn thân nhất của hắn đã dành cho hắn phản ứng tệ hại nhất trên đời này.
+Nhan Thư che mắt lại.
+Ánh nắng ban mai xuyên qua khung cửa sổ, khi ý thức dần trở lại, hắn chợt nhớ đến lời tỏ tình của Phó Ước hơn một tháng trước, cơn buồn ngủ lập tức tan biến.
+Đêm qua cuộc trò chuyện với Phó Ước đương nhiên lại kết thúc trong im lặng. Hắn không thể đáp lại tình cảm của đối phương, cũng không thể phớt lờ tình bạn chiếm vị trí quan trọng bậc nhất trong mọi mối quan hệ của mình. Hai người gắng gượng duy trì vẻ ngoài lịch sự, ở bên nhau vừa xa lạ vừa quen thuộc.
+Nhan Thư có lúc tự nghĩ, may mà Phó Ước đang đi công tác, chuyến công tác được phái đến thành phố khác kéo dài một tháng đúng vào giai đoạn ngượng ngùng nhất của bọn họ có lẽ đã cứu rỗi cả hai, ít nhất là tạm thời không phải đối mặt trực tiếp với nhau. Nhưng không gặp mặt cũng rất phiền phức, có những lúc hắn còn thầm trách trong lòng, sao hắn có thể không đến gặp mình như vậy, lại để lại một mớ hỗn độn chẳng thể nào gỡ rối cho mình một mình xử lý chứ.
+Chẳng thể nào nghĩ thông suốt được. Kẹt cứng trong giờ cao điểm sáng thứ Hai, Nhan Thư đau đầu nghĩ. Thói quen thả lỏng tâm trí khi di chuyển khiến suy nghĩ của hắn không tự chủ được mà bay về lời tuyên bố của Phó Ước tối qua, &quot;thích đã lâu rồi&quot;, &quot;không nhớ rõ thời điểm bắt đầu&quot;, rồi lại nhớ về rất nhiều chuyện trong quá khứ. Rốt cuộc là từ đâu bắt đầu sai lầm vậy?
+Biết Phó Ước là từ rất lâu về trước.
+Quy luật ngẫu nhiên đã khiến bọn họ trở thành bạn cùng bàn ngay trong ngày khai giảng đầu tiên. Hai người vừa mới quen nhau rất im lặng. Nhan Thư mười hai tuổi không thích nói chuyện với người lạ, lại càng cảm thấy Phó Ước ngồi ở bàn bên cạnh, người cũng chẳng buồn nói một lời kia, căn bản là đang giả vờ lạnh lùng, nên càng không muốn để ý đến hắn.
+Nhưng ở trung học, rất nhiều nhiệm vụ cần dựa vào bạn cùng bàn, hoặc bạn cùng bàn cộng thêm bàn trước bàn sau cùng nhau hoàn thành. Thân phận bạn cùng bàn nhìn qua vốn dĩ đã chiếm vị trí thân thiết hơn so với các bạn học khác. Khi quên mang sách bài tập, nửa quyển sách được xô sang từ bên cạnh; khi chép bài tập sau giờ học được nửa chừng mà bảng đen bị xóa sạch, bèn quay sang bên cạnh cầu cứu; hay chỉ đơn giản là khi bị gọi lên trả lời câu hỏi toán lý mà mình không giỏi, thì nhận được lời nhắc nhẹ nhàng từ phía bên cạnh.
+Sự quen thuộc dường như được tích tụ từ những ngày tháng thường nhật ấy, dù đến khi đổi chỗ ngồi, Nhan Thư mới nhận ra điều này. Thành tích của hắn thường ổn định ở tốp đầu lớp, còn Phó Ước xếp hạng còn cao hơn hắn một chút. Dù đã thân thiết hơn, hắn không còn thấy đối phương ít nói đến mức khó chịu, nhưng trong mắt thầy cô thì không phải vậy. Trong mắt giáo viên, hai học sinh có thành tích tốt lại không thích nói chuyện ngồi cạnh nhau có phần lãng phí, nên đến tiết sinh hoạt lần sau, họ tuyên bố tách hai người ra - một người được phân đi ngồi cạnh bạn học có thành tích kém hơn để kèm cặp, người kia thì chuyển sang cạnh đứa bạn hay nói chuyện phiếm nhất lớp trong giờ học.
+Cả buổi sáng, Nhan Thư bị ồn ào đến đau đầu. Vốn chẳng mấy mặn mà với việc học hành, thế mà giờ đây hắn lại khao khát được nghe thấy giọng giảng bài của thầy cô len lỏi trong những khoảng nghỉ của mấy câu chuyện phiếm, cũng chưa bao giờ chân thành da diết nhớ về một người đến vậy. Tan học buổi sáng, hắn bưng khay cơm ngồi đối diện Phó Ước, hai người ăn ý duy trì thói quen ăn chung từ hồi còn ngồi cùng bàn để lại.
+Nhan Thư nhai ngụm cơm canh chẳng ngon lành gì ở căng tin, nghĩ đi nghĩ lại, rốt cuộc vẫn lên tiếng: &quot;Nếu như ngươi vẫn còn ở đây thì tốt biết mấy.&quot;
+Lời này nói thật. Phó Ước vì cao hơn hắn một chút nên chỉ dời xuống vị trí sau hắn hai ba dãy. Rõ ràng chỉ cần quay đầu là có thể đụng mặt nhau.
+“Người bạn cùng bàn mới không tốt sao?” Phó Ước mang khuôn mặt vẫn còn non nớt như hắn, nhìn người trước mặt thong thả ăn cơm, nhưng lại không thể thật sự che giấu được vẻ mặt của mình.
+&quot;Không phải là không tốt.&quot; Nhan Thư thở dài, khó nói nên lời, &quot;Nhưng chúng ta là...&quot; Hắn nghĩ ngợi, một từ ngữ chưa từng được nghiêm túc nhắc đến giữa hai người bỗng nhiên hiện lên trong đầu, hắn vừa thăm dò nói ra, vừa quan sát biểu cảm của Phó Ước, &quot;Nhưng chúng ta là bằng hữu rồi... đúng không?&quot;
+“Ừ.” Phó Ước tựa hồ cũng bị cách dùng từ trang trọng của hắn làm cho choáng váng, nhưng vẫn nhanh chóng đáp lại, nhìn nụ cười rạng rỡ trên mặt Nhan Thư sau khi nghe được câu trả lời.
+&quot;Cho nên đó,&quot; Nhan Thư nói, &quot;bởi vì chúng ta là bạn bè rồi, cho nên bất kể nói thế nào, không cần lý do gì cả, so với bạn cùng bàn mới lạ thì ta càng muốn có bạn bè ở bên cạnh hơn.&quot;
+Tuyệt đối không phải vì bị ồn ào đến mức không chịu nổi.
+Hắn cảm thấy Phó Ước nhất định cũng nghĩ như vậy. Trong tiết học công khai học kỳ đó về chủ đề tình bạn, giáo viên yêu cầu mỗi người viết ra tâm nguyện về người bạn tốt của mình, đối tượng hắn viết là Phó Ước, tâm nguyện là hy vọng có thể tiếp tục làm bạn cùng bàn với hắn. Sau đó khi họ treo dải lụa đỏ viết tâm nguyện lên cây tình bạn giả ghép từ nhựa, hắn lén nhìn thấy đáp án của Phó Ước, người đó viết là, muốn mãi mãi ở bên nhau.
+Giai điệu &quot;Tình bạn vạn tuế&quot; ít nhất đã phát huy tác dụng suốt nhiều năm trời đối với bọn họ. Thời cấp ba học lớp bên cạnh, lên đại học tuy không học chung trường nhưng vẫn ở cùng một thành phố. So với những mối quan hệ phải xa cách vì khoảng cách địa lý, bọn họ vẫn luôn may mắn khi không phải chịu quá nhiều thử thách, rốt cuộc là chuyện tốt hay chuyện xấu đây? Giờ nghĩ lại, Nhan Thư cũng không thể nào kết luận được. &quot;Vì là bạn bè nên không cần quá nhiều lời giải thích&quot; - điểm này, từ lần đầu tiên bọn họ đặt hai chữ bạn bè vào giữa ranh giới hai người, hắn vẫn luôn tin tưởng một cách chắc chắn.
+Hồi cấp ba, hai người bận bịu chuyện học hành, hình như cũng chẳng có nhiều chuyện để kể. Lúc vội vã đến lớp tự học buổi tối, vì trời rất lạnh, Phó Ước khẽ cúi người xuống, từng vòng từng vòng quấn khăn quàng cổ cho hắn, rồi nắm lấy tay hắn. Miền Nam không có tuyết rơi, hơi thở lạnh buốt phả ra khi nói chuyện cứ thế cùng họ bước xa dần dưới ánh đèn đường trong bầu không khí ẩm ướt lạnh lẽo.
+Chiếc điện thoại bị hạn chế sử dụng cùng khối lượng bài vở áp lực cao, khó mà không ép ra chút tâm lý phản nghịch. Những khoảnh khắc không học hành gì, chẳng liên quan đến thi cử hay điểm số như thế này, bản thân nó đã là một phần của sự phản kháng. Rồi lại nhắc đến những chuyện khác, như vị chủ nhiệm quản lý nghiêm khắc, trông chừng kỷ luật, trông chừng thành tích, thậm chí cả chuyện yêu đương. Thuở thanh xuân trổ mã ra dáng vẻ tuấn tú xinh đẹp, Nhan Thư thỉnh thoảng cũng bị liên lụy, vô cớ rước lấy sự hoài nghi. Còn Phó Ước, có lẽ nhờ bộ dạng lạnh nhạt giả vờ không quan tâm trước mặt người ngoài mà may mắn thoát được một kiếp.
+Sau khi quen biết, hắn bắt đầu cảm thấy hình tượng Phó Ước đối ngoại đều là ngụy trang, dù sao người này trước mặt hắn cũng không lạnh lùng, không quá ít lời, cũng sẽ nghĩ có lẽ trước mặt hắn mới là đặc lệ, rồi vui vẻ cho rằng vốn dĩ nên như thế. Thêm vào tiền tố &quot;tốt nhất&quot; của chữ bạn bè thật sự đã dung túng quá nhiều thứ vốn không nên xem là đương nhiên.
+Nhưng Nhan Thư đang chuẩn bị đi tự học tối lại chẳng hề hay biết. Hắn dựa vào Phó Ước để sưởi ấm, có chút không vui nói, &quot;Nhưng ta làm sao mà yêu sớm được chứ, so với chuyện yêu đương thì ta còn muốn trốn tiết tự học tối ra ngoài hơn.&quot;
+Có vẻ chẳng có gì để so sánh cả. Nhưng mà nghĩ đi nghĩ lại thì dù sao bọn họ cũng cùng là loại người bướng bỉnh, ngỗ ngược thôi.
+Ừm. Phó Ước hỏi: &quot;Vậy còn thư và sô-cô-la nhận được thì xử lý thế nào?&quot;
+Nhan Thư: &quot;Sao ngươi nhớ rõ hơn cả ta vậy chứ.&quot; Rồi thẫn thờ nghĩ ngợi, &quot;Thì là... không thèm để ý tới.&quot;
+Nói xong mặc kệ tất cả, đầu khẽ tựa vào vai hắn, &quot;Trốn tiết tự học buổi tối cùng nhau nhé?&quot;
+Hắn biết Phó Ước sẽ không từ chối. Không chỉ vì Phó Ước gần như chưa bao giờ khước từ yêu cầu của hắn, mà còn vì cảm giác đối phương mang lại cho hắn chính là như thế - nếu lúc này hắn nói muốn trèo tường ra ngoài, hoặc tự nguyện chạy quanh sân vận động, đầu óc đang bị bài vở nhồi nhét bỗng nghẹn lại, dường như nghĩ không ra ví dụ nào táo bạo hơn, tóm lại dù có phải làm những chuyện mà người ngoài nhìn vào thấy hoang đường đến đâu, Phó Ước trông vẫn như thể sẽ đứng ở bên kia bức tường, ở cuối sân vận động, mãi mãi chờ đợi để đón lấy hắn.
+Hắn được tri kỷ dung túng, sống tùy tâm sở dục đã quá lâu, chưa từng nghĩ có một ngày tình thế sẽ đảo ngược. Kẻ mà hắn tưởng sẽ cùng hắn tuân theo khuôn phép bước qua từng chặng đường đời, cũng sẽ cùng hắn thỉnh thoảng vượt rào phá khuôn, lại ngoảnh đầu tự mình bước lên con đường lầm lỗi nhìn không thấy điểm cuối. Tình bạn dĩ nhiên nên là sự vun đắp từ hai phía, nhưng đối phương lại đem đường lệch ra khỏi ranh giới tình bạn, hắn không có cách nào kéo đối phương quay lại, cũng không thể trái với nội tâm mà đi cùng.
+        </div>
+
+        <div class="bottom-nav">
+            <button class="nav-action-btn" id="prevChapBtn" onclick="navigateChapter(-1)">← Chương trước</button>
+            <button class="top-scroll-btn" onclick="scrollToNav()">↑ Lên đầu (Mục lục)</button>
+            <button class="nav-action-btn" id="nextChapBtn" onclick="navigateChapter(1)">Chương sau →</button>
+        </div>
+
+        <div class="cbox-chat-section">
+            <h3 class="cbox-title">Trò Chuyện & Bình Luận Công Khai</h3>
+            <div class="cbox-frame-wrapper">
+                <iframe src="https://www5.cbox.ws/box/?boxid=966044&boxtag=ScPKVa" 
+                        width="100%" 
+                        height="450" 
+                        allowtransparency="yes" 
+                        allow="autoplay" 
+                        frameborder="0" 
+                        marginheight="0" 
+                        marginwidth="0" 
+                        scrolling="auto" 
+                        style="border: none; border-radius: 8px;">
+                </iframe>
+            </div>
+        </div>
+    </article>
+</div>
+
+<script>
+    const storyId = 'qua-thong-minh-5';
+    const storyData = [{"id":"ch1","title":"Phần 1","content":"**Best tổn hữu**\n==================\nVừa bước ra khỏi nhà thi đấu nơi vừa kết thúc buổi biểu diễn, đi theo dòng người khá lâu mà vẫn chưa thấy ngã rẽ.\nVì khu vực lân cận đang bị kiểm soát giao thông, nên quãng đường phải đi bộ cũng không tính là quá xa, từng lớp từng lớp bóng dáng đổ xuống những bậc thềm chồng chất trước mặt, liếc mắt nhìn không thấy điểm cuối, lại như đem thời gian ở bên nhau kéo dài vô tận.\nBên cạnh có rất nhiều người mang theo vật dụng cổ vũ đi ngang qua, có lẽ vẫn còn chìm đắm trong cơn sốt cuồng nhiệt tại nhà thi đấu, nên không có nhiều tiếng trò chuyện truyền ra. Nhan Thư cũng giống như bọn họ, cùng người bạn đi chung im lặng bước đi.\nHắn và Tần Mục thật ra chỉ mới gặp mặt vài lần, vẫn là nhờ đồng nghiệp quen biết giới thiệu. Tính từ lúc Nhan Thư kết thúc mối tình thất bại trước đó đến giờ đã hơn một tháng, đồng nghiệp vì vậy cho rằng thời cơ đã chín muồi, có thể giới thiệu cho hắn người mà nghe nói từ rất lâu trước, trong một buổi tiệc cuối tuần, đã có ấn tượng và hảo cảm với hắn.\n\"Ta cũng không bảo các ngươi bây giờ phải ở bên nhau.\" Đồng nghiệp nói như vậy, \"Chỉ là trước tiên làm bạn bè, tìm hiểu nhau một chút, chẳng phải rất tốt sao?\"\nTần Mục đại khái cũng đã tiếp nhận chỉ thị của đồng nghiệp, trước mặt hắn chỉ rất kiềm chế, sự thiên vị vượt quá giới hạn chỉ vô tình lộ ra trong những lời nói thường ngày kiểu bạn bè, không đến mức lộ vẻ gấp gáp ép người.\nKẻ theo đuổi Từ Từ Đồ Chi lúc này đã đuổi theo đến bên cạnh Nhan Thư, bọn họ ở trong dòng người chen chúc cách nhau vài bước đi trước đi sau, thỉnh thoảng lại phải dừng lại nhìn nhau để phòng bị lạc mất.\nNhan Thư trước đây cũng từng trải qua khoảnh khắc tan hàng náo nhiệt như thế này, nhà thi đấu tương tự, ca sĩ còn yêu thích hơn một chút, khi tan hàng Phó Ước nắm lấy cổ tay hắn, hai người giữa biển người như những vị khách vừa trốn thoát khỏi buổi lễ long trọng, chật vật mà thú vị luồn lách chạy qua những khe hở giữa dòng người.\nHơi ấm gần kề truyền đến cảm giác tự do và khoan khoái, vốn dĩ trông có vẻ thân mật, nhưng so với những cặp tình nhân đan tay nhau thì lại chẳng đến mức dính dớp, cho nên dùng bằng hữu, dùng tri kỷ để giải thích cho hành động này cũng hoàn toàn có thể nói thông...\n\n---\n\nHơi ấm gần kề truyền đến cảm giác tự do và khoan khoái, vốn dĩ trông có vẻ thân mật, nhưng so với những cặp tình nhân đan tay nhau thì lại chẳng đến mức dính dớp, cho nên dùng bằng hữu, dùng tri kỷ để giải thích cho hành động này cũng hoàn toàn có thể nói thông...\nKỳ lạ thật, lúc đó hắn vậy mà lại tin.\nTần Mục lúc này lên tiếng, hỏi hắn, tối nay muốn đăng lên vòng bạn bè thì có thể kèm theo tấm ảnh chụp chung của hai người không?\nNhan Thư theo bản năng đáp: “Được chứ.”\nSao lại còn phải hỏi qua ta chứ? Khi theo đuổi suy nghĩ về vấn đề này, hắn lại cảm thấy có chút ý vị khác. Cùng bạn bè đi xem concert, rồi đăng ảnh chụp chung lên mạng vốn dĩ là chuyện rất bình thường, trừ khi người này thực sự có lòng riêng, có cái lòng riêng mà cả hai đều hiểu rõ mà không nói ra.\nNhưng lời đã nói ra thì không thể thu hồi lại được. Việc đăng ảnh chung lên vòng bạn bè xem như ít nhất cũng tuyên bố rằng quan hệ giữa hai người đã trở nên thân mật hơn một chút. Một mối quan hệ dường như nên tiến triển theo cách này - thông qua từng lần tiếp xúc mà dần dần đi sâu, ở mỗi giai đoạn phát ra tín hiệu tiến thêm một bước, còn người nhận được tín hiệu ấy sẽ phải hồi đáp lại.\nNhan Thư suy nghĩ một chút, \"Vậy ta cũng đăng một tấm ảnh chụp chung của chúng ta.\"\nKhi chọn ảnh không hề thấy khó khăn. Ảnh chụp chung với Tần Mục giống như kiểu ảnh điểm danh theo thói quen, hai người rất khách sáo, trông cứ như đôi bạn đi concert thuần túy, nhưng thực chất lại là mối quan hệ khiến Nhan Thư có chút không thoải mái.\nHắn vốn không có ý định nhanh chóng bắt đầu một đoạn tình cảm nào, dù là tình bạn hay tình yêu, chỉ cần nghĩ đến những từ ngữ liên quan trong khoảng thời gian này đã khiến hắn cảm thấy mệt mỏi, chán chường với việc phải ứng phó. Lúc này hắn khiến bản thân ngừng suy nghĩ về những chuyện tương tự. Kéo tiếp vòng bạn bè chỉ hiện trong ba ngày lên trên, có thể lật ra những buổi biểu diễn và hoạt động khác mà chỉ mình hắn thấy được, cùng xem với Phó Ước, hoặc là Phó Ước cùng những người bạn khác.\nTrong ảnh chụp chung, rốt cuộc vẫn có thể nhìn ra ai thân ai sơ. Tấm ảnh lục ra từ đáy tủ, hắn tựa vào người Phó Ước, gần như dựa hẳn lên người đối phương, nụ cười thả lỏng đến lạ thường. Phó Ước khẽ vòng tay ôm lấy hắn, động tác chụp ảnh phối hợp ăn ý đến mức gần như chẳng để lộ ra một kẽ hở nào.\nLuôn là hai người họ chen chúc cùng nhau, bạn bè chung cũng như chính bọn họ đều hiểu rõ: hai người này thân thiết, đặc biệt hơn hết thảy. Nhan Thư theo bản năng phân chia Phó Ước với những người bạn khác, khác với bạn bè bình thường, Phó Ước chính là người quen biết lâu nhất, thân thuộc nhất với hắn, hầu như chuyện gì cũng có thể nói, chưa từng giữ bí mật nào với nhau... một người bạn.\nNgươi thật sự không nhìn ra sơ hở nào sao?\nNhan Thư đột nhiên không muốn xem nữa. Hắn vuốt qua bức ảnh, rồi khi định đăng lên bạn bè thì chợt khựng lại, do dự một lúc trong lựa chọn có nên chặn Phó Ước hay không. Hắn không muốn cố tình chọc vào tim người khác, nhất là khi đối phương là người bạn tốt nhất của hắn... người bạn từng tốt nhất. Nhưng sau một hồi do dự, hắn lại nhận ra sự giả tạo của chính mình, rõ ràng ngay từ đầu, từ lần đầu hắn nhận lời mời của Tần Mục, từ khi hắn nghĩ rằng tốt nhất nên có một mối tình mới trước khi Phó Ước đi công tác trở về, rõ ràng ngay từ đầu đã chứa đầy sự nhắm vào cố ý.\nLoại trạng thái bạn bè này luôn thu về không ít lượt thích ủng hộ. Mấy đồng nghiệp thích làm mai mối sau khi bấm like lại nhắn tin riêng qua chọc ghẹo, trông còn hớn hở hơn cả đương sự được mai mối: \"Tiến triển khá đấy chứ.\"\nNhan Thư đang lướt qua những biểu cảm xua tay phủ nhận, thì tin nhắn từ Phó Ước bỗng hiện lên phía trên màn hình.\nPhó Ước: Bạn mới à? Nói chuyện hợp gu lắm sao?\nHắn nghĩ Phó Ước nhất định đã thấy bài đăng trên vòng bạn bè của hắn, vừa có chút khó chịu lại vừa thấy buồn cười. Rõ ràng trước đây bọn họ chưa từng có lúc phải dựa vào vòng bạn bè mới có thể biết được hành tung của đối phương.\nNhan Thư: Là đối tượng mập mờ.\nGần như có thể tưởng tượng được đối phương im lặng một lúc lâu.\nPhó Ước: Mới quen à?\nNhan Thư: Thật ra đã hẹn hò vài lần rồi, quên nói với ngươi.\nPhó Ước gọi điện thoại tới. Cử chỉ này có phần ngược đời, trước đây khi hắn trải qua những buổi hẹn hò không mấy vui vẻ, hoặc kết thúc một mối tình tệ hại, hắn luôn nhịn không được chủ động kể với Phó Ước, có khi chỉ là một tin nhắn: \"Tệ quá.\" Có khi lại thêm vài câu oán trách nữa. Phó Ước nghe không mấy nhiệt tình, nhưng dù sao cũng coi như cùng chung kẻ thù.\nNhư lúc này, nếu như chuyện hơn một tháng trước chưa từng xảy ra, hắn gần như có thể tưởng tượng ra giọng nói của chính mình trong ống nghe, nói rằng chẳng nói chuyện được với nhau đâu, mỗi lần đi riêng với Tần Mục đều cảm thấy có chút ngượng ngùng, may mà buổi hòa nhạc chỉ cần nghe nhạc, nghe không thấy tiếng của nhau…\nChuyện đã xảy ra thì cũng đã xảy ra rồi. Lúc này, hắn chỉ im lặng.\nPhó Ước hỏi hắn đã đi xem concert chưa?\nNhan Thư buồn bực đáp lời.\nRồi giọng nói của Phó Ước vừa quen thuộc vừa đã lâu không được nghe lại tiếp tục hỏi: \"...Cho nên ngươi thích hắn sao? Người đi cùng ngươi, đối tượng mới ấy?\"\nNhan Thư cụp mắt xuống: \"Không nói chuyện này nữa.\"\nVậy nếu hắn nói không thích thì ngươi định làm gì? Hắn không muốn nghĩ tiếp.\n\"Dù sao thì nghe concert cũng rất vui mà. Tuy không phải ca sĩ quen thuộc lắm, nhưng lúc an cô hát bài ta thích, không khí hiện trường cũng rất tốt.\"\nDù là bài hát không mấy thuộc, bên cạnh là người bạn chưa đủ thân quen, nhưng trong bầu không khí như thế, cũng sẽ không khỏi bị cuốn theo mà thôi.\nCon người vốn là sinh vật dễ bị bầu không khí cuốn theo, khi bầu không khí được đẩy lên đến một mức độ nào đó, dù trong lòng không hề có thứ tình cảm dồi dào như vậy, cũng sẽ sinh ra ảo giác thăng hoa ít nhất là trong khoảnh khắc đó.\nNhan Thư trong lòng khẽ động, gần như muốn đối phương thừa nhận, \"Bởi vì khi bầu không khí đến rồi, thì rất dễ sinh ra ảo giác. Giống như việc thích một người cũng vậy thôi...\"\nPhó Ước cười nhạt một tiếng, không rõ cảm xúc. Nhan Thư chắc chắn hắn đã hiểu ẩn ý trong lời mình, nhưng lại không có ý định bước lên bậc thang mà mình đưa ra. \"Nếu đã thích một người từ rất lâu, đến mức không nhớ nổi thời điểm bắt đầu, thì có thể loại trừ khả năng đó không? Hay là cần thêm nhiều bằng chứng hơn, mới khiến đối phương tin rằng sự thích này không phải nhất thời nổi hứng, mà đang thật sự tồn tại.\"\n“……Ta không hề phủ nhận thứ tình cảm này.” Hắn đáp, giọng không mấy vững vàng, có lẽ chính vì đủ tin tưởng và thừa nhận nó, “Nhưng một thứ tình cảm không thể đáp lại, thì tại sao nhất định phải nhấn mạnh sự tồn tại của nó chứ?”\nSao ngươi không thể giả vờ như chưa từng có chuyện gì xảy ra?\nNhan Thư gần như muốn nói vậy, che đậy sự bình yên là đối sách duy nhất mà hắn nghĩ ra. Nhưng Phó Ước lại từng lần từng lần xé nát nó. \"Bởi vì cả hai chúng ta đều biết,\" hắn đáp lại, \"không thể nào tiếp tục giả vờ như không nhìn thấy sự thật 'ta thích ngươi'... cái sự thật này.\"\nExile (Phần trên)\n=====================\n“Hay là chúng ta đến với nhau đi.”\nNhớ về Phó Ước, rõ ràng nên có rất nhiều hình ảnh, nhưng lại luôn bắt đầu từ câu nói này.\nNhan Thư giả vờ thản nhiên, vừa nói đừng đùa kiểu đó vừa siết chặt điện thoại. Rõ ràng đối phương đang nói chuyện ở bên nhau, vậy mà trong lòng hắn lại như rơi xuống một bức tường ngăn cách nặng nề, đột ngột - đó chính là khởi đầu của đường ai nấy đi.\nSau này, khi hắn lại cùng Phó Ước nhắc đến khoảnh khắc ấy, dường như đã tách bản thân mình và cả Phó Ước ra khỏi câu chuyện, chỉ tự nhiên như một lão bằng hữu trò chuyện than vãn, như thể đang đứng trên góc nhìn của Thượng Đế để đối diện với lời tỏ tình kinh thiên động địa kia, “Ta chỉ là chia tay thôi mà. Đâu cần phải chịu đựng một phen kinh hãi như vậy……”\nVào ngày mối tình tồi tệ trước đó của hắn chấm dứt hoàn toàn, người bạn thân nhất của hắn đã dành cho hắn phản ứng tệ hại nhất trên đời này.\nNhan Thư che mắt lại.\nÁnh nắng ban mai xuyên qua khung cửa sổ, khi ý thức dần trở lại, hắn chợt nhớ đến lời tỏ tình của Phó Ước hơn một tháng trước, cơn buồn ngủ lập tức tan biến.\nĐêm qua cuộc trò chuyện với Phó Ước đương nhiên lại kết thúc trong im lặng. Hắn không thể đáp lại tình cảm của đối phương, cũng không thể phớt lờ tình bạn chiếm vị trí quan trọng bậc nhất trong mọi mối quan hệ của mình. Hai người gắng gượng duy trì vẻ ngoài lịch sự, ở bên nhau vừa xa lạ vừa quen thuộc.\nNhan Thư có lúc tự nghĩ, may mà Phó Ước đang đi công tác, chuyến công tác được phái đến thành phố khác kéo dài một tháng đúng vào giai đoạn ngượng ngùng nhất của bọn họ có lẽ đã cứu rỗi cả hai, ít nhất là tạm thời không phải đối mặt trực tiếp với nhau. Nhưng không gặp mặt cũng rất phiền phức, có những lúc hắn còn thầm trách trong lòng, sao hắn có thể không đến gặp mình như vậy, lại để lại một mớ hỗn độn chẳng thể nào gỡ rối cho mình một mình xử lý chứ.\nChẳng thể nào nghĩ thông suốt được. Kẹt cứng trong giờ cao điểm sáng thứ Hai, Nhan Thư đau đầu nghĩ. Thói quen thả lỏng tâm trí khi di chuyển khiến suy nghĩ của hắn không tự chủ được mà bay về lời tuyên bố của Phó Ước tối qua, \"thích đã lâu rồi\", \"không nhớ rõ thời điểm bắt đầu\", rồi lại nhớ về rất nhiều chuyện trong quá khứ. Rốt cuộc là từ đâu bắt đầu sai lầm vậy?\nBiết Phó Ước là từ rất lâu về trước.\nQuy luật ngẫu nhiên đã khiến bọn họ trở thành bạn cùng bàn ngay trong ngày khai giảng đầu tiên. Hai người vừa mới quen nhau rất im lặng. Nhan Thư mười hai tuổi không thích nói chuyện với người lạ, lại càng cảm thấy Phó Ước ngồi ở bàn bên cạnh, người cũng chẳng buồn nói một lời kia, căn bản là đang giả vờ lạnh lùng, nên càng không muốn để ý đến hắn.\nNhưng ở trung học, rất nhiều nhiệm vụ cần dựa vào bạn cùng bàn, hoặc bạn cùng bàn cộng thêm bàn trước bàn sau cùng nhau hoàn thành. Thân phận bạn cùng bàn nhìn qua vốn dĩ đã chiếm vị trí thân thiết hơn so với các bạn học khác. Khi quên mang sách bài tập, nửa quyển sách được xô sang từ bên cạnh; khi chép bài tập sau giờ học được nửa chừng mà bảng đen bị xóa sạch, bèn quay sang bên cạnh cầu cứu; hay chỉ đơn giản là khi bị gọi lên trả lời câu hỏi toán lý mà mình không giỏi, thì nhận được lời nhắc nhẹ nhàng từ phía bên cạnh.\nSự quen thuộc dường như được tích tụ từ những ngày tháng thường nhật ấy, dù đến khi đổi chỗ ngồi, Nhan Thư mới nhận ra điều này. Thành tích của hắn thường ổn định ở tốp đầu lớp, còn Phó Ước xếp hạng còn cao hơn hắn một chút. Dù đã thân thiết hơn, hắn không còn thấy đối phương ít nói đến mức khó chịu, nhưng trong mắt thầy cô thì không phải vậy. Trong mắt giáo viên, hai học sinh có thành tích tốt lại không thích nói chuyện ngồi cạnh nhau có phần lãng phí, nên đến tiết sinh hoạt lần sau, họ tuyên bố tách hai người ra - một người được phân đi ngồi cạnh bạn học có thành tích kém hơn để kèm cặp, người kia thì chuyển sang cạnh đứa bạn hay nói chuyện phiếm nhất lớp trong giờ học.\nCả buổi sáng, Nhan Thư bị ồn ào đến đau đầu. Vốn chẳng mấy mặn mà với việc học hành, thế mà giờ đây hắn lại khao khát được nghe thấy giọng giảng bài của thầy cô len lỏi trong những khoảng nghỉ của mấy câu chuyện phiếm, cũng chưa bao giờ chân thành da diết nhớ về một người đến vậy. Tan học buổi sáng, hắn bưng khay cơm ngồi đối diện Phó Ước, hai người ăn ý duy trì thói quen ăn chung từ hồi còn ngồi cùng bàn để lại.\nNhan Thư nhai ngụm cơm canh chẳng ngon lành gì ở căng tin, nghĩ đi nghĩ lại, rốt cuộc vẫn lên tiếng: \"Nếu như ngươi vẫn còn ở đây thì tốt biết mấy.\"\nLời này nói thật. Phó Ước vì cao hơn hắn một chút nên chỉ dời xuống vị trí sau hắn hai ba dãy. Rõ ràng chỉ cần quay đầu là có thể đụng mặt nhau.\n“Người bạn cùng bàn mới không tốt sao?” Phó Ước mang khuôn mặt vẫn còn non nớt như hắn, nhìn người trước mặt thong thả ăn cơm, nhưng lại không thể thật sự che giấu được vẻ mặt của mình.\n\"Không phải là không tốt.\" Nhan Thư thở dài, khó nói nên lời, \"Nhưng chúng ta là...\" Hắn nghĩ ngợi, một từ ngữ chưa từng được nghiêm túc nhắc đến giữa hai người bỗng nhiên hiện lên trong đầu, hắn vừa thăm dò nói ra, vừa quan sát biểu cảm của Phó Ước, \"Nhưng chúng ta là bằng hữu rồi... đúng không?\"\n“Ừ.” Phó Ước tựa hồ cũng bị cách dùng từ trang trọng của hắn làm cho choáng váng, nhưng vẫn nhanh chóng đáp lại, nhìn nụ cười rạng rỡ trên mặt Nhan Thư sau khi nghe được câu trả lời.\n\"Cho nên đó,\" Nhan Thư nói, \"bởi vì chúng ta là bạn bè rồi, cho nên bất kể nói thế nào, không cần lý do gì cả, so với bạn cùng bàn mới lạ thì ta càng muốn có bạn bè ở bên cạnh hơn.\"\nTuyệt đối không phải vì bị ồn ào đến mức không chịu nổi.\nHắn cảm thấy Phó Ước nhất định cũng nghĩ như vậy. Trong tiết học công khai học kỳ đó về chủ đề tình bạn, giáo viên yêu cầu mỗi người viết ra tâm nguyện về người bạn tốt của mình, đối tượng hắn viết là Phó Ước, tâm nguyện là hy vọng có thể tiếp tục làm bạn cùng bàn với hắn. Sau đó khi họ treo dải lụa đỏ viết tâm nguyện lên cây tình bạn giả ghép từ nhựa, hắn lén nhìn thấy đáp án của Phó Ước, người đó viết là, muốn mãi mãi ở bên nhau.\nGiai điệu \"Tình bạn vạn tuế\" ít nhất đã phát huy tác dụng suốt nhiều năm trời đối với bọn họ. Thời cấp ba học lớp bên cạnh, lên đại học tuy không học chung trường nhưng vẫn ở cùng một thành phố. So với những mối quan hệ phải xa cách vì khoảng cách địa lý, bọn họ vẫn luôn may mắn khi không phải chịu quá nhiều thử thách, rốt cuộc là chuyện tốt hay chuyện xấu đây? Giờ nghĩ lại, Nhan Thư cũng không thể nào kết luận được. \"Vì là bạn bè nên không cần quá nhiều lời giải thích\" - điểm này, từ lần đầu tiên bọn họ đặt hai chữ bạn bè vào giữa ranh giới hai người, hắn vẫn luôn tin tưởng một cách chắc chắn.\nHồi cấp ba, hai người bận bịu chuyện học hành, hình như cũng chẳng có nhiều chuyện để kể. Lúc vội vã đến lớp tự học buổi tối, vì trời rất lạnh, Phó Ước khẽ cúi người xuống, từng vòng từng vòng quấn khăn quàng cổ cho hắn, rồi nắm lấy tay hắn. Miền Nam không có tuyết rơi, hơi thở lạnh buốt phả ra khi nói chuyện cứ thế cùng họ bước xa dần dưới ánh đèn đường trong bầu không khí ẩm ướt lạnh lẽo.\nChiếc điện thoại bị hạn chế sử dụng cùng khối lượng bài vở áp lực cao, khó mà không ép ra chút tâm lý phản nghịch. Những khoảnh khắc không học hành gì, chẳng liên quan đến thi cử hay điểm số như thế này, bản thân nó đã là một phần của sự phản kháng. Rồi lại nhắc đến những chuyện khác, như vị chủ nhiệm quản lý nghiêm khắc, trông chừng kỷ luật, trông chừng thành tích, thậm chí cả chuyện yêu đương. Thuở thanh xuân trổ mã ra dáng vẻ tuấn tú xinh đẹp, Nhan Thư thỉnh thoảng cũng bị liên lụy, vô cớ rước lấy sự hoài nghi. Còn Phó Ước, có lẽ nhờ bộ dạng lạnh nhạt giả vờ không quan tâm trước mặt người ngoài mà may mắn thoát được một kiếp.\nSau khi quen biết, hắn bắt đầu cảm thấy hình tượng Phó Ước đối ngoại đều là ngụy trang, dù sao người này trước mặt hắn cũng không lạnh lùng, không quá ít lời, cũng sẽ nghĩ có lẽ trước mặt hắn mới là đặc lệ, rồi vui vẻ cho rằng vốn dĩ nên như thế. Thêm vào tiền tố \"tốt nhất\" của chữ bạn bè thật sự đã dung túng quá nhiều thứ vốn không nên xem là đương nhiên.\nNhưng Nhan Thư đang chuẩn bị đi tự học tối lại chẳng hề hay biết. Hắn dựa vào Phó Ước để sưởi ấm, có chút không vui nói, \"Nhưng ta làm sao mà yêu sớm được chứ, so với chuyện yêu đương thì ta còn muốn trốn tiết tự học tối ra ngoài hơn.\"\nCó vẻ chẳng có gì để so sánh cả. Nhưng mà nghĩ đi nghĩ lại thì dù sao bọn họ cũng cùng là loại người bướng bỉnh, ngỗ ngược thôi.\nỪm. Phó Ước hỏi: \"Vậy còn thư và sô-cô-la nhận được thì xử lý thế nào?\"\nNhan Thư: \"Sao ngươi nhớ rõ hơn cả ta vậy chứ.\" Rồi thẫn thờ nghĩ ngợi, \"Thì là... không thèm để ý tới.\"\nNói xong mặc kệ tất cả, đầu khẽ tựa vào vai hắn, \"Trốn tiết tự học buổi tối cùng nhau nhé?\"\nHắn biết Phó Ước sẽ không từ chối. Không chỉ vì Phó Ước gần như chưa bao giờ khước từ yêu cầu của hắn, mà còn vì cảm giác đối phương mang lại cho hắn chính là như thế - nếu lúc này hắn nói muốn trèo tường ra ngoài, hoặc tự nguyện chạy quanh sân vận động, đầu óc đang bị bài vở nhồi nhét bỗng nghẹn lại, dường như nghĩ không ra ví dụ nào táo bạo hơn, tóm lại dù có phải làm những chuyện mà người ngoài nhìn vào thấy hoang đường đến đâu, Phó Ước trông vẫn như thể sẽ đứng ở bên kia bức tường, ở cuối sân vận động, mãi mãi chờ đợi để đón lấy hắn.\nHắn được tri kỷ dung túng, sống tùy tâm sở dục đã quá lâu, chưa từng nghĩ có một ngày tình thế sẽ đảo ngược. Kẻ mà hắn tưởng sẽ cùng hắn tuân theo khuôn phép bước qua từng chặng đường đời, cũng sẽ cùng hắn thỉnh thoảng vượt rào phá khuôn, lại ngoảnh đầu tự mình bước lên con đường lầm lỗi nhìn không thấy điểm cuối. Tình bạn dĩ nhiên nên là sự vun đắp từ hai phía, nhưng đối phương lại đem đường lệch ra khỏi ranh giới tình bạn, hắn không có cách nào kéo đối phương quay lại, cũng không thể trái với nội tâm mà đi cùng."}];
+    let currentChapIndex = 0;
+    let currentFontSize = 1.2;
+
+    function changeFontSize(delta) {
+        currentFontSize = Math.max(0.9, Math.min(1.8, currentFontSize + delta));
+        const contentElem = document.getElementById('story-content-body');
+        if (contentElem) {
+            contentElem.style.fontSize = currentFontSize + 'rem';
+        }
+        localStorage.setItem('reader_font_size', currentFontSize);
+    }
+
+    function changeFontFamily(fontVal) {
+        const contentElem = document.getElementById('story-content-body');
+        if (contentElem) {
+            contentElem.style.fontFamily = fontVal;
+        }
+        localStorage.setItem('reader_font_family', fontVal);
+    }
+
+    function setTheme(themeName) {
+        document.body.className = 'theme-' + themeName;
+        document.querySelectorAll('.theme-circle').forEach(el => el.classList.remove('active'));
+        const activeCircle = document.querySelector('.theme-circle.' + themeName);
+        if (activeCircle) activeCircle.classList.add('active');
+        localStorage.setItem('reader_theme', themeName);
+    }
+
+    function loadReaderSettings() {
+        const savedSize = localStorage.getItem('reader_font_size');
+        const savedFont = localStorage.getItem('reader_font_family');
+        const savedTheme = localStorage.getItem('reader_theme');
+
+        if (savedSize) {
+            currentFontSize = parseFloat(savedSize);
+            const contentElem = document.getElementById('story-content-body');
+            if (contentElem) contentElem.style.fontSize = currentFontSize + 'rem';
+        }
+
+        if (savedFont) {
+            const contentElem = document.getElementById('story-content-body');
+            if (contentElem) contentElem.style.fontFamily = savedFont;
+            const fontSelect = document.querySelector('.font-select');
+            if (fontSelect) fontSelect.value = savedFont;
+        }
+
+        if (savedTheme) {
+            setTheme(savedTheme);
+        }
+    }
+
+    function updateNavButtons() {
+        const prevBtn = document.getElementById('prevChapBtn');
+        const nextBtn = document.getElementById('nextChapBtn');
+        if (prevBtn) prevBtn.disabled = (currentChapIndex <= 0);
+        if (nextBtn) nextBtn.disabled = (currentChapIndex >= storyData.length - 1);
+    }
+
+    function switchChapter(btn, cId) {
+        document.querySelectorAll('.chapter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const foundIndex = storyData.findIndex(item => item.id === cId);
+        if(foundIndex !== -1) {
+            currentChapIndex = foundIndex;
+            document.getElementById('story-content-body').textContent = storyData[foundIndex].content;
+            updateNavButtons();
+        }
+    }
+
+    function navigateChapter(direction) {
+        const newIndex = currentChapIndex + direction;
+        if (newIndex >= 0 && newIndex < storyData.length) {
+            const targetChap = storyData[newIndex];
+            const targetBtn = document.querySelector(`.chapter-btn[data-chap-id="${targetChap.id}"]`);
+            if (targetBtn) {
+                switchChapter(targetBtn, targetChap.id);
+                scrollToNav();
+            }
+        }
+    }
+
+    function scrollToNav() {
+        const navElem = document.getElementById('chapterNav');
+        if (navElem) {
+            navElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    function initBookmark() {
+        const bookmarks = JSON.parse(localStorage.getItem('story_bookmarks') || '[]');
+        const btn = document.querySelector('.bookmark-btn');
+        if (btn && bookmarks.includes(storyId)) {
+            btn.classList.add('bookmarked');
+            btn.querySelector('.bm-text').textContent = 'Đã Bookmark';
+        }
+    }
+
+    function toggleBookmark() {
+        let bookmarks = JSON.parse(localStorage.getItem('story_bookmarks') || '[]');
+        const btn = document.querySelector('.bookmark-btn');
+
+        if (bookmarks.includes(storyId)) {
+            bookmarks = bookmarks.filter(id => id !== storyId);
+            btn.classList.remove('bookmarked');
+            btn.querySelector('.bm-text').textContent = 'Bookmark';
+        } else {
+            bookmarks.push(storyId);
+            btn.classList.add('bookmarked');
+            btn.querySelector('.bm-text').textContent = 'Đã Bookmark';
+        }
+        localStorage.setItem('story_bookmarks', JSON.stringify(bookmarks));
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initBookmark();
+        updateNavButtons();
+        loadReaderSettings();
+    });
+</script>
+
+</body>
+</html>
