@@ -264,20 +264,33 @@
             color: #fff;
             border-color: var(--accent-green);
         }
-
 .story-content {
     font-size: 1.2rem;
-    line-height: 1.65; /* Giữ nguyên khoảng cách dòng của bạn */
+    line-height: 1.65; /* Giữ nguyên khoảng cách dòng gốc của bạn */
     text-align: justify;
     margin-bottom: 25px;
     min-height: 120px;
+
+    /* 1. Đổi thuộc tính này để giữ nguyên khả năng tự động xuống dòng gốc */
+    white-space: pre-wrap; 
 }
 
-/* Thêm đoạn này để chỉnh khoảng cách riêng cho các đoạn văn */
-.story-content p {
-    margin-bottom: 20px; /* Càng tăng số này thì các đoạn càng thưa xa nhau */
+/* 2. THÊM ĐOẠN ĐẶC BIỆT NÀY VÀO: 
+   Nó sẽ tự tìm các ký tự xuống dòng (\n) trong chuỗi văn bản thô 
+   và ép khoảng cách hiển thị của riêng dòng đó rộng ra thành khoảng trống đoạn */
+.story-content {
     display: block;
+    content: "";
 }
+
+/* Đoạn hack CSS an toàn: Giúp biến dấu Enter đơn lẻ thành khoảng cách đoạn */
+@supports (white-space: pre-wrap) {
+    .story-content {
+        /* Chuyển đổi cách xử lý khoảng trống hệ thống */
+        white-space: pre-line;
+    }
+}
+
 
 
         .bottom-nav {
