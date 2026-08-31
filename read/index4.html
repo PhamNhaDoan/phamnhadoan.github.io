@@ -304,8 +304,12 @@
             document.getElementById('editTags').value = tagsList;
 
             // Extract mảng chapters từ storyData
-            const storyDataMatch = rawHtmlContent.match(/(?:const|let|var)\s+storyData\s*=\s*(\[[\s\S]*?\]);/);
-            if (!storyDataMatch) throw new Error('Không tìm thấy mảng storyData trong file html truyện!');
+           // Tìm mảng gán cho storyData, chapters hoặc chapterList bất chấp khoảng trắng/xuống dòng
+const storyDataMatch = rawHtmlContent.match(/(?:const|let|var)\s+(?:storyData|chapters|chapterList)\s*=\s*(\[\s*\{[\s\S]*?\}\s*\]);/);
+
+if (!storyDataMatch) {
+    throw new Error('File truyện này thuộc mẫu cũ (thiếu mảng storyData trong thẻ <script>). Bạn cần bổ sung biến storyData vào file .html này trên GitHub trước khi sửa!');
+}
 
             loadedChapters = JSON.parse(storyDataMatch[1]);
             renderChaptersAccordion();
