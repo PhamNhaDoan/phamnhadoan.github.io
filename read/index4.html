@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỉnh Sửa Truyện Online - Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dots: #c2b280;
+            --cream-bg: rgba(253, 251, 247, 0.95);
+            --border-dash: #a89f91;
+            --primary-orange: #d76a03;
+            --accent-green: #4f6d7a;
+            --text-color: #2b2d42;
+            --moss-green: #3b535e;
+            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 40px 15px;
+            color: var(--text-color);
+            background-color: #f4f1ea;
+            background-image: radial-gradient(var(--bg-dots) 1.5px, transparent 1.5px);
+            background-size: 18px 18px;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+            background: var(--cream-bg);
+            border: 2px dashed var(--border-dash);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary-orange);
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .form-section {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 1.15rem;
+            color: var(--accent-green);
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed var(--border-dash);
+            padding-bottom: 8px;
+        }
+
+        .form-group { margin-bottom: 18px; }
+
+        label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--accent-green);
+        }
+
+        input[type="text"], input[type="password"], textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            background: #fff;
+        }
+
+        input:focus, textarea:focus { border-color: var(--accent-green); }
+
+        textarea { resize: vertical; }
+
+        .load-btn {
+            width: 100%;
+            background: var(--accent-green);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+
+        .load-btn:hover { background: var(--moss-green); }
+
+        /* Accordion chỉnh sửa từng chương */
+        .chap-item {
+            border: 1px solid #dcd6cd;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .chap-header {
+            padding: 12px 16px;
+            background: #f0ece1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .edit-toggle-btn {
+            background: var(--primary-orange);
+            color: #fff;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .chap-body {
+            display: none;
+            padding: 15px;
+            border-top: 1px solid #dcd6cd;
+            background: #faf8f5;
+        }
+
+        .chap-body.open { display: block; }
+
+        .save-btn {
+            width: 100%;
+            background: var(--primary-orange);
+            color: #fff;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s;
+            margin-top: 15px;
+        }
+
+        .save-btn:hover { background: #b55802; }
+
+        .status-msg {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 700;
+            word-break: break-all;
+        }
+
+        #editArea { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Chỉnh Sửa Truyện Đã Đăng</h2>
+
+    <!-- Bước 1: Nhập link và Token -->
+    <div class="form-section">
+        <div class="section-title">1. Thông Tin Truyện Cần Sửa</div>
+        <div class="form-group">
+            <label>GitHub Personal Access Token</label>
+            <input type="password" id="githubToken" placeholder="Nhập Token GitHub của bạn..." required>
+        </div>
+        <div class="form-group">
+            <label>Đường Link Trang Truyện</label>
+            <input type="text" id="storyUrl" placeholder="https://phamnhadoan.github.io/read/ten-truyen.html" required>
+        </div>
+        <button type="button" class="load-btn" onclick="loadStoryData()">Tải Thông Tin Truyện</button>
+    </div>
+
+    <!-- Bước 2: Khu vực Edit (Nổi lên khi bấm tải thông tin) -->
+    <form id="editArea" onsubmit="handleSaveStory(event)">
+        <div class="form-section">
+            <div class="section-title">2. Chỉnh Sửa Giới Thiệu & Thông Tin Chung</div>
+            <div class="form-group">
+                <label>Tên Truyện</label>
+                <input type="text" id="editTitle" required>
+            </div>
+            <div class="form-group">
+                <label>Tác Giả</label>
+                <input type="text" id="editAuthor" required>
+            </div>
+            <div class="form-group">
+                <label>Thẻ / Tag (Phân cách bằng dấu phẩy)</label>
+                <input type="text" id="editTags">
+            </div>
+            <div class="form-group">
+                <label>Link / URL Ảnh Bìa</label>
+                <input type="text" id="editCover">
+            </div>
+            <div class="form-group">
+                <label>Giới Thiệu / Tóm Tắt Truyện</label>
+                <textarea id="editSummary" rows="4"></textarea>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="section-title">3. Danh Sách Các Chương (Bấm "Sửa" Để Bung Nội Dung)</div>
+            <div id="chaptersListContainer"></div>
+        </div>
+
+        <button type="submit" class="save-btn">Lưu Thay Đổi Ngay Lên GitHub</button>
+    </form>
+
+    <div id="statusMsg" class="status-msg"></div>
+</div>
+
+<script>
+    const githubAcc = "PhamNhaDoan";
+    const repo = "phamnhadoan.github.io";
+    
+    let loadedSha = "";
+    let loadedFilePath = "";
+    let rawHtmlContent = "";
+    let loadedChapters = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedToken = localStorage.getItem('gh_token_reviewconvert');
+        if (savedToken) {
+            document.getElementById('githubToken').value = savedToken;
+        }
+    });
+
+    function getFilePathFromUrl(url) {
+        url = url.trim();
+        if (url.includes('.github.io/')) {
+            return url.split('.github.io/')[1];
+        }
+        if (url.startsWith('read/')) {
+            return url;
+        }
+        return 'read/' + url;
+    }
+
+    async function loadStoryData() {
+        const statusMsg = document.getElementById('statusMsg');
+        statusMsg.style.color = '#333';
+        statusMsg.textContent = 'Đang tải thông tin bài viết từ GitHub...';
+
+        const token = document.getElementById('githubToken').value.trim();
+        const storyUrl = document.getElementById('storyUrl').value.trim();
+
+        if (!token || !storyUrl) {
+            statusMsg.style.color = 'red';
+            statusMsg.textContent = 'Vui lòng nhập Token và Đường link truyện!';
+            return;
+        }
+
+        localStorage.setItem('gh_token_reviewconvert', token);
+        loadedFilePath = getFilePathFromUrl(storyUrl);
+
+        try {
+            const apiUrl = `https://api.github.com/repos/${githubAcc}/${repo}/contents/${loadedFilePath}`;
+            const res = await fetch(apiUrl, {
+                headers: { 'Authorization': `token ${token}` }
+            });
+
+            if (!res.ok) throw new Error(`Không tìm thấy file ${loadedFilePath} trên GitHub!`);
+
+            const fileData = await res.json();
+            loadedSha = fileData.sha;
+            rawHtmlContent = decodeURIComponent(escape(atob(fileData.content)));
+
+            // Extract thông tin Tiêu đề, Tác giả, Tag, Giới thiệu, Bìa
+            const titleMatch = rawHtmlContent.match(/<h1 class="story-title">(.*?)<\/h1>/);
+            const authorMatch = rawHtmlContent.match(/<div class="story-author">Tác giả:\s*(.*?)<\/div>/);
+            const summaryMatch = rawHtmlContent.match(/<div class="story-summary">\s*Giới thiệu:\s*([\s\S]*?)<\/div>/);
+            const coverMatch = rawHtmlContent.match(/<img src="(.*?)" alt="Bìa truyện"/);
+            
+            // Extract danh sách tag
+            const tagsMatches = [...rawHtmlContent.matchAll(/<span class="tag-item">(.*?)<\/span>/g)];
+            const tagsList = tagsMatches.map(m => m[1]).join(', ');
+
+            document.getElementById('editTitle').value = titleMatch ? unescapeHtml(titleMatch[1]) : '';
+            document.getElementById('editAuthor').value = authorMatch ? unescapeHtml(authorMatch[1]) : '';
+            document.getElementById('editSummary').value = summaryMatch ? unescapeHtml(summaryMatch[1].trim()) : '';
+            document.getElementById('editCover').value = coverMatch ? coverMatch[1] : '';
+            document.getElementById('editTags').value = tagsList;
+
+            // Extract mảng chapters từ storyData
+            const storyDataMatch = rawHtmlContent.match(/(?:const|let|var)\s+storyData\s*=\s*(\[[\s\S]*?\]);/);
+            if (!storyDataMatch) throw new Error('Không tìm thấy mảng storyData trong file html truyện!');
+
+            loadedChapters = JSON.parse(storyDataMatch[1]);
+            renderChaptersAccordion();
+
+            document.getElementById('editArea').style.display = 'block';
+            statusMsg.style.color = 'green';
+            statusMsg.textContent = 'Tải dữ liệu truyện thành công! Bạn có thể chỉnh sửa bên dưới.';
+
+        } catch (err) {
+            statusMsg.style.color = 'red';
+            statusMsg.textContent = 'Lỗi: ' + err.message;
+        }
+    }
+
+    function renderChaptersAccordion() {
+        const container = document.getElementById('chaptersListContainer');
+        container.innerHTML = '';
+
+        loadedChapters.forEach((chap, idx) => {
+            const item = document.createElement('div');
+            item.className = 'chap-item';
+            item.innerHTML = `
+                <div class="chap-header" onclick="toggleChapBody(${idx})">
+                    <span>${escapeHtml(chap.title)}</span>
+                    <button type="button" class="edit-toggle-btn">Sửa</button>
+                </div>
+                <div class="chap-body" id="chapBody_${idx}">
+                    <div class="form-group">
+                        <label>Tên / Tiêu Đề Chương</label>
+                        <input type="text" class="chap-title-input" value="${escapeHtml(chap.title)}" data-idx="${idx}">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Nội Dung Chương</label>
+                        <textarea class="chap-content-input" rows="8" data-idx="${idx}">${escapeHtml(chap.content)}</textarea>
+                    </div>
+                </div>
+            `;
+            container.appendChild(item);
+        });
+    }
+
+    function toggleChapBody(idx) {
+        const target = document.getElementById(`chapBody_${idx}`);
+        if (target) {
+            target.classList.toggle('open');
+        }
+    }
+
+    async function handleSaveStory(e) {
+        e.preventDefault();
+        const statusMsg = document.getElementById('statusMsg');
+        statusMsg.style.color = '#333';
+        statusMsg.textContent = 'Đang tiến hành lưu thay đổi lên GitHub...';
+
+        const token = document.getElementById('githubToken').value.trim();
+        const newTitle = document.getElementById('editTitle').value.trim();
+        const newAuthor = document.getElementById('editAuthor').value.trim();
+        const newSummary = document.getElementById('editSummary').value.trim();
+        const newCover = document.getElementById('editCover').value.trim();
+        const rawTags = document.getElementById('editTags').value.trim();
+
+        // Thu thập lại nội dung các chương đã edit
+        const titleInputs = document.querySelectorAll('.chap-title-input');
+        const contentInputs = document.querySelectorAll('.chap-content-input');
+
+        const updatedChapters = [];
+        titleInputs.forEach((input, idx) => {
+            updatedChapters.push({
+                id: loadedChapters[idx] ? loadedChapters[idx].id : `ch${idx + 1}`,
+                title: input.value.trim(),
+                content: contentInputs[idx].value.trim()
+            });
+        });
+
+        let updatedHtml = rawHtmlContent;
+
+        // 1. Thay đổi Tiêu đề, Tác giả, Giới thiệu, Bìa trong HTML
+        updatedHtml = updatedHtml.replace(/<h1 class="story-title">.*?<\/h1>/, `<h1 class="story-title">${escapeHtml(newTitle)}</h1>`);
+        updatedHtml = updatedHtml.replace(/<div class="story-author">Tác giả:.*?<\/div>/, `<div class="story-author">Tác giả: ${escapeHtml(newAuthor)}</div>`);
+        
+        if (newCover) {
+            updatedHtml = updatedHtml.replace(/<img src=".*?" alt="Bìa truyện"/, `<img src="${newCover}" alt="Bìa truyện"`);
+        }
+
+        if (newSummary) {
+            updatedHtml = updatedHtml.replace(/<div class="story-summary">[\s\S]*?<\/div>/, `<div class="story-summary">\n                    Giới thiệu: ${escapeHtml(newSummary)}\n                </div>`);
+        }
+
+        // 2. Thay đổi Tags
+        if (rawTags) {
+            const tagsHtml = rawTags.split(',').map(t => t.trim()).filter(t => t.length > 0)
+                .map(t => `<span class="tag-item">${escapeHtml(t)}</span>`).join('\n                    ');
+            updatedHtml = updatedHtml.replace(/<div class="story-tags">[\s\S]*?<\/div>/, `<div class="story-tags">\n                    ${tagsHtml}\n                </div>`);
+        }
+
+        // 3. Thay đổi mảng storyData
+        const newStoryDataStr = `const storyData = ${JSON.stringify(updatedChapters)};`;
+        updatedHtml = updatedHtml.replace(/(?:const|let|var)\s+storyData\s*=\s*\[[\s\S]*?\];/, newStoryDataStr);
+
+        // 4. Thay đổi danh sách nút Chapter Nav
+        const chapBtnsHtml = updatedChapters.map((ch, idx) => 
+            `<button class="chapter-btn ${idx === 0 ? 'active' : ''}" data-chap-id="${ch.id}" onclick="switchChapter(this, '${ch.id}')">${escapeHtml(ch.title)}</button>`
+        ).join('\n                ');
+
+        updatedHtml = updatedHtml.replace(
+            /<div class="chapter-nav" id="chapterNav">[\s\S]*?<\/div>/,
+            `<div class="chapter-nav" id="chapterNav">\n                ${chapBtnsHtml}\n        </div>`
+        );
+
+        // Đẩy file đã cập nhật đè lên GitHub
+        try {
+            const apiUrl = `https://api.github.com/repos/${githubAcc}/${repo}/contents/${loadedFilePath}`;
+            const putRes = await fetch(apiUrl, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: `Cập nhật nội dung truyện: ${newTitle}`,
+                    content: btoa(unescape(encodeURIComponent(updatedHtml))),
+                    sha: loadedSha
+                })
+            });
+
+            if (putRes.ok) {
+                const updatedData = await putRes.json();
+                loadedSha = updatedData.content.sha; // Cập nhật SHA mới
+                statusMsg.style.color = 'green';
+                statusMsg.innerHTML = `Lưu thay đổi thành công rực rỡ!<br><a href="https://${githubAcc.toLowerCase()}.github.io/${loadedFilePath}" target="_blank" style="color:#d76a03;">Xem Truyện Đã Sửa</a>`;
+            } else {
+                throw new Error('Không thể ghi đè file lên GitHub. Kiểm tra lại Token hoặc quyền truy cập!');
+            }
+
+        } catch (err) {
+            statusMsg.style.color = 'red';
+            statusMsg.textContent = 'Lỗi khi lưu: ' + err.message;
+        }
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    function unescapeHtml(str) {
+        return str.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"');
+    }
+</script>
+
+</body>
+</html>
