@@ -1,100 +1,231 @@
----
-layout: default
-title: Trang cá nhân của phamnhadoan
----
-
-<b>Các bài viết mới nhất</b>
-
-<ul>
-  {% for post in site.posts %}
-    <li>
-      <a href="{{ post.url }}">{{ post.date | date: "%d/%m/%Y" }} - {{ post.title }}</a>
-    </li>
-  {% endfor %}
-</ul>
-
- 
 <!DOCTYPE html>
-<html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phạm Nhã Đoan | Home Corner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #fdf8f4;
+            --card-bg: #ffffff;
+            --primary-coral: #ff9b85;
+            --soft-orange: #ffd97d;
+            --mint-green: #b5e2fa;
+            --warm-brown: #6b5b52;
+            --text-main: #574b44;
+            --text-light: #8c7a70;
+            --border-line: #f4ece4;
+            --shadow-soft: 0 10px 25px rgba(232, 180, 160, 0.25);
+            --shadow-hover: 0 14px 30px rgba(220, 140, 120, 0.35);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            font-family: 'Nunito', sans-serif;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px 15px;
+            /* Họa tiết chấm bi chìm siêu nhẹ */
+            background-image: radial-gradient(#ecc7b7 1.2px, transparent 1.2px);
+            background-size: 24px 24px;
+        }
+
+        .profile-card {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 480px;
+            border-radius: 28px;
+            padding: 35px 28px;
+            box-shadow: var(--shadow-soft);
+            border: 2px solid var(--border-line);
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* Trang trí huy hiệu góc nhỏ dễ thương */
+        .badge-cute {
+            display: inline-block;
+            background: #ffe5d9;
+            color: #d97762;
+            font-family: 'Comfortaa', cursive;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 5px 14px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+        }
+
+        .avatar-wrapper {
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 16px auto;
+            border-radius: 50%;
+            padding: 4px;
+            background: linear-gradient(135deg, var(--primary-coral), var(--soft-orange));
+            box-shadow: 0 8px 18px rgba(255, 155, 133, 0.3);
+        }
+
+        .avatar-wrapper img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ffffff;
+        }
+
+        h1 {
+            font-family: 'Comfortaa', cursive;
+            font-weight: 700;
+            font-size: 1.65rem;
+            color: var(--warm-brown);
+            margin-bottom: 6px;
+        }
+
+        p.subtitle {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-bottom: 28px;
+        }
+
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .btn-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-decoration: none;
+            padding: 16px 22px;
+            border-radius: 18px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Nút 1: Chú Công Convert - Màu Cam Hồng */
+        .btn-chucong {
+            background-color: #fff1ed;
+            color: #e06d53;
+            border: 1.5px solid #ffd8cd;
+        }
+
+        .btn-chucong:hover {
+            background-color: var(--primary-coral);
+            color: #ffffff;
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary-coral);
+        }
+
+        /* Nút 2: Control Panel - Màu Xanh Mint / Sky Dịu */
+        .btn-cp {
+            background-color: #f0f8ff;
+            color: #3b82a6;
+            border: 1.5px solid #d4ebf8;
+        }
+
+        .btn-cp:hover {
+            background-color: #63b3ed;
+            color: #ffffff;
+            transform: translateY(-4px);
+            box-shadow: 0 14px 30px rgba(99, 179, 237, 0.35);
+            border-color: #63b3ed;
+        }
+
+        /* Nút 3: Nhật Ký Đọc Sách - Màu Kem Vàng */
+        .btn-note {
+            background-color: #fffdf0;
+            color: #b5832a;
+            border: 1.5px solid #ffe8b5;
+        }
+
+        .btn-note:hover {
+            background-color: var(--soft-orange);
+            color: #6b5118;
+            transform: translateY(-4px);
+            box-shadow: 0 14px 30px rgba(255, 217, 125, 0.45);
+            border-color: var(--soft-orange);
+        }
+
+        .btn-icon {
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        .arrow-svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-link:hover .arrow-svg {
+            transform: translateX(4px);
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 0.82rem;
+            color: var(--text-light);
+            border-top: 1px dashed #f0e2d8;
+            padding-top: 18px;
+        }
+    </style>
+</head>
 <body>
 
- <style>
-  .khung-noi {
-    transition: transform 0.3s, box-shadow 0.3s; /* Hiệu ứng mượt mà */
-    border: 1px solid #eee;
-  }
-  
-  .khung-noi:hover {
-    transform: translateY(-5px); /* Khung nhích lên trên một chút */
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); /* Bóng đậm và rộng hơn */
-  }
-</style>
+    <main class="profile-card">
+        <span class="badge-cute">Welcome home</span>
+        
+        <div class="avatar-wrapper">
+            <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nhadaon&backgroundColor=ffdfbf" alt="Phạm Nhã Đoan Avatar">
+        </div>
 
-<div class="khung-noi" style="padding: 20px; border-radius: 10px; background: white;"> 
+        <h1>Phạm Nhã Đoan</h1>
+        <p class="subtitle">Góc nhỏ lưu trữ & quản lý truyện cá nhân</p>
 
-    <h4 style="margin-top: 0; text-align: center;"><b></b>Search theo tag:</b></h4>
-    <div style="text-align: center;">
-    <img src="hinh1.png" alt="Sủng công" style="max-width: 100%; height: auto;">
-</div>
+        <nav class="links-container">
+            <a href="https://chucongconvert.vercel.app" class="btn-link btn-chucong" target="_blank" rel="noopener">
+                <span class="btn-icon">✨</span>
+                <span>Trang Chú Công Convert</span>
+                <svg class="arrow-svg" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
 
-<p style="font-size: 100%;">
+            <a href="https://phamnhadoan.github.io/cp.html" class="btn-link btn-cp">
+                <span class="btn-icon">🛠️</span>
+                <span>Control Panel</span>
+                <svg class="arrow-svg" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
 
-<a href="http://dichtienghoa.com/translate/www.jjwxc.net?u=http%3A%2F%2Fwww.jjwxc.net%2Fbookbase.php%3Ffw0%3D0%26fbsj%3D0%26ycx0%3D0%26xx2%3D2%26mainview0%3D0%26sd0%3D0%26lx0%3D0%26fg0%3D0%26isfinish%3D0%26collectiontypes%3Dors%26searchkeywords%3D%25B9%25A5%25BF%25D8%26page%3D0%26sortType%3D1&t=vi&fbclid=IwAR2PNk-yWAywHQTZ4DJqXthh3Fi6_2XI-aqrK0NvylgpfElORfg63bQ7l8o" target="_blank">Công khống JJ</a> // <a href="http://dichtienghoa.com/translate/www.jjwxc.net?u=http%3A%2F%2Fwww.jjwxc.net%2Fbookbase.php%3Ffw0%3D0%26fbsj%3D0%26ycx0%3D0%26xx2%3D2%26mainview0%3D0%26sd0%3D0%26lx0%3D0%26fg0%3D0%26isfinish%3D0%26collectiontypes%3Dors%26searchkeywords%3D%25CA%25DC%25B3%25E8%25B9%25A5%26page%3D0%26sortType%3D1&t=vi&fbclid=IwAR2zAMff_hQw9GcHMZfZXy9NS_W-Dq9Mv8jXprbIE7Ro0nv7idqyVcgj8OY" target="_blank">Thụ sủng công JJ</a>
+            <a href="https://phamnhadoan.github.io/note/" class="btn-link btn-note">
+                <span class="btn-icon">📖</span>
+                <span>Nhật Ký Đọc Sách</span>
+                <svg class="arrow-svg" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+        </nav>
 
-<br><a href="https://www.gongzicp.com/novel/search/module/novel/keyword/%E5%8F%97%E5%AE%A0%E6%94%BB" target="_blank">Gongzi thụ sủng công</a> // <a href="https://www.gongzicp.com/novel/search/module/novel/keyword/%E6%94%BB%E6%8E%A7" target="_blank">Gongzi công khống</a> // <a href="https://www.gongzicp.com/novel/search/module/novel/keyword/%E5%BC%B1%E5%BC%BA" target="_blank">Gongzi nhược cường</a>
+        <footer>
+            &copy; PhamNhaDoan &bull; Little Corner
+        </footer>
+    </main>
 
-<br><a href="https://www.sosad.fun/books?withTag=1072-872" target="_blank">Phế văn thụ sủng công (hoàn)</a> // <a href="https://www.sosad.fun/books?withTag=73-872" target="_blank">Phế văn nhược công (hoàn)</a> <p style="font-size: 80%;">(Nếu muốn xem ongoing thì xóa cái tag hoàn ở chỗ tìm kiếm, các link này mình đã nhập 3 tag là: hiển thị hạn (H), thụ sủng công, hoàn)</p>
-</div>
-    </p>   
-
-
-<b><p style="color: orange; font-size: 120%; text-align: center">MỘT SỐ CÁCH LẤY TRUYỆN</p></b>
-<p style="font-size: 100%;">
-<b>LEGADO (Android):</b>
-<br><b>Link tải:</b>
-
-<br>- <a href="https://github.com/dat-bi/legado-qt/releases">Bản tích hợp QT</a>
-
-<br>- <a href="https://github.com/Luoyacheng/legado/releases">Bản gốc</a>
-
-<br>- <a href="https://www.yckceo.com/yuedu/index/index.html">Nguồn</a> (vào đây xem các tab bên trên và tìm các từ khóa nguồn như jjwxc, gongzi, haitang, lofter v.v... cài json hoặc áp thẳng vào app, bạn chịu khó tìm sẽ ra tỷ tỷ thứ... là cái mà ai cũng biết là cái gì á ^^)
-
-<p style="font-size: 90%;">Sử dụng các extension/nguồn để lấy truyện, trong các ext có chỗ đăng nhập các trang Trung, các bạn vẫn phải mua truyện nếu có chương vip nhé. 
-<br>Nên dùng bản có tích hợp QT để đọc hoặc tải raw luôn, nếu tải raw bằng legado thì không cần lấy token, file tải nằm trong điện thoại.
-  
-<br>
-<br><b>VBOOK (Android):</b>
-
-<br>-  <a href="https://ngốc.vn/i/vbook/docs">Link tải, hướng dẫn sử dụng</a> // <a href="https://vbookapp.com/download">Hoặc ở đây</a> // <a href="https://vbookapp.gitbook.io/huong-dan-su-dung">Hoặc ở đây</a> 
-
-<br>-  <a href="https://ngốc.vn/i/vbook/extension_list.php">Danh sách các extension vbook</a>
-
-<br>- <a href="https://anotepad.com/notes/sexc8ac6">Danh sách repo: bấm vào đây</a>
-
-<br>Vbook cũng hoạt động giống legado, mạnh về nguồn truyện tiếng Việt / convert, cơ chế hoạt động cũng là sử dụng extension để get truyện về kệ sách, vẫn có các ext trang Trung.
-
-<br>
-<br><b>Cài script vào trình duyệt, link Greasy tool tải truyện:</b> 
-
-<br><a href="https://greasyfork.org/vi/scripts/406070-%E5%B0%8F%E8%AF%B4%E4%B8%8B%E8%BD%BD%E5%99%A8">Link Script</a>
-
-<br><a href="https://github.com/404-novel-project/novel-downloader/raw/gh-pages/bundle.user.js">github</a> // <a href="https://greasyfork.org/scripts/406070-%E5%B0%8F%E8%AF%B4%E4%B8%8B%E8%BD%BD%E5%99%A8/code/%E5%B0%8F%E8%AF%B4%E4%B8%8B%E8%BD%BD%E5%99%A8.user.js">greasyfork</a>
-
-<br>Trên link trên đã có hướng dẫn lấy token, mình thì dùng netcapture search gg chứ không có trên chplay đâu nha, không khuyến khích chỉnh sửa hoặc add thêm chứng chỉ vào điện thoại.
-
-<br>
-<br> <a href="https://anotepad.com/notes/r3mp4a6i">Các tag tiếng Trung thường gặp</a>
-
-<br> <a href="https://drive.google.com/drive/folders/1bic3XdphiXtiqc_PI43XFdmRmRdrxGUe?usp=drive_link">Drive raw QT chucongconvert</a>   </p>
-
-
-<br><p style="color: orange; font-size: 100%"><b></b>Tham khảo:</b>
-
-<br><a href="https://github.com/zhongbai2333/Tomato-Novel-Downloader/releases">Tomato-Novel-Downloader</a>
-
-<br><a href="https://github.com/BaoBao666888/Novel-Downloader5/releases">Novel-Downloader5</a></p>
-
-
-</h1>
 </body>
 </html>
