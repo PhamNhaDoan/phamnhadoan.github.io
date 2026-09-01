@@ -3,218 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh Sách Truyện Mới Nhất</title>
+    <title>Góc Đọc Truyện - PhamNhaDoan</title>
+    <!-- Font chữ tròn xinh xắn, dịu mắt -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dots: #c2b280;
-            --cream-bg: rgba(253, 251, 247, 0.94);
-            --border-dash: #a89f91;
-            --primary-color: #d76a03;
-            --accent-green: #4f6d7a;
-            --text-color: #2b2d42;
-            --card-shadow: rgba(0, 0, 0, 0.05);
+            --bg-page: #fdf8f4;
+            --card-bg: #ffffff;
+            --warm-brown: #6b5b52;
+            --text-light: #8c7a70;
+            --border-line: #f4ece4;
+            
+            /* Tông màu nút & icon đơn sắc */
+            --coral-text: #e06d53;
+            --coral-bg: #fff1ed;
+            --coral-border: #ffd8cd;
+
+            --blue-text: #3b82a6;
+            --blue-bg: #f0f8ff;
+            --blue-border: #d4ebf8;
+
+            --amber-text: #b5832a;
+            --amber-bg: #fffdf0;
+            --amber-border: #ffe8b5;
+
+            --shadow-soft: 0 10px 25px rgba(232, 180, 160, 0.22);
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
+            background-color: var(--bg-page);
             font-family: 'Nunito', sans-serif;
-            margin: 0;
-            padding: 40px 15px;
-            color: var(--text-color);
-            background-color: #f4f1ea;
-            background-image: radial-gradient(var(--bg-dots) 1.5px, transparent 1.5px);
-            background-size: 18px 18px;
-            line-height: 1.6;
+            color: var(--warm-brown);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px 15px;
+            /* Họa tiết chấm bi chìm nhẹ nhàng */
+            background-image: radial-gradient(#ecc7b7 1.2px, transparent 1.2px);
+            background-size: 24px 24px;
         }
 
-        .container {
-            max-width: 850px;
-            margin: 0 auto;
-        }
-
-        header {
+        .main-card {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 460px;
+            border-radius: 28px;
+            padding: 36px 28px;
+            box-shadow: var(--shadow-soft);
+            border: 2px solid var(--border-line);
+            outline: 2px dashed #f0e2d8;
+            outline-offset: -8px;
             text-align: center;
-            margin-bottom: 35px;
-            border-bottom: 2px dashed var(--border-dash);
-            padding-bottom: 20px;
+            position: relative;
         }
 
-        header h1 {
-            font-size: 2.2rem;
-            color: var(--primary-color);
-            margin: 0 0 8px 0;
+        /* Huy hiệu nhỏ trang trí */
+        .badge-cute {
+            display: inline-block;
+            background: #ffe5d9;
+            color: var(--coral-text);
+            font-family: 'Comfortaa', cursive;
+            font-size: 0.8rem;
             font-weight: 700;
+            padding: 5px 16px;
+            border-radius: 20px;
+            margin-bottom: 20px;
         }
 
-        header p {
-            color: var(--accent-green);
-            font-weight: 600;
-            margin: 0;
-            font-style: italic;
+        h1 {
+            font-family: 'Comfortaa', cursive;
+            font-weight: 700;
+            font-size: 1.6rem;
+            color: var(--warm-brown);
+            margin-bottom: 8px;
         }
 
-        /* Danh sách chứa các khung truyện */
-        #story-list {
+        p.subtitle {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+
+        .links-container {
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 16px;
         }
 
-        /* Khung truyện hàng ngang (Card) */
-        .story-card {
-            background-color: var(--cream-bg);
-            border: 2px dashed var(--border-dash);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 6px 18px var(--card-shadow);
-            display: grid;
-            grid-template-columns: 160px 1fr;
-            gap: 22px;
-            align-items: start;
-            transition: transform 0.2s ease;
-        }
-
-        .story-card:hover {
-            transform: translateY(-2px);
-        }
-
-        @media (max-width: 600px) {
-            .story-card {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Khung ảnh bìa */
-        .cover-wrapper {
-            width: 100%;
-            height: 220px;
-            border: 1px dashed var(--border-dash);
-            padding: 4px;
-            border-radius: 10px;
-            background: #fff;
+        .btn-link {
             display: flex;
             align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .cover-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 6px;
-        }
-
-        /* Khung thông tin truyện */
-        .story-info {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .story-title {
-            font-size: 1.5rem;
-            margin: 0;
-            font-weight: 700;
-        }
-
-        .story-title a {
-            color: var(--primary-color);
+            justify-content: space-between;
             text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .story-title a:hover {
-            color: #b55802;
-        }
-
-        .story-author {
-            font-size: 0.95rem;
-            color: var(--accent-green);
-            font-weight: 700;
-        }
-
-        .story-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 2px;
-        }
-
-        .tag-item {
-            background: #e2ddd5;
-            color: var(--text-color);
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 0.82rem;
-            font-weight: 600;
-        }
-
-        .story-summary {
-            background: rgba(255, 255, 255, 0.75);
-            border-left: 3px solid var(--primary-color);
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 0.92rem;
-            color: #555;
-            font-style: italic;
-            margin-top: 4px;
-            line-height: 1.5;
-        }
-
-        .read-btn {
-            align-self: flex-start;
-            margin-top: 10px;
-            background: var(--accent-green);
-            color: #fff;
-            text-decoration: none;
-            padding: 7px 18px;
+            padding: 16px 22px;
             border-radius: 20px;
             font-weight: 700;
-            font-size: 0.9rem;
-            transition: background 0.2s;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .read-btn:hover {
-            background: #3b535e;
+        /* Icon tim đơn sắc trùng 100% màu chữ */
+        .btn-icon-single {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.05rem;
+            line-height: 1;
+        }
+
+        .arrow-icon {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-link:hover .arrow-icon {
+            transform: translateX(4px);
+        }
+
+        /* Nút 1: Kho Truyện */
+        .btn-khotruyen {
+            background-color: var(--coral-bg);
+            color: var(--coral-text);
+            border: 1.5px solid var(--coral-border);
+        }
+
+        .btn-khotruyen:hover {
+            background-color: #ff9b85;
+            color: #ffffff;
+            border-color: #ff9b85;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(255, 155, 133, 0.35);
+        }
+
+        /* Nút 2: Wattpad */
+        .btn-wattpad {
+            background-color: var(--blue-bg);
+            color: var(--blue-text);
+            border: 1.5px solid var(--blue-border);
+        }
+
+        .btn-wattpad:hover {
+            background-color: #63b3ed;
+            color: #ffffff;
+            border-color: #63b3ed;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(99, 179, 237, 0.35);
+        }
+
+        /* Nút 3: Inkitt */
+        .btn-inkitt {
+            background-color: var(--amber-bg);
+            color: var(--amber-text);
+            border: 1.5px solid var(--amber-border);
+        }
+
+        .btn-inkitt:hover {
+            background-color: #ffd97d;
+            color: #6b5118;
+            border-color: #ffd97d;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(255, 217, 125, 0.4);
+        }
+
+        footer {
+            margin-top: 32px;
+            font-size: 0.82rem;
+            color: var(--text-light);
+            border-top: 1px dashed #f0e2d8;
+            padding-top: 18px;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>Đọc truyện online</h1>
-        <p>Cập nhật truyện convert thụ sủng công, hstc, công khống</p>
-    </header>
+    <main class="main-card">
+        <span class="badge-cute">reading corner ♥</span>
 
-    <main id="story-list">
+        <h1>Tủ Truyện Đọc</h1>
+        <p class="subtitle">Tổng hợp liên kết các kho truyện & nền tảng</p>
 
-        <article class="story-card">
-            <div class="cover-wrapper">
-                <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=400" alt="Bìa truyện" class="cover-img">
-            </div>
-            <div class="story-info">
-                <h2 class="story-title"><a href="read/truyen-mau.html">Tên Truyện Mẫu Khởi Đầu</a></h2>
-                <div class="story-author">Tác giả: Doan Pham</div>
-                <div class="story-tags">
-                    <span class="tag-item">Thụ sủng công</span>
-                    <span class="tag-item">Thụ truy công</span>
-                    <span class="tag-item">Ngược thụ</span>
-                </div>
-                <div class="story-summary">
-                    Giới thiệu: Yêu công bảo muôn đời.
-                </div>
-                <a href="read/truyen-mau.html" class="read-btn">Đọc Truyện →</a>
-            </div>
-        </article>
+        <nav class="links-container">
+            <!-- Nút 1: Kho truyện -->
+            <a href="https://chucongconvert.vercel.app/taitruyen" class="btn-link btn-khotruyen" target="_blank" rel="noopener">
+                <span class="btn-icon-single">♥</span>
+                <span>Kho Truyện</span>
+                <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
 
+            <!-- Nút 2: Wattpad -->
+            <a href="#" class="btn-link btn-wattpad" onclick="alert('Link Wattpad sẽ được cập nhật sau!'); return false;">
+                <span class="btn-icon-single">♥</span>
+                <span>Wattpad</span>
+                <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+
+            <!-- Nút 3: Inkitt -->
+            <a href="#" class="btn-link btn-inkitt" onclick="alert('Link Inkitt sẽ được cập nhật sau!'); return false;">
+                <span class="btn-icon-single">♥</span>
+                <span>Inkitt</span>
+                <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+        </nav>
+
+        <footer>
+            PhamNhaDoan &bull; Reading Corner
+        </footer>
     </main>
-</div>
 
 </body>
 </html>
