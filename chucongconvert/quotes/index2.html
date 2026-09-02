@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Thêm Quote Mới</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dots: #c2b280;
+            --cream-bg: rgba(253, 251, 247, 0.95);
+            --border-dash: #8e8d8a;
+            --primary-color: #d76a03;
+            --text-main: #332c27;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f4efe6;
+            background-image: radial-gradient(var(--bg-dots) 1px, transparent 1px);
+            background-size: 18px 18px;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .admin-card {
+            width: 100%;
+            max-width: 600px;
+            background: var(--cream-bg);
+            border: 2px dashed var(--border-dash);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+        }
+
+        input[type="text"], input[type="password"], textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+            border-color: var(--primary-color);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #be5d02;
+        }
+
+        #status-msg {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-card">
+        <h2>Thêm Quote Đam Mỹ Sủng Công</h2>
+        
+        <form id="quote-form">
+            <div class="form-group">
+                <label for="github-token">GitHub Token Key:</label>
+                <input type="password" id="github-token" placeholder="Dán PAT (Personal Access Token) vào đây..." required>
+            </div>
+
+            <div class="form-group">
+                <label for="quote-text">Nội dung Quote mới:</label>
+                <textarea id="quote-text" placeholder="Nhập trích dẫn hay..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="story-title">Từ truyện:</label>
+                <input type="text" id="story-title" placeholder="Tên bộ truyện..." required>
+            </div>
+
+            <div class="form-group">
+                <label for="story-author">Tác giả truyện:</label>
+                <input type="text" id="story-author" placeholder="Tên tác giả...">
+            </div>
+
+            <button type="submit" class="btn-submit" id="btn-save">Đăng Quote Mới</button>
+        </form>
+
+        <div id="status-msg"></div>
+    </div>
+
+    <script>
+        const GITHUB_ACC = 'PhamNhaDoan';
+        const GITHUB_REPO = 'phamnhadoan.github.io';
+        const FILE_PATH = 'chucongconvert/quotes/index.html'; // Đường dẫn file index trên repo
+
+        document.getElementById('quote-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const token = document.getElementById('github-token').value.trim();
+            const quote = document.getElementById('quote-text').value.trim();
+            const story = document.getElementById('story-title').value.trim();
+            const author = document.getElementById('story-author').value.trim();
+
+            const statusMsg = document.getElementById('status-msg');
+            const btnSave = document.getElementById('btn-save');
+
+            if (!token) {
+                alert('Vui lòng nhập GitHub Token Key!');
+                return;
+            }
+
+            btnSave.disabled = true;
+            btnSave.textContent = 'Đang xử lý...';
+            statusMsg.style.color = '#333';
+            statusMsg.textContent = 'Đang lấy dữ liệu file index.html từ GitHub...';
+
+            try {
+                // 1. Lấy nội dung file index.html hiện tại từ GitHub
+                const getUrl = `https://api.github.com/repos/${GITHUB_ACC}/${GITHUB_REPO}/contents/${FILE_PATH}`;
+                const getRes = await fetch(getUrl, {
+                    headers: { 'Authorization': `token ${token}` }
+                });
+
+                if (!getRes.ok) {
+                    throw new Error('Không thể đọc file index.html. Hãy kiểm tra lại Token hoặc đường dẫn đường dẫn file!');
+                }
+
+                const fileData = await getRes.json();
+                // Giải mã UTF-8 từ Base64
+                const currentContent = decodeURIComponent(escape(atob(fileData.content)));
+                const fileSha = fileData.sha;
+
+                // 2. Tìm đoạn JSON quotes trong <script id="quotes-data">
+                const dataMatch = currentContent.match(/<script id="quotes-data" type="application\/json">([\s\S]*?)<\/script>/);
+                if (!dataMatch) {
+                    throw new Error('Không tìm thấy thẻ <script id="quotes-data"> trong file index.html!');
+                }
+
+                let quotesArray = [];
+                try {
+                    quotesArray = JSON.parse(dataMatch[1].trim());
+                } catch (err) {
+                    quotesArray = [];
+                }
+
+                // 3. Chèn quote mới vào mảng
+                const newQuoteObj = { quote, story, author };
+                quotesArray.unshift(newQuoteObj); // Thêm vào đầu mảng
+
+                // 4. Thay thế nội dung JSON mới vào HTML
+                const newJsonString = JSON.stringify(quotesArray, null, 4);
+                const updatedHtml = currentContent.replace(
+                    /<script id="quotes-data" type="application\/json">[\s\S]*?<\/script>/,
+                    `<script id="quotes-data" type="application/json">\n${newJsonString}\n    <\/script>`
+                );
+
+                // 5. Gửi request PUT đẩy file index.html mới lên GitHub
+                statusMsg.textContent = 'Đang lưu Quote mới lên GitHub...';
+                const putRes = await fetch(getUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Thêm quote mới từ truyện: ${story}`,
+                        content: btoa(unescape(encodeURIComponent(updatedHtml))),
+                        sha: fileSha
+                    })
+                });
+
+                if (putRes.ok) {
+                    statusMsg.style.color = 'green';
+                    statusMsg.innerHTML = `Thêm quote mới thành công!<br><a href="https://${GITHUB_ACC.toLowerCase()}.github.io/${FILE_PATH}" target="_blank" style="color:#d76a03;">Xem trang index.html</a>`;
+                    
+                    // Reset form ngoại trừ token
+                    document.getElementById('quote-text').value = '';
+                    document.getElementById('story-title').value = '';
+                    document.getElementById('story-author').value = '';
+                } else {
+                    throw new Error('Lỗi khi ghi đè dữ liệu lên GitHub.');
+                }
+
+            } catch (err) {
+                statusMsg.style.color = 'red';
+                statusMsg.textContent = 'Lỗi: ' + err.message;
+            } finally {
+                btnSave.disabled = false;
+                btnSave.textContent = 'Đăng Quote Mới';
+            }
+        });
+    </script>
+</body>
+</html>
