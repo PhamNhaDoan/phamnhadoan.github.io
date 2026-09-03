@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bị xúc tu đùa bỡn sau khi - Đọc Truyện</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dots: #c2b280;
+            --cream-bg: rgba(253, 251, 247, 0.94);
+            --border-dash: #a89f91;
+            --primary-color: #d76a03;
+            --accent-green: #4f6d7a;
+            --text-color: #2b2d42;
+            --card-shadow: rgba(0, 0, 0, 0.05);
+            --reader-bg: #f4f1ea;
+        }
+
+        /* Đổ màu nền trang theo Theme */
+        body.theme-cream {
+            background-color: #f4f1ea;
+            background-image: radial-gradient(var(--bg-dots) 1.5px, transparent 1.5px);
+            background-size: 18px 18px;
+            color: #2b2d42;
+        }
+
+        body.theme-white {
+            background-color: #ffffff;
+            background-image: none;
+            color: #111111;
+        }
+
+        body.theme-dark {
+            background-color: #1a1a1a;
+            background-image: none;
+            color: #d1d5db;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 40px 15px;
+            line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .container { max-width: 850px; margin: 0 auto; }
+
+        .story-container {
+            background-color: var(--cream-bg);
+            border: 2px dashed var(--border-dash);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 8px 24px var(--card-shadow);
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        body.theme-white .story-container {
+            background-color: #ffffff;
+            border-color: #d0d0d0;
+        }
+
+        body.theme-dark .story-container {
+            background-color: #262626;
+            border-color: #444444;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+
+        .story-header {
+            border-bottom: 1px dashed var(--border-dash);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 600px) {
+            .story-header { grid-template-columns: 1fr; }
+        }
+
+        .cover-wrapper {
+            width: 100%;
+            height: 250px;
+            border: 1px dashed var(--border-dash);
+            padding: 5px;
+            border-radius: 10px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .cover-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .story-title-group { display: flex; flex-direction: column; gap: 8px; }
+
+        .story-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .story-author { font-size: 1.05rem; color: var(--accent-green); font-weight: 600; }
+        body.theme-dark .story-author { color: #8ab4f8; }
+
+        .story-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .tag-item {
+            background: #e2ddd5;
+            color: var(--text-color);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        body.theme-dark .tag-item {
+            background: #3a3a3a;
+            color: #ccc;
+        }
+
+        .story-summary {
+            background: rgba(255, 255, 255, 0.7);
+            border-left: 3px solid var(--primary-color);
+            padding: 10px 14px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            color: #555;
+            font-style: italic;
+            margin-top: 6px;
+             white-space: pre-wrap;
+            margin-bottom: 25px;
+            line-height: 1.65;
+        }
+        body.theme-dark .story-summary {
+            background: rgba(0, 0, 0, 0.3);
+            color: #aaa;
+        }
+
+        .bookmark-btn {
+            align-self: flex-start;
+            margin-top: 8px;
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 6px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bookmark-btn:hover, .bookmark-btn.bookmarked {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        /* Thanh Công Cụ Tùy Chỉnh Đọc Truyện (Floating Toolbar) */
+        .reader-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--border-dash);
+            padding: 10px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        body.theme-dark .reader-toolbar {
+            background: #333333;
+            border-color: #555;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toolbar-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+        body.theme-dark .toolbar-label { color: #8ab4f8; }
+
+        .tool-btn {
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .tool-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        body.theme-dark .tool-btn { background: #444; color: #fff; border-color: #666; }
+
+        .font-select {
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-family: inherit;
+            font-size: 0.88rem;
+            outline: none;
+            background: #fff;
+        }
+        body.theme-dark .font-select { background: #444; color: #fff; border-color: #666; }
+
+        .theme-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s;
+        }
+        .theme-circle:hover { transform: scale(1.15); }
+        .theme-circle.active { border-color: var(--primary-color); }
+        .theme-circle.cream { background: #f4f1ea; border: 1px solid #ccc; }
+        .theme-circle.white { background: #ffffff; border: 1px solid #ccc; }
+        .theme-circle.dark { background: #1a1a1a; }
+
+        .chapter-nav { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .chapter-btn {
+            padding: 6px 16px;
+            border: 1px solid var(--border-dash);
+            background: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        body.theme-dark .chapter-btn { background: #333; color: #ddd; border-color: #555; }
+
+        .chapter-btn.active {
+            background: var(--accent-green);
+            color: #fff;
+            border-color: var(--accent-green);
+        }
+
+      .story-content {
+            font-size: 1.2rem;
+            line-height: 1.65;
+            text-align: justify;
+            white-space: pre-wrap;
+            margin-bottom: 25px;
+            min-height: 120px;
+        }
+
+        .story-content p, .story-content {
+            margin-bottom: 0.8rem;
+        }
+
+        .bottom-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding-top: 15px;
+            margin-bottom: 30px;
+            border-top: 1px dashed var(--border-dash);
+            flex-wrap: wrap;
+        }
+
+        .nav-action-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--primary-color);
+            background: #fff;
+            color: var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        body.theme-dark .nav-action-btn { background: #333; }
+
+        .nav-action-btn:hover:not(:disabled) {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .nav-action-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-color: var(--border-dash);
+            color: var(--border-dash);
+        }
+
+        .top-scroll-btn {
+            background: var(--accent-green);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .top-scroll-btn:hover {
+            background: #3b535e;
+        }
+
+        .cbox-chat-section {
+            border-top: 1px dashed var(--border-dash);
+            padding-top: 25px;
+            margin-top: 30px;
+        }
+
+        .cbox-title {
+            font-size: 1.25rem;
+            color: var(--accent-green);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        body.theme-dark .cbox-title { color: #8ab4f8; }
+
+        .cbox-frame-wrapper {
+            background: #fff;
+            padding: 6px;
+            border-radius: 12px;
+            border: 1px dashed var(--border-dash);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="theme-cream">
+
+<div class="container">
+    <article class="story-container">
+        <div class="story-header">
+            <div class="cover-wrapper">
+                <img src="https://plus.unsplash.com/premium_photo-1676478746990-4ef5c8ef234a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Zmxvd2VyfGVufDB8fDB8fHww" alt="Bìa truyện" class="cover-img">
+            </div>
+            <div class="story-title-group">
+                <h1 class="story-title">Bị xúc tu đùa bỡn sau khi</h1>
+                <div class="story-author">Tác giả: EUUUUK</div>
+                
+                <div class="story-tags">
+                    <span class="tag-item">cổ đại</span>
+                    <span class="tag-item">np</span>
+                    <span class="tag-item">nhất công đa thụ</span>
+                    <span class="tag-item">nhược cường</span>
+                    <span class="tag-item">cam tề</span>
+                    <span class="tag-item">chơi công</span>
+                    <span class="tag-item">công có ngực có sữa</span>
+                </div>
+
+                <div class="story-summary">
+                    Giới thiệu: Nguyên sang / nam nam / cổ đại / trung H / chính kịch / nhược công cường thụ / mỹ công cường thụ
+
+Hành văn tra, văn án phế.
+
+Đại khái là [ công tới giết chết yêu vật, bị xúc tu đùa bỡn, sau đó bị đồ đệ đùa bỡn, trở lại môn phái lại bị vài cái. . . ]
+
+Nhược cường cam tề [ chơi công ]
+
+Quên thêm giả thiết, ngực to công sẽ lưu sữa.
+                </div>
+
+                <button class="bookmark-btn" onclick="toggleBookmark()">
+                    <span class="bm-icon">★</span> <span class="bm-text">Bookmark</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Thanh Tùy Chỉnh Đọc Truyện -->
+        <div class="reader-toolbar">
+            <div class="toolbar-group">
+                <span class="toolbar-label">Cỡ chữ:</span>
+                <button class="tool-btn" onclick="changeFontSize(-0.1)">A-</button>
+                <button class="tool-btn" onclick="changeFontSize(0.1)">A+</button>
+            </div>
+
+            <div class="toolbar-group">
+                <span class="toolbar-label">Font:</span>
+                <select class="font-select" onchange="changeFontFamily(this.value)">
+                    <option value="'Nunito', sans-serif">Nunito (Trẻ trung)</option>
+                    <option value="'Merriweather', serif">Merriweather (Truyện giấy)</option>
+                    <option value="'Inter', sans-serif">Inter (Tối giản)</option>
+                </select>
+            </div>
+
+            <div class="toolbar-group">
+                <span class="toolbar-label">Giao diện:</span>
+                <div class="theme-circle cream active" onclick="setTheme('cream')" title="Vàng kem"></div>
+                <div class="theme-circle white" onclick="setTheme('white')" title="Trắng tinh"></div>
+                <div class="theme-circle dark" onclick="setTheme('dark')" title="Ban đêm"></div>
+            </div>
+        </div>
+
+        <div class="chapter-nav" id="chapterNav">
+            <button class="chapter-btn active" data-chap-id="ch1" onclick="switchChapter(this, 'ch1')">Phần 1</button>
+                <button class="chapter-btn " data-chap-id="ch2" onclick="switchChapter(this, 'ch2')">Phần 2</button>
+                <button class="chapter-btn " data-chap-id="ch3" onclick="switchChapter(this, 'ch3')">Phần 3 (end)</button>
+        </div>
+
+        <div class="story-content" id="story-content-body">
+            Tìm kiếm yêu vật / bị xúc tu trói buộc trên không trung đùa bỡn
+
+Bóng đêm dần dần dày, treo cao trên không trung trăng sáng tỏa ra thăm thẳm tia sáng, vắng lặng âm phong thổi đến mức xung quanh cây cối bay phần phật, ngoài ra nhưng lại không bất kỳ thanh âm gì, có vẻ đặc biệt quỷ dị.
+
+Vân Ly cầm trong tay lợi kiếm đi ở mảnh này u ám bên trong vùng rừng rậm, lòng bàn chân bên cạnh dây leo đông đảo, hắn không thể không vừa đi vừa thanh lý, bốn phía tràn ngập chướng khí cũng làm cho bước tiến của hắn càng phát chậm.
+
+Tự hắn nhận tiêu diệt trong rừng yêu vật bắt đầu từ ngày kia, dĩ nhiên ở đây tìm hai ngày, trừ qua cây cối vẫn là cây cối, liền nửa điểm nguồn nước cái bóng đều không có, đừng nói gì đến cắn giết yêu vật.
+
+Hắn cùng với môn phái ước định ba ngày kỳ hạn lại vài canh giờ cũng sắp hết hạn.
+
+Vân Ly trong lòng lo lắng, bất đắc dĩ khiến cho bí thuật, hắn nhất định phải ở trong vòng một canh giờ tìm tới cũng giết chết yêu vật, không phải vậy sử dụng bí thuật mang đến suy yếu phản phệ sẽ chỉ làm hắn trở thành chăn nuôi yêu vật chất dinh dưỡng.
+
+Bí thuật biểu hiện, yêu vật dưới đây vẻn vẹn khoảng cách bốn dặm, Vân Ly siết chặt kiếm trong tay, chậm rãi tới gần vị trí.
+
+Trong rừng khói đen càng dày đặc, hầu như che chắn toàn bộ ánh trăng, âm u bức người.
+
+Vân Ly ghi nhớ pháp quyết đã làm xong nghênh chiến chuẩn bị, hắn cảnh giác chú ý phía trước cảnh sắc.
+
+Gần trong gang tấc hồ nước không giống màu xanh lục, trong đó hắc vụ lượn quanh, bản thân màu sắc bị sương mù bưng đến chặt chẽ.
+
+Yêu vật bản thể là xúc tu, vô cùng khó đối phó, Vân Ly tự nhiên không dám xem thường, lúc này phía sau phong thanh ác liệt, hầu như chớp mắt thời gian vài con nửa trong suốt xúc tu liền quấn tới.
+
+Vân Ly né tránh không kịp, bị này vài con xúc tu bắt lên vững vàng ràng buộc trên không trung.
+
+Lạnh lẽo dính mồ hôi xúc cảm cách y vật theo yêu vật leo lên chậm rãi lan tràn đến toàn thân, bị chạm được địa phương không nhịn được nổi lên run rẩy.
+
+Xúc tu dễ dàng quấn lấy tứ chi, trong đó một cái vòng qua Vân Ly eo thon chi xoắn đứt bên hông ràng buộc.
+
+Màu trắng ngoại bào thoáng chốc tản ra, tùng lỏng lỏng lẻo lẻo   treo ở trên người, liền ngay cả áo sơ mi cũng bị trong người xúc tu cuốn lấy rách rách rưới rưới.
+
+Hay là cảm thấy ngoại bào ngăn cản quá nhiều, xúc tu lôi kéo áo khoác nhẹ nhàng ném xuống đất, lại cảm thấy quần vướng bận, liền với quần đồng thời kéo lại đi, còn sót lại áo sơ mi cũng bị lôi kéo đến chỉ còn dư lại vài miếng vải vóc.
+
+Cảm giác mát mẻ theo xúc tu leo lên thâm nhập đầu óc, Vân Ly muốn gọi lên kiếm của mình, hai tay lại bị xúc tu cuốn lấy phân tại bên người.
+
+Môi bị mấy cái xúc tu ngăn chặn không cách nào ngôn ngữ, liền ngay cả tứ chi cũng bị khống chế.
+
+Hắn giương bị xúc tu nhét được chặt chẽ miệng, cầu cứu thanh âm hàm hồ đến bị ức ở trong cổ.
+
+Thân thể ở giữa không trung không được   giãy dụa lay động, sau đó càng nhiều xúc tu quấn lấy tứ chi của hắn, liền giãy dụa cũng bị mất khí lực.
+
+Hai cái xúc tu linh hoạt   theo da thịt leo lên đến trước ngực, dưới đáy giác hút như là có vô số tờ cái miệng nhỏ ở mút vào hôn, quấn quít lấy ngực thịt tùy ý tụ lại thành các loại hình dáng.
+
+Đầu vú bị xúc tu đỉnh chóp giác hút bao bọc lấy trằn trọc quấn làm, đã sung huyết rất đứng lên.
+
+Xúc tu phân bố màu đỏ chất lỏng dọc theo lồng ngực tình dục   lướt xuống, hồng bạch giao hòa, nhìn từ đàng xa như là một bộ vô cùng xinh đẹp bức tranh.
+
+&quot;Ân. . . Ha a. . .&quot;
+
+Yêu vật chất lỏng có chứa kích dục công hiệu, Vân Ly trong miệng vẫn cứ ngậm lấy xúc tu, không lắm rõ ràng rên rỉ vài tiếng.
+
+Bộ ngực càng ngày càng đến ngứa khó nhịn, sưng không thể tả đầu vú bị xúc tu đùa bỡn đến đỏ tươi cực kỳ, vô lực lộ ra trên không trung run rẩy run rẩy phát run.
+
+Nơi này có chứa hồi âm, một tiếng một tiếng dâm mị rên rỉ vang vọng ở bên tai của hắn.
+
+Vân Ly không chịu được mình bị một yêu vật đối xử như thế. Lớn lao lúng túng cùng xấu hổ điên cuồng hành hạ nội tâm, nước mắt theo nổi lên ửng đỏ khóe mắt rơi xuống.
+
+Như vậy trái lại càng có thể gây nên người làm nhục ý tứ.
+
+Yêu vật vốn là sinh linh trí, hiển nhiên càng thêm trở nên hưng phấn, không kiêng kị mà phân ra nhiều hơn xúc tu quấn quanh đi tới, có mấy cái càng là dọc theo bắp đùi đi xuống tìm kiếm.
+
+Trắng nõn non mềm bắp đùi bị hai cái xúc tu hung hăng   phân ra, giữa hai chân môn hộ mở ra.
+
+Nhếch lên cán mặt trên còn chậm rãi chảy xuôi dâm mị tuyến dịch, lần này triệt để bại lộ ở trong tầm mắt.
+
+Vân Ly cúi đầu gần như tan vỡ phát hiện, chính mình dâm đãng hạ thân sớm đã có phản ứng, từ trước bưng tràn ra dâm dịch thậm chí ở dưới ánh trăng hiện ra óng ánh tia sáng.
+
+Cơ quan sinh dục bị xúc tu qua lại gảy, buông lỏng căng thẳng dây dưa càng làm cho ý thức của hắn càng ngày càng mơ hồ, người tu tiên không nặng tình dục, hắn dĩ vãng chưa từng trải nghiệm qua cỡ này kích thích khoái cảm.
+
+Lý trí hầu như tiêu tan, thân thể dục vọng tích góp đến đỉnh, hắn không tự chủ được rên rỉ run rẩy, ở xúc tu quấn quanh dưới, thân thể trên không trung cung thành kỳ quái dáng dấp.
+
+Hạ thân không chịu nổi kích thích thích thả ra, ngón chân không nhịn được cuộn tròn lên.
+
+Xúc tu nhưng không nghĩ buông tha hắn, trái lại đưa hắn ràng buộc càng chặt hơn, vẫn cứ động cái liên tục.
+
+Vân Ly không thể trốn đi đâu được, ở xúc tu đùa bỡn dưới lại tiết một lần.
+
+&quot;Không. . . Không muốn. . . Ân a. . .&quot;
+
+Chất lỏng để thân thể của hắn càng thêm mẫn cảm, trong miệng không nhịn được nhỏ giọng   xin tha, nỗ lực để cái này yêu vật lại nhẹ một chút.
+
+Trong đó chen lẫn tiếng rên rỉ nhưng là để cho thay đổi vị, phảng phất là trần trụi câu dẫn bình thường.
+
+Lưu lại áo sơ mi kết nối với mới sưng sữa nhọn đều không che nổi, tóc dài ngổn ngang   tản tại bên người.
+
+Vân Ly sắc mặt ửng hồng, dâm mị môi đỏ bị xúc tu gây xích mích chảy ra nước bọt, theo cằm không được   chảy xuống, hiển nhiên một bộ bị chơi tàn nhẫn dáng dấp.
+
+Xúc tu lúc này cực tốc thu hồi bản thể, đem Vân Ly quấn quanh lấy để dưới đất, lòng bàn chân chạm đến thực địa, không còn không trung nhẹ nhàng cảm giác.
+
+Hắn từ lâu đã tiêu hao hết khí lực, hai chân hiện ra mềm ý, suýt nữa ngã nhào trên đất trên, may mà bên hông xúc tu đúng lúc nắm chặt.
+
+Còn không có đợi hắn thở dốc chốc lát, trắng mịn xúc cảm lại liên tiếp   bò lên trên thân thể.
+
+Trước ngực có vài xúc tu không ngừng liếm láp sưng đỏ đầu vú, hai chân của hắn lại bắt đầu run, từ từ tích lũy, gộp lại khoái cảm hành hạ đầu óc, trong miệng tiếng rên rỉ càng ngày càng đến đại.
+
+Xung quanh xúc tu chúng nghe được âm thanh hưng phấn trên không trung giương nanh múa vuốt, liên quan Vân Ly thân thể đều đung đưa, ửng đỏ ngực thịt theo động tác dập dờn bồng bềnh chập trùng.
+
+&quot;Ân a. . . A a. . . Không muốn. . .&quot;
+
+Sữa lỗ tựa hồ có món đồ gì dâng lên càng, Vân Ly bị loại này khó nhịn cảm giác chơi đùa không được vặn vẹo, dày đặc lông mi bị nước mắt ướt nhẹp dính nối liền cùng nhau.
+
+Rất nhanh, hắn liền biết được là vật gì.
+
+Xúc tu quấn quanh lấy ngực thịt hơi dùng sức ra bên ngoài đè ép, yếu ớt sữa lỗ không chịu nổi kích thích bắn ra từng luồng từng luồng thơm ngọt sữa tươi, tràn đầy ở trên người bị tranh nhau chen lấn   cướp thực.
+
+Vân Ly không thể tin đang nhìn mình tựa hồ biến lớn không ít bộ ngực cùng với trong người sữa, đầu óc tràn đầy không cầm được lúng túng, hắn một kẻ nam tử, lại làm sao sẽ. . .
+
+Lưu lại dục vọng hoàn toàn bị khủng hoảng che lấp, hắn chỉ cảm thấy chính mình thành một bất nam bất nữ quái vật, việc này nếu là bị môn phái người biết được, hắn lại nên làm gì?
+
+Vân Ly thiết tưởng đông đảo độ khả thi, mặc dù chưởng môn đối với hắn thương yêu rất nhiều, đồ đệ ngày xưa cũng thường xuyên chăm sóc hắn, nhưng này kiện làm người không thể tả đến cực hạn sự thực chỉ sợ cũng không cho lượng giải.
+
+Khi hắn suy nghĩ lung tung, xúc tu đối với thân thể ràng buộc càng ngày càng tùng, tựa hồ hút sữa sau liền hài lòng buông lỏng cảnh giác.
+
+Vân Ly cúi đầu nhìn mình áo rách quần manh gần như trần truồng dáng dấp, cắn cắn môi, hắn cố nén nội tâm quẫn bách cùng e lệ, thừa dịp yêu vật không chú ý lúc triển khai thuấn di pháp quyết.
+
+Pháp quyết sẽ đưa hắn tùy ý đưa tới xung quanh bốn mươi dặm bất kỳ địa phương nào, Vân Ly cũng không biết chính mình sẽ đi đến nơi nào, hắn chỉ hy vọng không cần có người nhìn thấy hắn như vậy. . .
+
+Hạ tiến vào đại đồ đệ trong lồng ngực / bị đại đồ đệ cam tề
+
+Vân Ly lập tức dời đi trong rừng một nơi, cũng không biết cụ thể phương vị. Trên người hắn không có một chỗ là tốt, mặt trên hầu như tràn đầy lít nha lít nhít vết đỏ.
+
+Việc cấp bách hiển nhiên là trước tiên tìm một cái có thể che đậy thân thể y vật.
+
+Lảo đảo đi về phía trước mấy bước, tinh thủy hỗn hợp với sữa kéo dài bắp đùi vẫn luôn chảy đến trên đất, hai chân chỉ cần hơi động, liền cấm không ngừng run rẩy, căn bản đứng không đứng dậy đến.
+
+Bí thuật suy yếu phản phệ tùy theo mà đến, thân thể như là bị đổ chì giống như vậy, Vân Ly bước chân trầm trọng, lập tức mất trọng tâm về phía trước đổ tới.
+
+Hắn đã không có dư thừa phép thuật đi tránh khỏi chuyện này, không thể làm gì khác hơn là chống cánh tay tận lực giảm bớt cảm giác đau.
+
+Trong dự liệu đau đớn vẫn chưa đi tới, trái lại hạ tiến vào một ấm áp lại dày rộng trong ngực.
+
+Không đợi Vân Ly phục hồi tinh thần lại, người trước mặt chậm rãi quấn lấy vòng eo của hắn, hơi dùng sức, hai người liền vừa khớp dán càng chặt hơn.
+
+&quot;Sư tôn, không sao rồi. &quot;
+
+Bên tai truyền đến thanh âm quen thuộc, Vân Ly chôn ở trong ngực của nam nhân không khống chế được   khóc nức nở, hàm răng căng cắn chặc môi dưới, hạ xuống nước mắt châu thấm ướt Phó Lăng vạt áo.
+
+Vân Ly ở bên trong môn phái cũng coi như là nuông chiều từ bé, đâu chịu nổi ủy khuất như thế, càng khỏi nói bị một yêu vật như vậy đùa bỡn.
+
+Hắn ở Phó Lăng trong lòng khóc hồi lâu, đuôi mắt lại nổi lên hồng đến, xúc tu trước tràn ra kích dục chất lỏng phảng phất đã sâu vào bên trong, hạ thân không khỏi lại có phản ứng.
+
+Không có quần áo ngăn cản càng rõ ràng, Vân Ly lúc này mới nhớ từ bản thân tình cảnh, giẫy giụa muốn từ Phó Lăng trong lồng ngực rời đi.
+
+Hắn lúng túng   mở ra cái khác tầm mắt, không muốn nhìn thẳng chính mình như vậy. . . Phóng đãng dáng dấp.
+
+Phó Lăng theo Vân Ly giãy dụa sức mạnh dìu hắn lên, tầm mắt chăm chú nhìn trước mặt lộ ra thân thể, hô hấp không khỏi cứng lại.
+
+Áo sơ mi rách rách rưới rưới   đáp ở phía trên, hai nơi sưng sữa nhọn bị đùa bỡn đến cơ hồ lớn hơn một vòng.
+
+Không giống với trước trắng như tuyết bộ ngực đầy đặn tràn đầy màu đỏ sẫm ám muội dấu vết, theo bộ ngực chập trùng động tác run lên một cái.
+
+Vân Ly bị đạo này trần trụi tầm mắt nhìn chăm chú đến không biết làm sao, hắn lo lắng thân thể cứng ở tại chỗ, trắng nõn gò má cũng đặt lên một tầng mỏng hồng.
+
+&quot;Sư tôn, bầu vú ngươi thật lớn. &quot; Phó Lăng để sát vào Vân Ly bên tai nhẹ giọng nói rằng, hắn thở ra khí tức quá mức nóng rực, trêu đến bên cạnh trắng loáng bên tai cũng đỏ đến mức triệt để.
+
+&quot;Ngươi. . .&quot; Vân Ly còn chưa nói xong, Phó Lăng tay đã nắm lấy đoàn kia trắng như tuyết, bắt đầu đại lực   xoa xoa lên, trước ngực hai hạt bị rà qua rà lại, rất nhanh lại đứng thẳng đâm về Phó Lăng lòng bàn tay.
+
+Môi cũng bị cương quyết ngăn chặn, liền mút mang gặm hôn để Vân Ly không còn khí lực, hắn vô lực đẩy mấy lần, âm thanh cũng bị hôn hàm hàm hồ hồ, &quot;Làm càn. . .&quot;
+
+Kích dục công hiệu càng ngày càng nghiêm trọng, Vân Ly sắc mặt ửng hồng, nhẹ sưng môi đỏ hơi mím, tình cờ tiết ra vài tiếng nhỏ đến mức không thể nghe thấy ngâm khẽ.
+
+Con mắt ngậm lấy tình dục nước mắt, mông lung rồi lại đầy đủ câu người.
+
+Hắn không muốn bị đồ đệ của mình nhìn thấy dáng dấp như vậy, gắng gượng ngăn lại bộ ngực cặp kia tay, &quot;Phó Lăng, yêu. . . Yêu vật còn chưa giải quyết. . . Chúng ta. . . Chúng ta trước tiên về môn phái. . .&quot;
+
+Dục vọng dường như thủy triều sẽ không ngừng lại, Vân Ly thân thể khó nhịn   giãy dụa, hai chân cũng không chỗ ở nhẹ nhàng làm phiền.
+
+Lông mi xuyết nước mắt dịch càng nhiều lắm, khiến người ta không khỏi nghĩ muốn mạnh mẽ bắt nạt một trận.
+
+&quot;Sư tôn, ngươi rất khó chịu đi, ta tới giúp ngươi. &quot;
+
+Phó Lăng đem Vân Ly dán đến chặt hơn chút nữa, si mê mút vào trong lòng này là mê người lại thơm ngọt thân thể.
+
+Hắn một cái kéo xuống tàn phá áo sơ mi vứt trên mặt đất, cúi đầu ngậm kia cứng đến nỗi đứng thẳng núm vú, đại lực mút hút.
+
+&quot;A Ly sữa thực sự là hương đây. &quot;
+
+Vân Ly bị đồ đệ như vậy trắng ra ngôn ngữ kích đến lại lưu không ít địa tinh nước, hắn nhỏ giọng mà thở gấp khí, nước mắt liên tiếp   lướt xuống gò má.
+
+Đáy lòng xấu hổ cùng thân thể chịu đựng khoái cảm đan dệt, hắn cũng không nói được chính mình vì sao phải khóc.
+
+Trên tay khước từ chẳng biết lúc nào đã biến thành nghênh hợp, non mềm bàn tay bám ở nam nhân mạnh mẽ trên eo.
+
+Nhũ lỗ bị Phó Lăng đầu lưỡi không ngừng đỉnh làm, rất nhanh sữa cứ như vậy chảy ra, trong không khí cũng tản ra như có như không hương thơm.
+
+Đại đa số sữa bị Phó Lăng hút vào trong miệng, yên tĩnh trong hoàn cảnh có thể rõ ràng nghe được nuốt thanh âm.
+
+Sữa cuồn cuộn không ngừng, một phần nhỏ theo Vân Ly thân thể trần truồng chảy đến trên đất.
+
+&quot;Ân a. . . Nhẹ. . . Nhẹ chút. . .&quot; Đầu vú bị cắn đến sưng đỏ lại mẫn cảm, Vân Ly ức chế không được rên rỉ vài tiếng, trong miệng cũng theo bản năng xin tha.
+
+Hắn có phần bất lực mà nhìn Phó Lăng mút cắn động tác, trong mắt cũng lóe vài tia yếu ớt lệ quang.
+
+Trắng toát bộ ngực tràn đầy sẫm màu dấu vết, ban đầu màu đỏ còn chưa biến mất, lại bị nặng nề che kín một tầng.
+
+No đủ lại giàu có co dãn ngực lớn như là hai con trắng như tuyết thỏ, nhảy nhảy nhót nhót hảo không đáng yêu.
+
+Phó Lăng thi pháp biến ra một cái giường đến, ôm Vân Ly eo đè lên, vạt áo chậm rãi rơi xuống đất.
+
+Hừng hực lồng ngực dán chặt lấy kia hai đám mềm mại, sưng đỏ đến không được đầu vú lại bị sượt đến gắng gượng, Phó Lăng thấy vậy ánh mắt tối mù mịt, &quot;Sư tôn thật đúng là sẽ câu dẫn người. &quot;
+
+Hắn bàn tay lớn xoa xoa Vân Ly bộ ngực đầy đặn, nhân cơ hội lại sẽ kia nhổng lên thật cao cơ quan sinh dục nuốt xuống, Vân Ly bị nuốt đến đột nhiên không kịp chuẩn bị, thoải mái khoái cảm để hắn không nhịn được kêu lên tiếng.
+
+&quot;Ân a. . . Ha. . . Không được. . . Không muốn a. . .&quot; Vân Ly nhếch miệng môi theo bản năng từ chối, thỉnh thoảng còn có thể nhìn thấy kia bôi đỏ tươi nước trơn đầu lưỡi.
+
+Phó Lăng bị câu dẫn mà cúi đầu ngăn chặn miệng môi của hắn, đầu lưỡi tùy ý   hoành trùng thẳngьèɒ đụng, đem trong miệng khí tức cùng nước bọt cuốn đến không còn một mống.
+
+Trong miệng còn lưu lại mới vừa mùi sữa thơm, hoảng hốt trong lúc đó như là thưởng thức đến chính mình sữa, Vân Ly xấu hổ   run rẩy bờ môi, đẩy nam nhân khí lực cũng dần dần tăng thêm.
+
+Đối với Phó Lăng mà nói, kia bất quá như là con mèo nhỏ gãi ngứa, trái lại bị quấy ra đầy người hỏa khí, hắn kịch liệt đung đưa mạnh mẽ phần eo, đem trong cơ thể vật nuốt đến càng sâu.
+
+Người tu tiên vốn là có khác hẳn với người thường thể năng, Phó Lăng chập trùng tốc độ càng lúc càng nhanh.
+
+Vân Ly tiếng rên rỉ bị đụng phải vụn vặt, nước mắt dần dần thấm ướt gò má, kia phó yếu đuối lại phóng đãng vẻ mặt mang theo câu hồn phách người mị lực, dẫn tới Phó Lăng tiếp tục tăng nhanh tốc độ.
+
+Kịch liệt va chạm dẫn tới Vân Ly mi mắt càng ướt, hắn hoảng loạn   cuốn lại nam nhân cái cổ, cầu khẩn, &quot;A Lăng. . . Chậm. . . Chậm một chút. . . A. . . Sư tôn không. . . Không xong rồi. . .&quot;
+
+Phó Lăng nghe này động đến càng hăng say, dường như muốn đem dưới thân người nuốt vào thân thể tựa như, hai người kết hợp địa phương dính mồ hôi lại dâm loạn.
+
+Vân Ly sau ngước cổ, trong hốc mắt dồi dào nước mắt, hô hấp dần dần tán loạn.
+
+Sắc mặt tràn đầy tình dục ửng hồng, trong con ngươi ý xuân dập dờn. Hắn ôm nam nhân cổ cánh tay vô lực rủ xuống, hai chân bắt đầu run rẩy cái liên tục.
+
+Mềm mại bộ ngực bị nam nhân xoa xoa thành các loại hình dáng, sữa, tinh thủy hầu như chảy tràn toàn thân đều là, nổi bật lên cả người dâm sắc cực kỳ.
+
+Vân Ly bị nam nhân đè ở dưới thân làm một lần lại một lần, tiếng rên rỉ cùng thân thể chạm vào nhau phát ra tiếng bành bạch vang giao hòa, như là một hồi vĩnh viễn không ngừng nghỉ hòa âm.
+
+Sắc trời sắp tờ mờ sáng lúc, trận này kịch liệt tình sự mới ngừng lại, Vân Ly trong cơ thể thực sự không đồ vật bắn, hầu như trong suốt như nước.
+
+Hắn bị kích thích đến vẫn luôn rơi lệ, khóc đến con mắt đều hồng sưng lên, cuối cùng càng là ngủ thiếp đi.
+
+Phó Lăng làm tịnh thân pháp quyết, lại thay Vân Ly thay xong y vật, mới ôm lấy hắn chuẩn bị trở về đến môn phái.
+
+Trong lúc còn không quên giết chết con kia bắt nạt Vân Ly yêu vật.
+
+Cùng đại đồ đệ làm tình bị nhìn trộm
+
+Vân Ly bị yêu vật gây thương tích tin tức thoáng qua truyền khắp toàn bộ môn phái.
+
+Phó Lăng ôm lấy Vân Ly trở lại lúc, kiêng kỵ Vân Ly danh dự, liền rắc cái này lời nói dối. Này cũng đúng như Vân Ly ý nguyện, hắn nhất định phải mau chóng tìm ra thân thể phát sinh biến hóa nguyên nhân, trước đó cũng không thích hợp gặp người.
+
+. . .
+
+Vân Ly sáng sớm tỉnh lại toàn thân bủn rủn vô lực, trong người càng là phủ kín lít nha lít nhít vết đỏ.
+
+Hai cái đầu vú đỏ tươi đến như là sung máu giống như vậy, tình dục tản đi, nội tâm của hắn cũng chỉ còn lại có xấu hổ cùng lúng túng.
+
+Cho tới hôm nay hắn cũng không thể nào tưởng tượng được, chính mình càng bị đồ đệ quải lên giường, càng sâu với lộ ra kia phó so với Hợp Hoan tông đệ tử còn muốn phóng đãng dáng dấp.
+
+&quot;Sư tôn, ta tiến đến. &quot;
+
+Phó Lăng dừng ở ngoài cửa, đáy lòng không nhịn được sinh ra một tia khát vọng cùng chờ mong, hai người đêm qua được rồi đạo lữ việc, sư tôn tỉnh lại sẽ là như thế nào vẻ mặt?
+
+E lệ, tức giận, cũng hoặc là hai người đều có. . .
+
+Mặc kệ thế nào, kia nhất định là cực kỳ sinh động mê người dáng dấp.
+
+Nghĩ như vậy, Phó Lăng không nhịn được ngoắc ngoắc khóe môi, mang theo ý cười đẩy cửa bước vào Vân Ly trong phòng.
+
+Hắn giương mắt nhìn người trên giường, tinh xảo mặt mày, hơi lộ ra màu đỏ dấu vết, tự dưng chọc người mơ màng.
+
+Phó Lăng đi vào bên giường, nhẹ nhàng nắm Vân Ly mảnh khảnh thủ đoạn, từ hắn cái góc độ này có thể dễ dàng thấy rõ áo sơ mi không che nổi hai vú, &quot;A Ly. &quot;
+
+Vân Ly thủ đoạn nhẹ giật giật, tránh thoát ràng buộc, hắn buông xuống con ngươi không làm ngôn ngữ, mãi đến tận tìm đến phía trước ngực tầm mắt càng cực nóng, khiến người ta không cho lơ là.
+
+Hắn chậm rãi ngẩng đầu lên, làm bộ vô sự phát sinh vẻ mặt, &quot;Ngươi. . . Ngươi đi ra ngoài trước đi. &quot;
+
+Nhưng mà hơi run thanh âm nhưng bại lộ hắn lúc này không bình tĩnh.
+
+Phó Lăng mắt sắc tối mù mịt, hai tay dọc theo Vân Ly áo sơ mi ranh giới thăm dò vào, nhẹ nhàng kéo một cái, kia khiến người ta si mê, no đủ lại êm dịu hai vú sôi nổi mà ra, không nhịn được trên không trung run rẩy, như là đang câu dẫn người bình thường.
+
+Rộng lớn bàn tay bắt được đi tới, mềm mại một đoàn, nắm trong tay bị nhào nặn thành các loại hình dáng, &quot;Sư tôn, bầu vú ngươi thật mềm. &quot;
+
+Vân Ly bị tóm đến huyết dịch cả người đều sôi trào lên, nhỏ dài dày đặc lông mi rung động nhè nhẹ, đuôi mắt không khỏi hạ xuống vài giọt lệ đến, &quot;Ngươi. . . Ngươi thả ta ra, vô liêm sỉ. . .&quot;
+
+Hắn như là bị bức ép đến mức tận cùng, núp ở góc xem ra tội nghiệp dáng vẻ, toàn thân đều tản ra mâu thuẫn khí tức.
+
+Nhưng đứng thẳng đầu vú, cương hạ thân không một không biểu hiện hắn sa vào chân tướng trong đó, điều này thật sự là làm trái lẽ thường.
+
+Vân Ly sẽ bị tử lại đi trên lôi kéo, nỗ lực che khuất chính mình không thể tả phản ứng, Phó Lăng động tác nhưng càng thêm cấp tốc, một bên dùng sức xoa sữa một bên vén chăn lên.
+
+Tầm mắt quét đến Vân Ly nhếch lên cơ quan sinh dục trên, vò sữa khí lực càng lớn chút, &quot;Sư tôn rõ ràng rất yêu thích a. &quot;
+
+Giọng trêu chọc để Vân Ly gò má lại đỏ bừng một mảnh, hắn không cách nào phản bác Phó Lăng, nhất thời cũng không biết đáp lại nên phản ứng làm sao.
+
+Thân thể của hắn hiện tại mẫn cảm đến kỳ cục, chỉ cần một chút đụng vào cũng sẽ bị kích đến cả người run rẩy.
+
+Vân Ly còn không có phục hồi tinh thần lại, đã bị Phó Lăng đè xuống giường cởi bên trong quần, Phó Lăng hừng hực cự vật thẳng tắp chống đỡ ở trên bụng của hắn, giữa hai người nhiệt độ lẫn nhau giao hòa, kích thích Vân Ly lại phát sinh một tiếng ngâm khẽ.
+
+Thân thể triệt để mềm thành một bãi xuân thủy, sợi tóc đen sì ngổn ngang   tản ở trên giường, hai vú bị hai bàn tay lớn vò đến vò đi, Vân Ly ánh mắt cũng từ từ trở nên mê ly.
+
+Hai người sa vào trong đó, tự là không có lưu ý cửa phòng đã mở ra khe hở.
+
+Đợi được Đoạn Tiện Chi bưng thuốc trị thương xuất hiện ở cửa lúc, gặp cửa phòng hơi mở rộng, đang chuẩn bị ra hiệu sư tôn, nhưng chợt nghe vài tiếng ngọt ngào rên rỉ cùng thở gấp.
+
+Xuyên thấu qua khe hở, lúc ẩn lúc hiện có thể thấy rõ trên giường dây dưa hai bóng người, sư tôn của hắn bị người ép ở dưới người tùy ý xoa xoa, mảnh mai mị người thanh âm uyển chuyển êm tai.
+
+Trước ngực là một đôi hắn dĩ vãng chưa từng gặp trắng như tuyết hai vú, mơ hồ bị quần áo che ở một ít, nhưng mà nhỏ nhìn thật kỹ còn có thể nhìn thấy từ nhũ lỗ cuồn cuộn không ngừng chảy ra sữa.
+
+Đoạn Tiện Chi nơi nào gặp Vân Ly dáng dấp như vậy, hắn trong ký ức sư tôn từ trước đến giờ không thông tình yêu, quần áo tận chỉnh, nơi nào sẽ giống như bây giờ.
+
+Trên người y vật nửa chặn nửa che, no đủ êm dịu bộ ngực vô cùng sống động, hạ thân càng là một mảnh trần trụi, lộ ra da thịt mang theo tình dục hồng nhạt.
+
+Đoạn Tiện Chi mắt sắc thâm trầm, hầu kết lăn mấy phần, hắn nghe Vân Ly ngâm gọi, cách quần lót kìm lòng không đặng ve vuốt từ bản thân dương vật.
+
+Trong phòng tiếng rên rỉ càng dâng trào, phát ra phập phập phập tiếng nước tần suất cao đến không được, Vân Ly bị kích thích đến hai chân không được rung động, ngữ điệu đều mang tới khóc âm, &quot;Ân a. . . Không muốn. . . Chậm. . . Chậm một chút. . . A a. . .&quot;
+
+Trắng nõn mảnh khảnh đùi hơi khuất ở trên giường, chỉ cần ngẫm lại liền biết, cặp kia chân kẹp ở trên eo nên là cỡ nào tốt đẹp chính là tư vị.
+
+Giả như sư tôn là nằm ở dưới thân của hắn gào khóc, chính mình nhất định là muốn mạnh mẽ thao lộng một phen, hút khô hắn sữa, nhìn hắn còn dám như vậy lộ ra hai vú câu dẫn người khác.
+
+Đoạn Tiện Chi nghĩ như vậy, giữa háng vật vừa sưng trướng mấy phần, hắn thô thô thở hổn hển mấy hơi thở, trên tay tuốt động tần suất càng lúc càng nhanh, dường như muốn mang ra tàn ảnh.
+
+Theo Vân Ly cao trào ngâm tiếng kêu, Đoạn Tiện Chi tùy ý khuấy động mấy lần, từng luồng từng luồng trọc dịch hết mức phun ra ở trên quần lót, hắn đứng tại chỗ lại thưởng thức một hồi Vân Ly tao lãng dáng dấp, hỏa khí suýt chút nữa lại bị câu đi ra.
+
+Mang theo thuốc trị thương trước khi rời đi, Đoạn Tiện Chi gần như sắp muốn không kìm nén được trong lòng tuôn ra âm u tâm tư.
+
+Sư huynh đều nếu có thể, hắn tại sao không được chứ?
+
+Đúng đấy, hắn tại sao không được chứ, Đoạn Tiện Chi tròng mắt né qua một tia ngột ngạt hưng phấn, ánh mắt đột nhiên chìm xuống.
+
+Sư tôn thân thể đã xảy ra như vậy biến hóa, hắn rồi sẽ tìm được cơ hội.
+
+Tắm rửa / nhị đồ đệ chen vào bồn tắm
+
+Buổi tối, Vân Ly giẫy giụa tỉnh lại từ trong mộng, trong người chỉ mặc một cái đơn bạc áo sơ mi, bộ ngực theo thở hổn hển trên dưới chập trùng.
+
+Có lẽ là ban ngày chuyện tình quá mức khiến người ta khắc sâu ấn tượng, hắn càng ở trong mơ cũng gặp được Phó Lăng, hai người ở trong mơ được điên loan đảo phượng việc, so với trước là chỉ có hơn chứ không kém.
+
+Vân Ly dưới ánh mắt liễm, dày lớn lên lông mi nghiêng quét xuống đến, hắn này mới nhìn đến chính mình quần lót tựa hồ ướt một mảnh.
+
+Ướt nhẹp sau vải vóc càng có vẻ đơn bạc, bị chất lỏng thẩm thấu hơi trở nên trong suốt lên, hạ thân còn vẫn duy trì nhếch lên dáng dấp, bắp đùi dinh dính trơn trợt, cũng không hơn gì.
+
+Vân Ly thấy vậy sắc mặt ửng đỏ, lôi kéo chăn lại úp xuống, hắn đang chuẩn bị gọi Phó Lăng chuẩn bị tắm rửa món đồ cần thiết, đúng dịp chính là cửa phòng cũng vào thời khắc này bị người gõ vang.
+
+&quot;Phó Lăng, ngươi đi chuẩn bị chút nước nóng, ta muốn tắm rửa. &quot;
+
+Người đến nghe được dặn dò bước chân xa dần, Vân Ly không nghi ngờ có hắn, lẳng lặng đem chính mình nắp đang chăn dưới, chỉ chốc lát nước liền đã chuẩn bị kỹ càng.
+
+Phó Lăng tối nay cũng coi như nghe lời, bị xong nước sau trực tiếp rời đi, theo đóng cửa tiếng vang truyền vào trong tai, Vân Ly cũng vén chăn lên xuống giường.
+
+Tu thân áo sơ mi phác hoạ ra tinh tế đẹp đẽ thân hình, như ngọc trắng nõn tuyết đủ đạp ở sẫm màu trên tấm ván gỗ, cùng với cùng lót, so sánh rõ ràng.
+
+Áo sơ mi nút buộc chậm rãi được cởi ra, áo trắng treo ở bên cạnh trên giá, kể cả quần lót đồng loạt khoác lên bên trên.
+
+Vân Ly đánh quay đầu trên bạch ngọc làm ngọc trâm, tóc dài đen nhánh ngổn ngang   xõa xuống, vẫn luôn hoãn lại đến bên hông.
+
+Trước ngực trắng như tuyết đại đoàn như ẩn như hiện, câu dẫn người ta hận không thể nhào tới vùi đầu khổ ăn.
+
+Mê người lõa thể dần dần ẩn ở dưới nước, sóng nước dập dờn, chọc người suy tư.
+
+Ấm áp nước chạm vào thân, phảng phất mang đi tất cả ầm ĩ, trong mộng lưu lại tình dục liên tiếp hiện lên.
+
+Vân Ly đóng mắt, hai tay khắc chế rồi lại khó nhịn   xoa hai vú của chính mình, hắn vội vàng muốn thả, đầu vú bị nhéo đến cơ hồ hồng sưng lên, sữa vẫn cứ tí xíu đều bắn không ra đi.
+
+Động tác càng ngày càng không được kết cấu, lực tay lớn dần, đoàn kia thịt mềm bị không chút nào thương tiếc   xoa xoa xé kéo, sóng sữa dập dờn, gây nên một trận bọt nước.
+
+Đoạn Tiện Chi ở bên cạnh nín hơi đứng thẳng hồi lâu, tầm mắt chăm chú nhìn Vân Ly một khắc cũng không nguyện dời, hầu kết trên dưới lăn mấy lần, hắn nhịn không được trực tiếp phát hiện thân tới gần thùng gỗ.
+
+Bàn tay rốt cục không trở ngại chút nào   đụng tới Vân Ly da thịt, che ở sóng sữa trên nhẹ nhàng nhào nặn.
+
+Thô lệ lòng bàn tay mang theo một tầng mỏng kén ở đầu vú qua lại vuốt nhẹ, hơi yếu dòng điện dọc theo hai người tiếp xúc địa phương từ từ lan tràn.
+
+Vân Ly này mới phát giác có người đến, hắn nhìn thấy Đoạn Tiện Chi sau, không thể tin trợn to hai mắt, nhũ hạt nhô ra kích thích càng làm cho hắn tràn ra vài tiếng trầm thấp thở dốc.
+
+&quot;Ân a. . . Tiện chi, ngươi. . . Ngươi đi ra ngoài trước, a. . . Ta không dùng người hầu hạ. &quot;
+
+Cùng đại đồ đệ lên giường đã là hắn có thể tiếp nhận cực hạn, nếu là tiện chi đối với hắn cũng làm chuyện như vậy, hắn thực sự không biết phải làm làm thế nào bộ mặt đi làm hai người sư tôn.
+
+Đoạn Tiện Chi động tác trên tay liên tục, thậm chí cả người chen vào nhỏ hẹp trong thùng nước tắm, đầu gối chống đỡ ở Vân Ly giữa hai chân, hơi đỉnh làm, kia thanh tú cơ quan sinh dục cũng đã hưng phấn nhổng lên thật cao.
+
+&quot;Sư tôn đang nói cái gì mê sảng, ngài đều khó chịu thành như vậy, đệ tử đương nhiên phải vi sư tôn phân ưu giải nạn. &quot;
+
+Đoạn Tiện Chi trong tay nâng đoàn kia mềm mại, sưng đầu vú lộ ra mặt nước, lôi kéo người ta hái.
+
+Hắn hơi cúi đầu ngậm lên kia sung huyết đỏ tươi sữa nhọn, đầu lưỡi dùng sức đỉnh ở nhũ lỗ qua lại đâm làm, sữa trong nháy mắt dâng lên.
+
+Trong veo mùi sữa tràn ngập ở khoang miệngdᴿj bên trong, Đoạn Tiện Chi cắn đầu vú tham lam   mút vào nuốt.
+
+Kịch liệt khoái cảm từ trước ngực truyền đến, Vân Ly ngón tay nắm thật chặc bồn tắm một mặt, bị kích thích đến không được rên rỉ.
+
+&quot;Tiện. . . Ân a. . . Tiện chi. . . Ha a. . . Ngươi. . . Ngươi buông tha sư tôn hảo. . . Không tốt. . . A a. . .&quot;
+
+Vân Ly con ngươi dần dần tràn trề một tầng hơi nước, đuôi mắt ửng hồng, nổi bật lên cả người một bộ dáng vẻ đáng thương, khiến người ta càng ngày càng   muốn tùy ý chà đạp.
+
+Dù cho thân thể dục vọng đã tới đỉnh điểm, hắn vẫn là không cách nào tiếp thu cùng một cái khác đệ tử cẩu hợp việc.
+
+Hắn nháy sương mù mông lung con mắt, nội tâm chờ đợi trước mặt ác liệt đệ tử có thể buông tha hắn.
+
+Đoạn Tiện Chi nghe này thở dài một hơi, hắn tầng tầng hút trước mặt sữa, nghe được Vân Ly không kìm nén được rên rỉ, ngữ khí làm như không rõ, &quot;Sư tôn khi nào như vậy khẩu thị tâm phi?&quot;
+
+Vừa dứt lời, hắn dùng đầu răng cắn đầu vú hơi dùng sức, thành cỗ sữa phun ra, chảy hai người một thân, liền bồn tắm trong nước đều tràn ngập nhạt nhẽo mùi sữa.
+
+&quot;Sư tôn tao cái vú có thể là yêu thích căng. &quot;
+
+Gặp Đoạn Tiện Chi tựa hồ càng dựa vào càng gần, Vân Ly đại não né qua vài tia nguy hiểm tin tức.
+
+Hắn bất lực   uốn éo người nghĩ muốn trốn khỏi, bất quá bồn tắm cứ như vậy lớn một chút địa phương, rất nhanh sẽ bị Đoạn Tiện Chi ôm lấy eo kéo trở lại.
+
+Ân môi đỏ cánh hoa bị cắn nhẹ nhàng mút vào, thừa dịp hắn hô hấp trống rỗng, Đoạn Tiện Chi nóng rực đầu lưỡi chớp mắt mò vào.
+
+Đầu óc dần dần thiếu dưỡng, thân thể cũng mềm mại   dán vào nam nhân lồng ngực, Vân Ly bị hôn không còn khí lực, chỉ có thể vô lực bị nam nhân ôm vào trong ngực.
+
+Đoạn Tiện Chi ôm hắn từ bồn tắm đứng dậy, dọc theo đường tung xuống lấm ta lấm tấm chất lỏng, chất lỏng cũng không minh bạch, rõ ràng không đơn thuần là lướt xuống giọt nước mưa.
+
+Đến trên giường sau khi, Vân Ly sữa còn lưu cái liên tục, nhũ thịt bị kích thích đến run, bị nam nhân chăm chú ngậm vào trong miệng nuốt chửng hầu như không còn.
+
+Dưới thân cơ quan sinh dục đang không ngừng xoa xoa dưới nhổng lên thật cao, hai người cực nóng chạm nhau, Đoạn Tiện Chi còn ưỡn một cái ưỡn một cái   dùng cái kia cự vật va chạm hắn cán.
+
+Vân Ly chỉ cảm thấy thân người trên nhiệt độ bỏng đến đốt người, hắn ngước mắt nhìn trước mặt rất có lực lượng thân thể, càng phát giác xấu hổ, không khỏi muốn khép lại hai chân.
+
+Nam nhân làm như rõ ràng động tác của hắn, cướp trước một bước dùng lực, đem chân của hắn phân đến mở thêm, nắm hạ thể cứ như vậy ngồi xuống.
+
+Trên dưới chập trùng tốc độ càng nhanh hơn, Vân Ly lý trí cũng thuận theo tung bay, trong miệng rên rỉ đã sớm bị nam nhân thao lộng đến thay đổi điệu.
+
+Một mực người kia một bên động một bên muốn hỏi hắn đến cùng cùng ai hơn vì là thoải mái?
+
+Vân Ly cắn chặt hàm răng không muốn trả lời, sưng đến như nho đầu vú lại bị người tầng tầng nhào nặn, vui thích nước mắt không được từ khóe mắt chảy xuống.
+
+Mơ hồ pha thêm một tia đau ý.
+
+&quot;Tiện chi. . . A. . . Nhẹ một chút. . . Nhẹ một chút có được hay không?&quot;
+
+Hắn không chịu được lớn như vậy kích thích, nức nở hướng về nam nhân xin tha, trắng nõn cánh tay chậm rãi liên lụy cổ của người nọ, cố nén xấu hổ trả lời nam nhân nói, &quot;Sư tôn, sư tôn cùng ngươi. . . Càng. . . Thoải mái. &quot;
+
+Mềm mại ngữ điệu mang theo một chút run rẩy ý, câu người đến đòi mạng.
+
+Đoạn Tiện Chi thô thở hổn hển một tiếng, nắm Vân Ly eo liều mạng mà thao túng phần eo, tiếp theo lại nặng nề   đứng dậy ngồi xuống, bất chấp giống như thao lộng dưới thân người cơ quan sinh dục.
+
+Người trong lòng như vậy mê người, ngày hôm nay nếu không phải đem Vân Ly làm được xuống không được giường, hắn sẽ không tính như một người đàn ông.
+
+&quot;Sư tôn, thoải mái sao?&quot;
+
+&quot;A! . . . Quá. . . Quá nhanh. . . Ha a. . .&quot; Vân Ly cả người đều bị kích thích đến rung động, hai tay vô lực   cầm lấy Đoạn Tiện Chi cánh tay, trên mặt ửng hồng xuân sắc dần dần lan tràn.
+
+Trước ngực một đôi bầu vú to theo chập trùng loạn xạ đung đưa, thậm chí tình cờ đều sẽ chụp được Đoạn Tiện Chi nắm tại bên hông trên cánh tay.
+
+. . .
+
+Người tu tiên thể lực rất tốt, Vân Ly cho đến sắc trời từng bước mới nghỉ đi, Đoạn Tiện Chi vì hắn làm thanh tẩy phép thuật, không còn nỗi lo về sau, Vân Ly tựa ở trong ngực của hắn chậm rãi ngủ.
+
+Nếu là lấy hướng về ô uế thân, Vân Ly nhất định là muốn tinh tế tắm rửa một phen, hắn từ trước đến giờ cảm thấy vạn sự đều dùng pháp thuật không có gì lạc thú.
+
+Lần này thật sự là quá mức mệt mỏi, cũng mất tinh lực cùng khí lực.
+        </div>
+
+        <div class="bottom-nav">
+            <button class="nav-action-btn" id="prevChapBtn" onclick="navigateChapter(-1)">← Chương trước</button>
+            <button class="top-scroll-btn" onclick="scrollToNav()">↑ Lên đầu (Mục lục)</button>
+            <button class="nav-action-btn" id="nextChapBtn" onclick="navigateChapter(1)">Chương sau →</button>
+        </div>
+
+        <!-- Khung Cbox Chat -->
+        <div class="cbox-chat-section">
+            <h3 class="cbox-title">Trò Chuyện & Bình Luận Công Khai</h3>
+            <div class="cbox-frame-wrapper">
+                <iframe src="https://www5.cbox.ws/box/?boxid=966044&boxtag=ScPKVa" 
+                        width="100%" 
+                        height="450" 
+                        allowtransparency="yes" 
+                        allow="autoplay" 
+                        frameborder="0" 
+                        marginheight="0" 
+                        marginwidth="0" 
+                        scrolling="auto" 
+                        style="border: none; border-radius: 8px;">
+                </iframe>
+            </div>
+        </div>
+    </article>
+</div>
+
+<script>
+    const storyId = 'bi-xuc-tu-dua-bon-sau-khi';
+    const storyData = [{"id":"ch1","title":"Phần 1","content":"Tìm kiếm yêu vật / bị xúc tu trói buộc trên không trung đùa bỡn\n\nBóng đêm dần dần dày, treo cao trên không trung trăng sáng tỏa ra thăm thẳm tia sáng, vắng lặng âm phong thổi đến mức xung quanh cây cối bay phần phật, ngoài ra nhưng lại không bất kỳ thanh âm gì, có vẻ đặc biệt quỷ dị.\n\nVân Ly cầm trong tay lợi kiếm đi ở mảnh này u ám bên trong vùng rừng rậm, lòng bàn chân bên cạnh dây leo đông đảo, hắn không thể không vừa đi vừa thanh lý, bốn phía tràn ngập chướng khí cũng làm cho bước tiến của hắn càng phát chậm.\n\nTự hắn nhận tiêu diệt trong rừng yêu vật bắt đầu từ ngày kia, dĩ nhiên ở đây tìm hai ngày, trừ qua cây cối vẫn là cây cối, liền nửa điểm nguồn nước cái bóng đều không có, đừng nói gì đến cắn giết yêu vật.\n\nHắn cùng với môn phái ước định ba ngày kỳ hạn lại vài canh giờ cũng sắp hết hạn.\n\nVân Ly trong lòng lo lắng, bất đắc dĩ khiến cho bí thuật, hắn nhất định phải ở trong vòng một canh giờ tìm tới cũng giết chết yêu vật, không phải vậy sử dụng bí thuật mang đến suy yếu phản phệ sẽ chỉ làm hắn trở thành chăn nuôi yêu vật chất dinh dưỡng.\n\nBí thuật biểu hiện, yêu vật dưới đây vẻn vẹn khoảng cách bốn dặm, Vân Ly siết chặt kiếm trong tay, chậm rãi tới gần vị trí.\n\nTrong rừng khói đen càng dày đặc, hầu như che chắn toàn bộ ánh trăng, âm u bức người.\n\nVân Ly ghi nhớ pháp quyết đã làm xong nghênh chiến chuẩn bị, hắn cảnh giác chú ý phía trước cảnh sắc.\n\nGần trong gang tấc hồ nước không giống màu xanh lục, trong đó hắc vụ lượn quanh, bản thân màu sắc bị sương mù bưng đến chặt chẽ.\n\nYêu vật bản thể là xúc tu, vô cùng khó đối phó, Vân Ly tự nhiên không dám xem thường, lúc này phía sau phong thanh ác liệt, hầu như chớp mắt thời gian vài con nửa trong suốt xúc tu liền quấn tới.\n\nVân Ly né tránh không kịp, bị này vài con xúc tu bắt lên vững vàng ràng buộc trên không trung.\n\nLạnh lẽo dính mồ hôi xúc cảm cách y vật theo yêu vật leo lên chậm rãi lan tràn đến toàn thân, bị chạm được địa phương không nhịn được nổi lên run rẩy.\n\nXúc tu dễ dàng quấn lấy tứ chi, trong đó một cái vòng qua Vân Ly eo thon chi xoắn đứt bên hông ràng buộc.\n\nMàu trắng ngoại bào thoáng chốc tản ra, tùng lỏng lỏng lẻo lẻo   treo ở trên người, liền ngay cả áo sơ mi cũng bị trong người xúc tu cuốn lấy rách rách rưới rưới.\n\nHay là cảm thấy ngoại bào ngăn cản quá nhiều, xúc tu lôi kéo áo khoác nhẹ nhàng ném xuống đất, lại cảm thấy quần vướng bận, liền với quần đồng thời kéo lại đi, còn sót lại áo sơ mi cũng bị lôi kéo đến chỉ còn dư lại vài miếng vải vóc.\n\nCảm giác mát mẻ theo xúc tu leo lên thâm nhập đầu óc, Vân Ly muốn gọi lên kiếm của mình, hai tay lại bị xúc tu cuốn lấy phân tại bên người.\n\nMôi bị mấy cái xúc tu ngăn chặn không cách nào ngôn ngữ, liền ngay cả tứ chi cũng bị khống chế.\n\nHắn giương bị xúc tu nhét được chặt chẽ miệng, cầu cứu thanh âm hàm hồ đến bị ức ở trong cổ.\n\nThân thể ở giữa không trung không được   giãy dụa lay động, sau đó càng nhiều xúc tu quấn lấy tứ chi của hắn, liền giãy dụa cũng bị mất khí lực.\n\nHai cái xúc tu linh hoạt   theo da thịt leo lên đến trước ngực, dưới đáy giác hút như là có vô số tờ cái miệng nhỏ ở mút vào hôn, quấn quít lấy ngực thịt tùy ý tụ lại thành các loại hình dáng.\n\nĐầu vú bị xúc tu đỉnh chóp giác hút bao bọc lấy trằn trọc quấn làm, đã sung huyết rất đứng lên.\n\nXúc tu phân bố màu đỏ chất lỏng dọc theo lồng ngực tình dục   lướt xuống, hồng bạch giao hòa, nhìn từ đàng xa như là một bộ vô cùng xinh đẹp bức tranh.\n\n\"Ân. . . Ha a. . .\"\n\nYêu vật chất lỏng có chứa kích dục công hiệu, Vân Ly trong miệng vẫn cứ ngậm lấy xúc tu, không lắm rõ ràng rên rỉ vài tiếng.\n\nBộ ngực càng ngày càng đến ngứa khó nhịn, sưng không thể tả đầu vú bị xúc tu đùa bỡn đến đỏ tươi cực kỳ, vô lực lộ ra trên không trung run rẩy run rẩy phát run.\n\nNơi này có chứa hồi âm, một tiếng một tiếng dâm mị rên rỉ vang vọng ở bên tai của hắn.\n\nVân Ly không chịu được mình bị một yêu vật đối xử như thế. Lớn lao lúng túng cùng xấu hổ điên cuồng hành hạ nội tâm, nước mắt theo nổi lên ửng đỏ khóe mắt rơi xuống.\n\nNhư vậy trái lại càng có thể gây nên người làm nhục ý tứ.\n\nYêu vật vốn là sinh linh trí, hiển nhiên càng thêm trở nên hưng phấn, không kiêng kị mà phân ra nhiều hơn xúc tu quấn quanh đi tới, có mấy cái càng là dọc theo bắp đùi đi xuống tìm kiếm.\n\nTrắng nõn non mềm bắp đùi bị hai cái xúc tu hung hăng   phân ra, giữa hai chân môn hộ mở ra.\n\nNhếch lên cán mặt trên còn chậm rãi chảy xuôi dâm mị tuyến dịch, lần này triệt để bại lộ ở trong tầm mắt.\n\nVân Ly cúi đầu gần như tan vỡ phát hiện, chính mình dâm đãng hạ thân sớm đã có phản ứng, từ trước bưng tràn ra dâm dịch thậm chí ở dưới ánh trăng hiện ra óng ánh tia sáng.\n\nCơ quan sinh dục bị xúc tu qua lại gảy, buông lỏng căng thẳng dây dưa càng làm cho ý thức của hắn càng ngày càng mơ hồ, người tu tiên không nặng tình dục, hắn dĩ vãng chưa từng trải nghiệm qua cỡ này kích thích khoái cảm.\n\nLý trí hầu như tiêu tan, thân thể dục vọng tích góp đến đỉnh, hắn không tự chủ được rên rỉ run rẩy, ở xúc tu quấn quanh dưới, thân thể trên không trung cung thành kỳ quái dáng dấp.\n\nHạ thân không chịu nổi kích thích thích thả ra, ngón chân không nhịn được cuộn tròn lên.\n\nXúc tu nhưng không nghĩ buông tha hắn, trái lại đưa hắn ràng buộc càng chặt hơn, vẫn cứ động cái liên tục.\n\nVân Ly không thể trốn đi đâu được, ở xúc tu đùa bỡn dưới lại tiết một lần.\n\n\"Không. . . Không muốn. . . Ân a. . .\"\n\nChất lỏng để thân thể của hắn càng thêm mẫn cảm, trong miệng không nhịn được nhỏ giọng   xin tha, nỗ lực để cái này yêu vật lại nhẹ một chút.\n\nTrong đó chen lẫn tiếng rên rỉ nhưng là để cho thay đổi vị, phảng phất là trần trụi câu dẫn bình thường.\n\nLưu lại áo sơ mi kết nối với mới sưng sữa nhọn đều không che nổi, tóc dài ngổn ngang   tản tại bên người.\n\nVân Ly sắc mặt ửng hồng, dâm mị môi đỏ bị xúc tu gây xích mích chảy ra nước bọt, theo cằm không được   chảy xuống, hiển nhiên một bộ bị chơi tàn nhẫn dáng dấp.\n\nXúc tu lúc này cực tốc thu hồi bản thể, đem Vân Ly quấn quanh lấy để dưới đất, lòng bàn chân chạm đến thực địa, không còn không trung nhẹ nhàng cảm giác.\n\nHắn từ lâu đã tiêu hao hết khí lực, hai chân hiện ra mềm ý, suýt nữa ngã nhào trên đất trên, may mà bên hông xúc tu đúng lúc nắm chặt.\n\nCòn không có đợi hắn thở dốc chốc lát, trắng mịn xúc cảm lại liên tiếp   bò lên trên thân thể.\n\nTrước ngực có vài xúc tu không ngừng liếm láp sưng đỏ đầu vú, hai chân của hắn lại bắt đầu run, từ từ tích lũy, gộp lại khoái cảm hành hạ đầu óc, trong miệng tiếng rên rỉ càng ngày càng đến đại.\n\nXung quanh xúc tu chúng nghe được âm thanh hưng phấn trên không trung giương nanh múa vuốt, liên quan Vân Ly thân thể đều đung đưa, ửng đỏ ngực thịt theo động tác dập dờn bồng bềnh chập trùng.\n\n\"Ân a. . . A a. . . Không muốn. . .\"\n\nSữa lỗ tựa hồ có món đồ gì dâng lên càng, Vân Ly bị loại này khó nhịn cảm giác chơi đùa không được vặn vẹo, dày đặc lông mi bị nước mắt ướt nhẹp dính nối liền cùng nhau.\n\nRất nhanh, hắn liền biết được là vật gì.\n\nXúc tu quấn quanh lấy ngực thịt hơi dùng sức ra bên ngoài đè ép, yếu ớt sữa lỗ không chịu nổi kích thích bắn ra từng luồng từng luồng thơm ngọt sữa tươi, tràn đầy ở trên người bị tranh nhau chen lấn   cướp thực.\n\nVân Ly không thể tin đang nhìn mình tựa hồ biến lớn không ít bộ ngực cùng với trong người sữa, đầu óc tràn đầy không cầm được lúng túng, hắn một kẻ nam tử, lại làm sao sẽ. . .\n\nLưu lại dục vọng hoàn toàn bị khủng hoảng che lấp, hắn chỉ cảm thấy chính mình thành một bất nam bất nữ quái vật, việc này nếu là bị môn phái người biết được, hắn lại nên làm gì?\n\nVân Ly thiết tưởng đông đảo độ khả thi, mặc dù chưởng môn đối với hắn thương yêu rất nhiều, đồ đệ ngày xưa cũng thường xuyên chăm sóc hắn, nhưng này kiện làm người không thể tả đến cực hạn sự thực chỉ sợ cũng không cho lượng giải.\n\nKhi hắn suy nghĩ lung tung, xúc tu đối với thân thể ràng buộc càng ngày càng tùng, tựa hồ hút sữa sau liền hài lòng buông lỏng cảnh giác.\n\nVân Ly cúi đầu nhìn mình áo rách quần manh gần như trần truồng dáng dấp, cắn cắn môi, hắn cố nén nội tâm quẫn bách cùng e lệ, thừa dịp yêu vật không chú ý lúc triển khai thuấn di pháp quyết.\n\nPháp quyết sẽ đưa hắn tùy ý đưa tới xung quanh bốn mươi dặm bất kỳ địa phương nào, Vân Ly cũng không biết chính mình sẽ đi đến nơi nào, hắn chỉ hy vọng không cần có người nhìn thấy hắn như vậy. . .\n\nHạ tiến vào đại đồ đệ trong lồng ngực / bị đại đồ đệ cam tề\n\nVân Ly lập tức dời đi trong rừng một nơi, cũng không biết cụ thể phương vị. Trên người hắn không có một chỗ là tốt, mặt trên hầu như tràn đầy lít nha lít nhít vết đỏ.\n\nViệc cấp bách hiển nhiên là trước tiên tìm một cái có thể che đậy thân thể y vật.\n\nLảo đảo đi về phía trước mấy bước, tinh thủy hỗn hợp với sữa kéo dài bắp đùi vẫn luôn chảy đến trên đất, hai chân chỉ cần hơi động, liền cấm không ngừng run rẩy, căn bản đứng không đứng dậy đến.\n\nBí thuật suy yếu phản phệ tùy theo mà đến, thân thể như là bị đổ chì giống như vậy, Vân Ly bước chân trầm trọng, lập tức mất trọng tâm về phía trước đổ tới.\n\nHắn đã không có dư thừa phép thuật đi tránh khỏi chuyện này, không thể làm gì khác hơn là chống cánh tay tận lực giảm bớt cảm giác đau.\n\nTrong dự liệu đau đớn vẫn chưa đi tới, trái lại hạ tiến vào một ấm áp lại dày rộng trong ngực.\n\nKhông đợi Vân Ly phục hồi tinh thần lại, người trước mặt chậm rãi quấn lấy vòng eo của hắn, hơi dùng sức, hai người liền vừa khớp dán càng chặt hơn.\n\n\"Sư tôn, không sao rồi. \"\n\nBên tai truyền đến thanh âm quen thuộc, Vân Ly chôn ở trong ngực của nam nhân không khống chế được   khóc nức nở, hàm răng căng cắn chặc môi dưới, hạ xuống nước mắt châu thấm ướt Phó Lăng vạt áo.\n\nVân Ly ở bên trong môn phái cũng coi như là nuông chiều từ bé, đâu chịu nổi ủy khuất như thế, càng khỏi nói bị một yêu vật như vậy đùa bỡn.\n\nHắn ở Phó Lăng trong lòng khóc hồi lâu, đuôi mắt lại nổi lên hồng đến, xúc tu trước tràn ra kích dục chất lỏng phảng phất đã sâu vào bên trong, hạ thân không khỏi lại có phản ứng.\n\nKhông có quần áo ngăn cản càng rõ ràng, Vân Ly lúc này mới nhớ từ bản thân tình cảnh, giẫy giụa muốn từ Phó Lăng trong lồng ngực rời đi.\n\nHắn lúng túng   mở ra cái khác tầm mắt, không muốn nhìn thẳng chính mình như vậy. . . Phóng đãng dáng dấp.\n\nPhó Lăng theo Vân Ly giãy dụa sức mạnh dìu hắn lên, tầm mắt chăm chú nhìn trước mặt lộ ra thân thể, hô hấp không khỏi cứng lại.\n\nÁo sơ mi rách rách rưới rưới   đáp ở phía trên, hai nơi sưng sữa nhọn bị đùa bỡn đến cơ hồ lớn hơn một vòng.\n\nKhông giống với trước trắng như tuyết bộ ngực đầy đặn tràn đầy màu đỏ sẫm ám muội dấu vết, theo bộ ngực chập trùng động tác run lên một cái.\n\nVân Ly bị đạo này trần trụi tầm mắt nhìn chăm chú đến không biết làm sao, hắn lo lắng thân thể cứng ở tại chỗ, trắng nõn gò má cũng đặt lên một tầng mỏng hồng.\n\n\"Sư tôn, bầu vú ngươi thật lớn. \" Phó Lăng để sát vào Vân Ly bên tai nhẹ giọng nói rằng, hắn thở ra khí tức quá mức nóng rực, trêu đến bên cạnh trắng loáng bên tai cũng đỏ đến mức triệt để.\n\n\"Ngươi. . .\" Vân Ly còn chưa nói xong, Phó Lăng tay đã nắm lấy đoàn kia trắng như tuyết, bắt đầu đại lực   xoa xoa lên, trước ngực hai hạt bị rà qua rà lại, rất nhanh lại đứng thẳng đâm về Phó Lăng lòng bàn tay.\n\nMôi cũng bị cương quyết ngăn chặn, liền mút mang gặm hôn để Vân Ly không còn khí lực, hắn vô lực đẩy mấy lần, âm thanh cũng bị hôn hàm hàm hồ hồ, \"Làm càn. . .\"\n\nKích dục công hiệu càng ngày càng nghiêm trọng, Vân Ly sắc mặt ửng hồng, nhẹ sưng môi đỏ hơi mím, tình cờ tiết ra vài tiếng nhỏ đến mức không thể nghe thấy ngâm khẽ.\n\nCon mắt ngậm lấy tình dục nước mắt, mông lung rồi lại đầy đủ câu người.\n\nHắn không muốn bị đồ đệ của mình nhìn thấy dáng dấp như vậy, gắng gượng ngăn lại bộ ngực cặp kia tay, \"Phó Lăng, yêu. . . Yêu vật còn chưa giải quyết. . . Chúng ta. . . Chúng ta trước tiên về môn phái. . .\"\n\nDục vọng dường như thủy triều sẽ không ngừng lại, Vân Ly thân thể khó nhịn   giãy dụa, hai chân cũng không chỗ ở nhẹ nhàng làm phiền.\n\nLông mi xuyết nước mắt dịch càng nhiều lắm, khiến người ta không khỏi nghĩ muốn mạnh mẽ bắt nạt một trận.\n\n\"Sư tôn, ngươi rất khó chịu đi, ta tới giúp ngươi. \"\n\nPhó Lăng đem Vân Ly dán đến chặt hơn chút nữa, si mê mút vào trong lòng này là mê người lại thơm ngọt thân thể.\n\nHắn một cái kéo xuống tàn phá áo sơ mi vứt trên mặt đất, cúi đầu ngậm kia cứng đến nỗi đứng thẳng núm vú, đại lực mút hút.\n\n\"A Ly sữa thực sự là hương đây. \"\n\nVân Ly bị đồ đệ như vậy trắng ra ngôn ngữ kích đến lại lưu không ít địa tinh nước, hắn nhỏ giọng mà thở gấp khí, nước mắt liên tiếp   lướt xuống gò má.\n\nĐáy lòng xấu hổ cùng thân thể chịu đựng khoái cảm đan dệt, hắn cũng không nói được chính mình vì sao phải khóc.\n\nTrên tay khước từ chẳng biết lúc nào đã biến thành nghênh hợp, non mềm bàn tay bám ở nam nhân mạnh mẽ trên eo.\n\nNhũ lỗ bị Phó Lăng đầu lưỡi không ngừng đỉnh làm, rất nhanh sữa cứ như vậy chảy ra, trong không khí cũng tản ra như có như không hương thơm.\n\nĐại đa số sữa bị Phó Lăng hút vào trong miệng, yên tĩnh trong hoàn cảnh có thể rõ ràng nghe được nuốt thanh âm.\n\nSữa cuồn cuộn không ngừng, một phần nhỏ theo Vân Ly thân thể trần truồng chảy đến trên đất.\n\n\"Ân a. . . Nhẹ. . . Nhẹ chút. . .\" Đầu vú bị cắn đến sưng đỏ lại mẫn cảm, Vân Ly ức chế không được rên rỉ vài tiếng, trong miệng cũng theo bản năng xin tha.\n\nHắn có phần bất lực mà nhìn Phó Lăng mút cắn động tác, trong mắt cũng lóe vài tia yếu ớt lệ quang.\n\nTrắng toát bộ ngực tràn đầy sẫm màu dấu vết, ban đầu màu đỏ còn chưa biến mất, lại bị nặng nề che kín một tầng.\n\nNo đủ lại giàu có co dãn ngực lớn như là hai con trắng như tuyết thỏ, nhảy nhảy nhót nhót hảo không đáng yêu.\n\nPhó Lăng thi pháp biến ra một cái giường đến, ôm Vân Ly eo đè lên, vạt áo chậm rãi rơi xuống đất.\n\nHừng hực lồng ngực dán chặt lấy kia hai đám mềm mại, sưng đỏ đến không được đầu vú lại bị sượt đến gắng gượng, Phó Lăng thấy vậy ánh mắt tối mù mịt, \"Sư tôn thật đúng là sẽ câu dẫn người. \"\n\nHắn bàn tay lớn xoa xoa Vân Ly bộ ngực đầy đặn, nhân cơ hội lại sẽ kia nhổng lên thật cao cơ quan sinh dục nuốt xuống, Vân Ly bị nuốt đến đột nhiên không kịp chuẩn bị, thoải mái khoái cảm để hắn không nhịn được kêu lên tiếng.\n\n\"Ân a. . . Ha. . . Không được. . . Không muốn a. . .\" Vân Ly nhếch miệng môi theo bản năng từ chối, thỉnh thoảng còn có thể nhìn thấy kia bôi đỏ tươi nước trơn đầu lưỡi.\n\nPhó Lăng bị câu dẫn mà cúi đầu ngăn chặn miệng môi của hắn, đầu lưỡi tùy ý   hoành trùng thẳngьèɒ đụng, đem trong miệng khí tức cùng nước bọt cuốn đến không còn một mống.\n\nTrong miệng còn lưu lại mới vừa mùi sữa thơm, hoảng hốt trong lúc đó như là thưởng thức đến chính mình sữa, Vân Ly xấu hổ   run rẩy bờ môi, đẩy nam nhân khí lực cũng dần dần tăng thêm.\n\nĐối với Phó Lăng mà nói, kia bất quá như là con mèo nhỏ gãi ngứa, trái lại bị quấy ra đầy người hỏa khí, hắn kịch liệt đung đưa mạnh mẽ phần eo, đem trong cơ thể vật nuốt đến càng sâu.\n\nNgười tu tiên vốn là có khác hẳn với người thường thể năng, Phó Lăng chập trùng tốc độ càng lúc càng nhanh.\n\nVân Ly tiếng rên rỉ bị đụng phải vụn vặt, nước mắt dần dần thấm ướt gò má, kia phó yếu đuối lại phóng đãng vẻ mặt mang theo câu hồn phách người mị lực, dẫn tới Phó Lăng tiếp tục tăng nhanh tốc độ.\n\nKịch liệt va chạm dẫn tới Vân Ly mi mắt càng ướt, hắn hoảng loạn   cuốn lại nam nhân cái cổ, cầu khẩn, \"A Lăng. . . Chậm. . . Chậm một chút. . . A. . . Sư tôn không. . . Không xong rồi. . .\"\n\nPhó Lăng nghe này động đến càng hăng say, dường như muốn đem dưới thân người nuốt vào thân thể tựa như, hai người kết hợp địa phương dính mồ hôi lại dâm loạn.\n\nVân Ly sau ngước cổ, trong hốc mắt dồi dào nước mắt, hô hấp dần dần tán loạn.\n\nSắc mặt tràn đầy tình dục ửng hồng, trong con ngươi ý xuân dập dờn. Hắn ôm nam nhân cổ cánh tay vô lực rủ xuống, hai chân bắt đầu run rẩy cái liên tục.\n\nMềm mại bộ ngực bị nam nhân xoa xoa thành các loại hình dáng, sữa, tinh thủy hầu như chảy tràn toàn thân đều là, nổi bật lên cả người dâm sắc cực kỳ.\n\nVân Ly bị nam nhân đè ở dưới thân làm một lần lại một lần, tiếng rên rỉ cùng thân thể chạm vào nhau phát ra tiếng bành bạch vang giao hòa, như là một hồi vĩnh viễn không ngừng nghỉ hòa âm.\n\nSắc trời sắp tờ mờ sáng lúc, trận này kịch liệt tình sự mới ngừng lại, Vân Ly trong cơ thể thực sự không đồ vật bắn, hầu như trong suốt như nước.\n\nHắn bị kích thích đến vẫn luôn rơi lệ, khóc đến con mắt đều hồng sưng lên, cuối cùng càng là ngủ thiếp đi.\n\nPhó Lăng làm tịnh thân pháp quyết, lại thay Vân Ly thay xong y vật, mới ôm lấy hắn chuẩn bị trở về đến môn phái.\n\nTrong lúc còn không quên giết chết con kia bắt nạt Vân Ly yêu vật.\n\nCùng đại đồ đệ làm tình bị nhìn trộm\n\nVân Ly bị yêu vật gây thương tích tin tức thoáng qua truyền khắp toàn bộ môn phái.\n\nPhó Lăng ôm lấy Vân Ly trở lại lúc, kiêng kỵ Vân Ly danh dự, liền rắc cái này lời nói dối. Này cũng đúng như Vân Ly ý nguyện, hắn nhất định phải mau chóng tìm ra thân thể phát sinh biến hóa nguyên nhân, trước đó cũng không thích hợp gặp người.\n\n. . .\n\nVân Ly sáng sớm tỉnh lại toàn thân bủn rủn vô lực, trong người càng là phủ kín lít nha lít nhít vết đỏ.\n\nHai cái đầu vú đỏ tươi đến như là sung máu giống như vậy, tình dục tản đi, nội tâm của hắn cũng chỉ còn lại có xấu hổ cùng lúng túng.\n\nCho tới hôm nay hắn cũng không thể nào tưởng tượng được, chính mình càng bị đồ đệ quải lên giường, càng sâu với lộ ra kia phó so với Hợp Hoan tông đệ tử còn muốn phóng đãng dáng dấp.\n\n\"Sư tôn, ta tiến đến. \"\n\nPhó Lăng dừng ở ngoài cửa, đáy lòng không nhịn được sinh ra một tia khát vọng cùng chờ mong, hai người đêm qua được rồi đạo lữ việc, sư tôn tỉnh lại sẽ là như thế nào vẻ mặt?\n\nE lệ, tức giận, cũng hoặc là hai người đều có. . .\n\nMặc kệ thế nào, kia nhất định là cực kỳ sinh động mê người dáng dấp.\n\nNghĩ như vậy, Phó Lăng không nhịn được ngoắc ngoắc khóe môi, mang theo ý cười đẩy cửa bước vào Vân Ly trong phòng.\n\nHắn giương mắt nhìn người trên giường, tinh xảo mặt mày, hơi lộ ra màu đỏ dấu vết, tự dưng chọc người mơ màng.\n\nPhó Lăng đi vào bên giường, nhẹ nhàng nắm Vân Ly mảnh khảnh thủ đoạn, từ hắn cái góc độ này có thể dễ dàng thấy rõ áo sơ mi không che nổi hai vú, \"A Ly. \"\n\nVân Ly thủ đoạn nhẹ giật giật, tránh thoát ràng buộc, hắn buông xuống con ngươi không làm ngôn ngữ, mãi đến tận tìm đến phía trước ngực tầm mắt càng cực nóng, khiến người ta không cho lơ là.\n\nHắn chậm rãi ngẩng đầu lên, làm bộ vô sự phát sinh vẻ mặt, \"Ngươi. . . Ngươi đi ra ngoài trước đi. \"\n\nNhưng mà hơi run thanh âm nhưng bại lộ hắn lúc này không bình tĩnh.\n\nPhó Lăng mắt sắc tối mù mịt, hai tay dọc theo Vân Ly áo sơ mi ranh giới thăm dò vào, nhẹ nhàng kéo một cái, kia khiến người ta si mê, no đủ lại êm dịu hai vú sôi nổi mà ra, không nhịn được trên không trung run rẩy, như là đang câu dẫn người bình thường.\n\nRộng lớn bàn tay bắt được đi tới, mềm mại một đoàn, nắm trong tay bị nhào nặn thành các loại hình dáng, \"Sư tôn, bầu vú ngươi thật mềm. \"\n\nVân Ly bị tóm đến huyết dịch cả người đều sôi trào lên, nhỏ dài dày đặc lông mi rung động nhè nhẹ, đuôi mắt không khỏi hạ xuống vài giọt lệ đến, \"Ngươi. . . Ngươi thả ta ra, vô liêm sỉ. . .\"\n\nHắn như là bị bức ép đến mức tận cùng, núp ở góc xem ra tội nghiệp dáng vẻ, toàn thân đều tản ra mâu thuẫn khí tức.\n\nNhưng đứng thẳng đầu vú, cương hạ thân không một không biểu hiện hắn sa vào chân tướng trong đó, điều này thật sự là làm trái lẽ thường.\n\nVân Ly sẽ bị tử lại đi trên lôi kéo, nỗ lực che khuất chính mình không thể tả phản ứng, Phó Lăng động tác nhưng càng thêm cấp tốc, một bên dùng sức xoa sữa một bên vén chăn lên.\n\nTầm mắt quét đến Vân Ly nhếch lên cơ quan sinh dục trên, vò sữa khí lực càng lớn chút, \"Sư tôn rõ ràng rất yêu thích a. \"\n\nGiọng trêu chọc để Vân Ly gò má lại đỏ bừng một mảnh, hắn không cách nào phản bác Phó Lăng, nhất thời cũng không biết đáp lại nên phản ứng làm sao.\n\nThân thể của hắn hiện tại mẫn cảm đến kỳ cục, chỉ cần một chút đụng vào cũng sẽ bị kích đến cả người run rẩy.\n\nVân Ly còn không có phục hồi tinh thần lại, đã bị Phó Lăng đè xuống giường cởi bên trong quần, Phó Lăng hừng hực cự vật thẳng tắp chống đỡ ở trên bụng của hắn, giữa hai người nhiệt độ lẫn nhau giao hòa, kích thích Vân Ly lại phát sinh một tiếng ngâm khẽ.\n\nThân thể triệt để mềm thành một bãi xuân thủy, sợi tóc đen sì ngổn ngang   tản ở trên giường, hai vú bị hai bàn tay lớn vò đến vò đi, Vân Ly ánh mắt cũng từ từ trở nên mê ly.\n\nHai người sa vào trong đó, tự là không có lưu ý cửa phòng đã mở ra khe hở.\n\nĐợi được Đoạn Tiện Chi bưng thuốc trị thương xuất hiện ở cửa lúc, gặp cửa phòng hơi mở rộng, đang chuẩn bị ra hiệu sư tôn, nhưng chợt nghe vài tiếng ngọt ngào rên rỉ cùng thở gấp.\n\nXuyên thấu qua khe hở, lúc ẩn lúc hiện có thể thấy rõ trên giường dây dưa hai bóng người, sư tôn của hắn bị người ép ở dưới người tùy ý xoa xoa, mảnh mai mị người thanh âm uyển chuyển êm tai.\n\nTrước ngực là một đôi hắn dĩ vãng chưa từng gặp trắng như tuyết hai vú, mơ hồ bị quần áo che ở một ít, nhưng mà nhỏ nhìn thật kỹ còn có thể nhìn thấy từ nhũ lỗ cuồn cuộn không ngừng chảy ra sữa.\n\nĐoạn Tiện Chi nơi nào gặp Vân Ly dáng dấp như vậy, hắn trong ký ức sư tôn từ trước đến giờ không thông tình yêu, quần áo tận chỉnh, nơi nào sẽ giống như bây giờ.\n\nTrên người y vật nửa chặn nửa che, no đủ êm dịu bộ ngực vô cùng sống động, hạ thân càng là một mảnh trần trụi, lộ ra da thịt mang theo tình dục hồng nhạt.\n\nĐoạn Tiện Chi mắt sắc thâm trầm, hầu kết lăn mấy phần, hắn nghe Vân Ly ngâm gọi, cách quần lót kìm lòng không đặng ve vuốt từ bản thân dương vật.\n\nTrong phòng tiếng rên rỉ càng dâng trào, phát ra phập phập phập tiếng nước tần suất cao đến không được, Vân Ly bị kích thích đến hai chân không được rung động, ngữ điệu đều mang tới khóc âm, \"Ân a. . . Không muốn. . . Chậm. . . Chậm một chút. . . A a. . .\"\n\nTrắng nõn mảnh khảnh đùi hơi khuất ở trên giường, chỉ cần ngẫm lại liền biết, cặp kia chân kẹp ở trên eo nên là cỡ nào tốt đẹp chính là tư vị.\n\nGiả như sư tôn là nằm ở dưới thân của hắn gào khóc, chính mình nhất định là muốn mạnh mẽ thao lộng một phen, hút khô hắn sữa, nhìn hắn còn dám như vậy lộ ra hai vú câu dẫn người khác.\n\nĐoạn Tiện Chi nghĩ như vậy, giữa háng vật vừa sưng trướng mấy phần, hắn thô thô thở hổn hển mấy hơi thở, trên tay tuốt động tần suất càng lúc càng nhanh, dường như muốn mang ra tàn ảnh.\n\nTheo Vân Ly cao trào ngâm tiếng kêu, Đoạn Tiện Chi tùy ý khuấy động mấy lần, từng luồng từng luồng trọc dịch hết mức phun ra ở trên quần lót, hắn đứng tại chỗ lại thưởng thức một hồi Vân Ly tao lãng dáng dấp, hỏa khí suýt chút nữa lại bị câu đi ra.\n\nMang theo thuốc trị thương trước khi rời đi, Đoạn Tiện Chi gần như sắp muốn không kìm nén được trong lòng tuôn ra âm u tâm tư.\n\nSư huynh đều nếu có thể, hắn tại sao không được chứ?\n\nĐúng đấy, hắn tại sao không được chứ, Đoạn Tiện Chi tròng mắt né qua một tia ngột ngạt hưng phấn, ánh mắt đột nhiên chìm xuống.\n\nSư tôn thân thể đã xảy ra như vậy biến hóa, hắn rồi sẽ tìm được cơ hội.\n\nTắm rửa / nhị đồ đệ chen vào bồn tắm\n\nBuổi tối, Vân Ly giẫy giụa tỉnh lại từ trong mộng, trong người chỉ mặc một cái đơn bạc áo sơ mi, bộ ngực theo thở hổn hển trên dưới chập trùng.\n\nCó lẽ là ban ngày chuyện tình quá mức khiến người ta khắc sâu ấn tượng, hắn càng ở trong mơ cũng gặp được Phó Lăng, hai người ở trong mơ được điên loan đảo phượng việc, so với trước là chỉ có hơn chứ không kém.\n\nVân Ly dưới ánh mắt liễm, dày lớn lên lông mi nghiêng quét xuống đến, hắn này mới nhìn đến chính mình quần lót tựa hồ ướt một mảnh.\n\nƯớt nhẹp sau vải vóc càng có vẻ đơn bạc, bị chất lỏng thẩm thấu hơi trở nên trong suốt lên, hạ thân còn vẫn duy trì nhếch lên dáng dấp, bắp đùi dinh dính trơn trợt, cũng không hơn gì.\n\nVân Ly thấy vậy sắc mặt ửng đỏ, lôi kéo chăn lại úp xuống, hắn đang chuẩn bị gọi Phó Lăng chuẩn bị tắm rửa món đồ cần thiết, đúng dịp chính là cửa phòng cũng vào thời khắc này bị người gõ vang.\n\n\"Phó Lăng, ngươi đi chuẩn bị chút nước nóng, ta muốn tắm rửa. \"\n\nNgười đến nghe được dặn dò bước chân xa dần, Vân Ly không nghi ngờ có hắn, lẳng lặng đem chính mình nắp đang chăn dưới, chỉ chốc lát nước liền đã chuẩn bị kỹ càng.\n\nPhó Lăng tối nay cũng coi như nghe lời, bị xong nước sau trực tiếp rời đi, theo đóng cửa tiếng vang truyền vào trong tai, Vân Ly cũng vén chăn lên xuống giường.\n\nTu thân áo sơ mi phác hoạ ra tinh tế đẹp đẽ thân hình, như ngọc trắng nõn tuyết đủ đạp ở sẫm màu trên tấm ván gỗ, cùng với cùng lót, so sánh rõ ràng.\n\nÁo sơ mi nút buộc chậm rãi được cởi ra, áo trắng treo ở bên cạnh trên giá, kể cả quần lót đồng loạt khoác lên bên trên.\n\nVân Ly đánh quay đầu trên bạch ngọc làm ngọc trâm, tóc dài đen nhánh ngổn ngang   xõa xuống, vẫn luôn hoãn lại đến bên hông.\n\nTrước ngực trắng như tuyết đại đoàn như ẩn như hiện, câu dẫn người ta hận không thể nhào tới vùi đầu khổ ăn.\n\nMê người lõa thể dần dần ẩn ở dưới nước, sóng nước dập dờn, chọc người suy tư.\n\nẤm áp nước chạm vào thân, phảng phất mang đi tất cả ầm ĩ, trong mộng lưu lại tình dục liên tiếp hiện lên.\n\nVân Ly đóng mắt, hai tay khắc chế rồi lại khó nhịn   xoa hai vú của chính mình, hắn vội vàng muốn thả, đầu vú bị nhéo đến cơ hồ hồng sưng lên, sữa vẫn cứ tí xíu đều bắn không ra đi.\n\nĐộng tác càng ngày càng không được kết cấu, lực tay lớn dần, đoàn kia thịt mềm bị không chút nào thương tiếc   xoa xoa xé kéo, sóng sữa dập dờn, gây nên một trận bọt nước.\n\nĐoạn Tiện Chi ở bên cạnh nín hơi đứng thẳng hồi lâu, tầm mắt chăm chú nhìn Vân Ly một khắc cũng không nguyện dời, hầu kết trên dưới lăn mấy lần, hắn nhịn không được trực tiếp phát hiện thân tới gần thùng gỗ.\n\nBàn tay rốt cục không trở ngại chút nào   đụng tới Vân Ly da thịt, che ở sóng sữa trên nhẹ nhàng nhào nặn.\n\nThô lệ lòng bàn tay mang theo một tầng mỏng kén ở đầu vú qua lại vuốt nhẹ, hơi yếu dòng điện dọc theo hai người tiếp xúc địa phương từ từ lan tràn.\n\nVân Ly này mới phát giác có người đến, hắn nhìn thấy Đoạn Tiện Chi sau, không thể tin trợn to hai mắt, nhũ hạt nhô ra kích thích càng làm cho hắn tràn ra vài tiếng trầm thấp thở dốc.\n\n\"Ân a. . . Tiện chi, ngươi. . . Ngươi đi ra ngoài trước, a. . . Ta không dùng người hầu hạ. \"\n\nCùng đại đồ đệ lên giường đã là hắn có thể tiếp nhận cực hạn, nếu là tiện chi đối với hắn cũng làm chuyện như vậy, hắn thực sự không biết phải làm làm thế nào bộ mặt đi làm hai người sư tôn.\n\nĐoạn Tiện Chi động tác trên tay liên tục, thậm chí cả người chen vào nhỏ hẹp trong thùng nước tắm, đầu gối chống đỡ ở Vân Ly giữa hai chân, hơi đỉnh làm, kia thanh tú cơ quan sinh dục cũng đã hưng phấn nhổng lên thật cao.\n\n\"Sư tôn đang nói cái gì mê sảng, ngài đều khó chịu thành như vậy, đệ tử đương nhiên phải vi sư tôn phân ưu giải nạn. \"\n\nĐoạn Tiện Chi trong tay nâng đoàn kia mềm mại, sưng đầu vú lộ ra mặt nước, lôi kéo người ta hái.\n\nHắn hơi cúi đầu ngậm lên kia sung huyết đỏ tươi sữa nhọn, đầu lưỡi dùng sức đỉnh ở nhũ lỗ qua lại đâm làm, sữa trong nháy mắt dâng lên.\n\nTrong veo mùi sữa tràn ngập ở khoang miệngdᴿj bên trong, Đoạn Tiện Chi cắn đầu vú tham lam   mút vào nuốt.\n\nKịch liệt khoái cảm từ trước ngực truyền đến, Vân Ly ngón tay nắm thật chặc bồn tắm một mặt, bị kích thích đến không được rên rỉ.\n\n\"Tiện. . . Ân a. . . Tiện chi. . . Ha a. . . Ngươi. . . Ngươi buông tha sư tôn hảo. . . Không tốt. . . A a. . .\"\n\nVân Ly con ngươi dần dần tràn trề một tầng hơi nước, đuôi mắt ửng hồng, nổi bật lên cả người một bộ dáng vẻ đáng thương, khiến người ta càng ngày càng   muốn tùy ý chà đạp.\n\nDù cho thân thể dục vọng đã tới đỉnh điểm, hắn vẫn là không cách nào tiếp thu cùng một cái khác đệ tử cẩu hợp việc.\n\nHắn nháy sương mù mông lung con mắt, nội tâm chờ đợi trước mặt ác liệt đệ tử có thể buông tha hắn.\n\nĐoạn Tiện Chi nghe này thở dài một hơi, hắn tầng tầng hút trước mặt sữa, nghe được Vân Ly không kìm nén được rên rỉ, ngữ khí làm như không rõ, \"Sư tôn khi nào như vậy khẩu thị tâm phi?\"\n\nVừa dứt lời, hắn dùng đầu răng cắn đầu vú hơi dùng sức, thành cỗ sữa phun ra, chảy hai người một thân, liền bồn tắm trong nước đều tràn ngập nhạt nhẽo mùi sữa.\n\n\"Sư tôn tao cái vú có thể là yêu thích căng. \"\n\nGặp Đoạn Tiện Chi tựa hồ càng dựa vào càng gần, Vân Ly đại não né qua vài tia nguy hiểm tin tức.\n\nHắn bất lực   uốn éo người nghĩ muốn trốn khỏi, bất quá bồn tắm cứ như vậy lớn một chút địa phương, rất nhanh sẽ bị Đoạn Tiện Chi ôm lấy eo kéo trở lại.\n\nÂn môi đỏ cánh hoa bị cắn nhẹ nhàng mút vào, thừa dịp hắn hô hấp trống rỗng, Đoạn Tiện Chi nóng rực đầu lưỡi chớp mắt mò vào.\n\nĐầu óc dần dần thiếu dưỡng, thân thể cũng mềm mại   dán vào nam nhân lồng ngực, Vân Ly bị hôn không còn khí lực, chỉ có thể vô lực bị nam nhân ôm vào trong ngực.\n\nĐoạn Tiện Chi ôm hắn từ bồn tắm đứng dậy, dọc theo đường tung xuống lấm ta lấm tấm chất lỏng, chất lỏng cũng không minh bạch, rõ ràng không đơn thuần là lướt xuống giọt nước mưa.\n\nĐến trên giường sau khi, Vân Ly sữa còn lưu cái liên tục, nhũ thịt bị kích thích đến run, bị nam nhân chăm chú ngậm vào trong miệng nuốt chửng hầu như không còn.\n\nDưới thân cơ quan sinh dục đang không ngừng xoa xoa dưới nhổng lên thật cao, hai người cực nóng chạm nhau, Đoạn Tiện Chi còn ưỡn một cái ưỡn một cái   dùng cái kia cự vật va chạm hắn cán.\n\nVân Ly chỉ cảm thấy thân người trên nhiệt độ bỏng đến đốt người, hắn ngước mắt nhìn trước mặt rất có lực lượng thân thể, càng phát giác xấu hổ, không khỏi muốn khép lại hai chân.\n\nNam nhân làm như rõ ràng động tác của hắn, cướp trước một bước dùng lực, đem chân của hắn phân đến mở thêm, nắm hạ thể cứ như vậy ngồi xuống.\n\nTrên dưới chập trùng tốc độ càng nhanh hơn, Vân Ly lý trí cũng thuận theo tung bay, trong miệng rên rỉ đã sớm bị nam nhân thao lộng đến thay đổi điệu.\n\nMột mực người kia một bên động một bên muốn hỏi hắn đến cùng cùng ai hơn vì là thoải mái?\n\nVân Ly cắn chặt hàm răng không muốn trả lời, sưng đến như nho đầu vú lại bị người tầng tầng nhào nặn, vui thích nước mắt không được từ khóe mắt chảy xuống.\n\nMơ hồ pha thêm một tia đau ý.\n\n\"Tiện chi. . . A. . . Nhẹ một chút. . . Nhẹ một chút có được hay không?\"\n\nHắn không chịu được lớn như vậy kích thích, nức nở hướng về nam nhân xin tha, trắng nõn cánh tay chậm rãi liên lụy cổ của người nọ, cố nén xấu hổ trả lời nam nhân nói, \"Sư tôn, sư tôn cùng ngươi. . . Càng. . . Thoải mái. \"\n\nMềm mại ngữ điệu mang theo một chút run rẩy ý, câu người đến đòi mạng.\n\nĐoạn Tiện Chi thô thở hổn hển một tiếng, nắm Vân Ly eo liều mạng mà thao túng phần eo, tiếp theo lại nặng nề   đứng dậy ngồi xuống, bất chấp giống như thao lộng dưới thân người cơ quan sinh dục.\n\nNgười trong lòng như vậy mê người, ngày hôm nay nếu không phải đem Vân Ly làm được xuống không được giường, hắn sẽ không tính như một người đàn ông.\n\n\"Sư tôn, thoải mái sao?\"\n\n\"A! . . . Quá. . . Quá nhanh. . . Ha a. . .\" Vân Ly cả người đều bị kích thích đến rung động, hai tay vô lực   cầm lấy Đoạn Tiện Chi cánh tay, trên mặt ửng hồng xuân sắc dần dần lan tràn.\n\nTrước ngực một đôi bầu vú to theo chập trùng loạn xạ đung đưa, thậm chí tình cờ đều sẽ chụp được Đoạn Tiện Chi nắm tại bên hông trên cánh tay.\n\n. . .\n\nNgười tu tiên thể lực rất tốt, Vân Ly cho đến sắc trời từng bước mới nghỉ đi, Đoạn Tiện Chi vì hắn làm thanh tẩy phép thuật, không còn nỗi lo về sau, Vân Ly tựa ở trong ngực của hắn chậm rãi ngủ.\n\nNếu là lấy hướng về ô uế thân, Vân Ly nhất định là muốn tinh tế tắm rửa một phen, hắn từ trước đến giờ cảm thấy vạn sự đều dùng pháp thuật không có gì lạc thú.\n\nLần này thật sự là quá mức mệt mỏi, cũng mất tinh lực cùng khí lực."},{"id":"ch2","title":"Phần 2","content":"Bình minh lên xong cùng nhị đồ đệ / đem muốn đi tìm sư huynh\n\nNắng sớm mờ mờ, ánh bình minh xuyên thấu qua che đậy cửa sổ chiếu nghiêng tiến vào bên trong, trong không khí còn tràn ngập một luồng nhạt nhẽo cây hương trầm.\n\nNgười trên giường quần áo ngổn ngang, trước ngực đôi kia trắng nõn hai vú no đủ to lớn, theo hắn thở dốc động tác nổi sóng chập trùng, xung quanh béo mập trên quầng vú diện hiện đầy tỉ mỉ dấu răng.\n\nVân Ly hư hư nằm ở Đoạn Tiện Chi trong lòng, trên mặt ửng hồng giống như hoa đào, khóe mắt còn lưu lại vài giọt óng ánh nước mắt châu.\n\nBị nam nhân ngậm sắp tới cả đêm đầu vú vẫn cứ gắng gượng, từ sữa lỗ liên tiếp tràn ra sữa tươi làm ướt trong người tóc dài đen nhánh, xung quanh trải rộng khô cạn sữa cùng điểm điểm trọc dịch.\n\nCái vú so với hôm qua lại là lớn hơn một vòng, Đoạn Tiện Chi ngậm lấy đầu vú cả khuôn mặt chôn vào, trong miệng phát sinh một tiếng thỏa mãn than thở, nhũ thịt mềm mại đến cực điểm, khiến người ta nghiện.\n\n\"Nhẹ. . . Nhẹ chút. . .\" Vân Ly đỏ mắt ôm chặt lấy đồ đệ chôn ở trước ngực đầu, trong người thỉnh thoảng run rẩy một hồi, thoải mái đến cực hạn.\n\nĐoạn Tiện Chi nghe thấy lời nói của hắn sau khi trái lại càng phát tùy ý, gắn bó cắn vào chín sữa nhọn tầng tầng mút vào, dường như muốn đem sữa toàn bộ hút vào trong miệng.\n\nMột cái tay đại lực   xoa nắn một bên khác đầu vú, một cái tay khác theo mềm nhẵn da thịt sờ soạng xuống.\n\nCơ quan sinh dục bị nắm trong tay không nhẹ không nặng trên dưới xoa xoa, che mỏng kén lòng bàn tay đứt quãng sát qua đỉnh, thẳng đem Vân Ly đùa bỡn   không còn khí lực.\n\nTrước ngực kia hai đám càng chặt chẽ không thể tách rời   dán vào nam nhân khuôn mặt, cơ hồ bị đè ép   biến hình trạng.\n\nVân Ly giương môi đỏ miệng lớn thở hổn hển, chỉ chốc lát liền cắn chặt răng tiết ở tay của người đàn ông bên trong.\n\nBán giải quần áo treo ở phần eo, bị chảy ra sữa tươi thấm ướt thành tảng lớn tảng lớn vệt nước. Bắn ra tinh dịch càng là một giọt không sót   nhỏ giọt lại thân trên quần lót.\n\nQuần lót đã sớm bị nam nhân kéo tới khuỷu chân nơi, trắng nõn mảnh khảnh đùi chọc người ánh mắt lưu luyến.\n\nVân Ly kiên trì cái vú hơi rung nhẹ thân thể, mân mê cái mông to lớn vểnh cao, so với hai vú cũng không kém chút nào nửa phần.\n\nĐoạn Tiện Chi rốt cục cam lòng buông ra trong miệng núm vú, cánh tay ôm lấy Vân Ly eo đưa hắn đè xuống giường, trong mắt bốc lên hừng hực vạn phần đốt người.\n\nHắn bất chấp   thao lộng dưới thân người cơ quan sinh dục, đụng phải Vân Ly trong lúc nhất thời thở gấp liên tục.\n\nThanh âm rên rỉ đều trở nên vụn vặt, mông bị một hai bàn tay dùng sức vò cầm lấy, bên trên hiện đầy đỏ tươi mi tươi đẹp sẫm màu dấu tay.\n\n\"Ân a. . . Ạch. . . Được rồi. . . A. . . Tiện chi. . . Ha. . . Được rồi. . .\"\n\nVân Ly hét dài bắn ra một luồng tinh dịch, Đoạn Tiện Chi còn phục ở trên người hắn lên lên xuống xuống.\n\nCả người vô lực xụi lơ ở trên giường, Vân Ly súc còn sót lại một điểm lực đem người từ trên người chính mình hất đi.\n\nHắn thở hổn hển gấp gáp   hô hấp lấy, cái vú tùy theo hơi rung nhẹ, nhận ra được trước mặt hừng hực ánh mắt, cuống quít lại lôi kéo chăn úp xuống.\n\nChờ hô hấp dần dần bình phục một ít, Vân Ly hết sức làm cho vẻ mặt chính mình trở nên lạnh nhạt hạ xuống, hắn nghiêm mặt sắc chậm rãi nói rằng: \"Tiện chi, ta buổi trưa muốn đi một chuyến sư huynh nơi đó, ngươi. . . Ngươi đi về trước đi. \"\n\nĐoạn Tiện Chi đưa tay ra, nhẹ nhàng sát qua Vân Ly môi đỏ, hắn nở nụ cười, trong con ngươi tối đen một mảnh, \"Đệ tử kia buổi tối trở lại, sư tôn cũng đừng chờ đã lâu sau không trở lại. \"\n\nCó thâm ý khác ngôn ngữ để Vân Ly lại mặt đỏ lên, hắn gật gật đầu, ngữ khí ngậm lấy mấy phần e lệ, \"Ta, ta biết rồi. \"\n\nỞ Đoạn Tiện Chi đi tới cạnh cửa lúc, Vân Ly tựa hồ lại nghĩ tới điều gì, hắn hô đồ đệ tên, dừng một chút nói rằng, \"Việc này vạn không thể báo cho người khác. \"\n\nNhìn thấy người kia gật đầu đáp lại sau khi, Vân Ly mới thở phào nhẹ nhõm. Cái này đệ tử so với Phó Lăng mà nói càng thêm khó có thể khống chế, cũng càng thêm. . . Ác liệt.\n\nBuổi tối không thể làm gì khác hơn là trước tiên tùy ý tìm lý do ứng phó ứng phó Phó Lăng, thực sự không được cũng chỉ có thể cùng hắn khác định một thời gian.\n\nCởi quần áo để sư huynh kiểm tra thân thể\n\n\"A Ly?\"\n\nVân Ly nghe tiếng xoay người, vừa vặn Trác Diên từ ngoài phòng đi vào.\n\nHắn còn chưa có đi, sư huynh làm sao trực tiếp đến rồi?\n\nVân Ly một sốt ruột bỗng nhiên liền hạ ngã ở trên giường, còn chưa bị banh buộc đai thật chặt ngực to tùy theo loáng một cái.\n\nThô ráp vải vóc ma sát qua sưng đỏ mẫn cảm đầu vú, chỉ một thoáng rên rỉ không ngừng. Hắn vô lực giơ tay lên siết chặt quần áo, đuôi mắt ửng hồng, \"Sư huynh. . . A. . . Ngươi. . . Ngươi đi ra ngoài trước. \"\n\nTrong lòng gấp gáp, tay run rẩy càng thêm lợi hại, vải băng không khỏi không có buộc chặt, càng trực tiếp bị kéo xuống, no đủ hai vú như thỏ bình thường thẳng tắp nhảy ra vạt áo ở ngoài.\n\nThấy Trác Diên còn sững sờ ở tại chỗ, Vân Ly hầu như muốn khóc ra thành tiếng, hắn quay đầu đi, cắn môi giận dữ và xấu hổ muốn chết.\n\nTrác Diên trái lại ánh mắt yên tĩnh, dường như không nhìn thấy bất cứ thứ gì dáng dấp, hắn đi tới nhẹ nhàng kéo Vân Ly thủ đoạn, hơi dùng sức đưa hắn dắt vào trong ngực.\n\nRộng lớn bàn tay rất có động viên   xoa xoa Vân Ly tóc, âm thanh nhu hòa mang theo vài phần đầu độc, \"A Ly tại sao khóc, nói cho sư huynh, xảy ra chuyện gì?\"\n\nVân Ly vùi đầu cắn lấy Trác Diên trên bả vai, trước đó vài ngày bị ủy khuất trong nháy mắt toàn bộ băng đi ra, hắn khóc phải nói thanh đều đứt quãng, \"Sư huynh, cái kia yêu vật vẫn luôn quấn quít lấy ta. . . Ta thành quái vật. . .\"\n\nTrác Diên giơ lên Vân Ly cằm nhìn kỹ lấy hắn, \"A Ly không phải quái vật, một hồi sư huynh giúp ngươi kiểm tra một chút, coi như biến không quay về, sư huynh làm chưởng môn, còn có thể không nuôi nổi một mình ngươi? Ngươi tin tưởng sư huynh, sư huynh khẳng định có thể giải quyết. \"\n\nVân Ly nghe này hoảng loạn tâm nháy mắt cũng định đi, hắn ỷ lại   sượt sượt Trác Diên lòng bàn tay, đúng đấy, sư huynh lợi hại như vậy, hắn nhất định có biện pháp.\n\nNếu là sớm một chút tìm đến sư huynh, cũng không cần cùng đồ đệ. . .\n\n\"A Ly trước đem y vật thoát, sư huynh muốn tinh tế kiểm tra một phen. \"\n\nVân Ly ánh mắt đều ngưng trệ hạ xuống, hắn có phần mờ mịt nhìn Trác Diên, lập tức cả khuôn mặt đều ngượng ngùng đỏ lên, \"Sư huynh, ta. . .\"\n\nHắn từ nhỏ đều đem sư huynh cho rằng ca ca của chính mình, làm sao có thể ở ca ca trước mặt trần truồng thân thể, huống chi, trên người hắn tràn đầy hai cái đồ đệ lưu lại dấu ấn.\n\nNày nên làm thế nào cho phải?\n\n\"A Ly thật là không tin sư huynh? Thôi, sư huynh quan tâm sẽ bị loạn, A Ly bây giờ lớn hơn, cùng ta cũng càng ngày càng xa lạ. \"\n\n\"Sư huynh, A Ly không có, là. . . Là yêu vật kia ở trên người lưu không ít đồ vật, ta sợ sư huynh chuyện cười. \" Vân Ly mi mắt khẽ nhúc nhích, men theo khi còn bé ký ức đến gần hôn Trác Diên một hồi, \"Sư huynh, ta tin tưởng ngươi. \"\n\nHắn hôn xong sau khi lại thẹn thùng   rụt trở lại, cả người co rúc ở Trác Diên trong lòng, một đôi trẻ bú sữa sượt ở Trác Diên trên lồng ngực, bị đè ép   biến hình.\n\nTrác Diên cũng không vội vã, đưa tay ra thân mật xoa xoa Vân Ly đầu, đáy mắt ý cười như mực bình thường sền sệt.\n\nChờ chuẩn bị tâm lý thật tốt sau khi, Vân Ly hơi khẽ cúi đầu, tránh ra Trác Diên tầm mắt, hai tay run rẩy lộ ra quần áo trên người.\n\nY vật làm phiền để hắn không còn khí lực, thân thể lại mềm lại khó chịu.\n\nTrên mặt nổi lên không tự nhiên ửng hồng, hắn kẹp chặt hai chân, hô hấp dồn dập, nghĩ đến sư huynh muốn kiểm tra sự tình, lại có chút xấu hổ   quay về Trác Diên ưỡng ngực lên, tờ mở đùi lộ ra thanh tú cơ quan sinh dục.\n\n\"Đừng sợ, sư huynh kiểm tra một chút. \"\n\nVừa dứt lời, Trác Diên cầm lấy trước mặt cái vú liền vò chuyển động, \"Nói cho sư huynh, nơi nào không thoải mái?\"\n\n\"Sư huynh. . . Ân a. . . Hạ thân. . . Còn có. . . A. . . Còn có tao cái vú đều thật khó chịu. \" ý thức dần dần tán loạn, Vân Ly cũng không biết mình ở loạn nói cái gì, hắn nghĩ tới đồ đệ ở giường chỉ nói, không kìm lòng được liền bật thốt lên.\n\nĐệm giường đã bị hạ thân chảy ra tinh thủy ướt nhẹp một mảnh, Vân Ly hoảng hốt trong lúc đó quên sư huynh tồn tại.\n\nHắn bị kích thích đến cả người như nhũn ra, vô lực nằm ở Trác Diên trong lồng ngực, nhấc eo nâng chính mình cái vú ở nam nhân trên mặt loạn xạ kì kèo.\n\nTrong mắt tình dục dày đặc, trắng nõn da thịt hơi lộ ra phấn ý.\n\nVân Ly ôm Trác Diên đầu nhắm ngay chính mình đầu vú, vểnh cái mông vặn vẹo đứng người dậy, \"Ha a. . . Mau ăn ăn một lần. . . Hảo. . . Thật khó chịu. . .\"\n\nCái mông cùng cái vú đều trên không trung đung đưa, nhất thời càng không nhận rõ cái nào trắng hơn, cái kia càng to lớn hơn?\n\nTrác Diên bị lắc hoa mắt, giữa háng dương vật cực tốc sưng gắng gượng, ức đến đau đớn, ве ᗥ hắn thô thô thở một khẩu khí, nhìn trước mặt mê người không tự biết yêu tinh chìm chìm con ngươi.\n\n\"Đùng\" một tiếng.\n\nVân Ly trắng mềm cái mông to bị vỗ một cái, một trận thịt dập dờn bồng bềnh dạng, Trác Diên nhịn không được lại quay mấy lần, hắn trên mặt đứng đắn, âm thanh cũng là trầm thấp thuần hậu, tựa hồ không mang theo một tia tình dục, \"A Ly, tỉnh táo một hồi. \"\n\nVân Ly ánh mắt mê ly, đuôi mắt ôm lấy một vệt đỏ tươi, hắn miễn cưỡng kéo trở lại một tia ý thức, chỉ nghe Trác Diên lại nói: \"Sư huynh giúp ngươi lấy tay trói lại đi, kiểm tra thời điểm tay không thể lộn xộn. \"\n\nTay không thể lộn xộn? Thật là thân thể thật khó chịu a.\n\nVân Ly ngất ngất ngây ngây, hắn từ Trác Diên trong lồng ngực tránh ra, xuống giường, thân thể trần truồng liền đi ra ngoài chạy đi.\n\nBước chân lảo đảo, gần như sắp đến ngã nhào trên đất trên.\n\nĐầu óc chỉ còn dư lại một ý nghĩ, hắn muốn đi tìm A Lăng hoặc là tiện chi, chỉ muốn tìm người phóng thích tình dục tay chắc chắn sẽ không lộn xộn.\n\nMắt thấy rời khỏi phòng môn chỉ còn tí xíu khoảng cách, Vân Ly thở phào nhẹ nhõm, bỗng nhiên lại bị người ôm lấy eo ôm vào trên giường.\n\n\"Sư huynh, ngươi làm gì a?\" Vân Ly không hiểu nhìn Trác Diên, lập tức hai tay bị người theo ở phía sau trói ở cùng nhau, hắn vặn vẹo cổ tay cọ xát mài dây thừng, không dùng được.\n\nHai chân lung tung đạp thân người trên, tao cái vú vung một cái vung một cái, tràn ra sữa văng tứ phía, vung toàn thân đều là.\n\nHồng nhạt cơ quan sinh dục đã nhô lên bay lên, dưới thân đệm giường lại bị tinh thủy ngâm cái thấu, hắn vặn căng hai chân không được kì kèo, tinh thủy càng chảy càng nhiều, vẫn cứ một chút xíu bắn ra ý nghĩ đều không có.\n\nHạ thân đã bị giăm bông sượt đến đỏ lên, trên không trung run lên một cái hảo không đáng thương.\n\n\"Sư huynh. . . Ân a. . . Sư. . . Sư huynh. . . Ngươi kiểm tra nhanh. . . Nhanh lên một chút. . .\"\n\n\"A Ly nếu như vẫn luôn lộn xộn, sư huynh muốn nhanh cũng không nhanh được. \"\n\nVân Ly miệng lớn thở hổn hển, mở ra môi đỏ chảy ra vài tia dâm mị nước bọt, hắn thuận theo   quay về Trác Diên tờ mở đùi, làm cho sư huynh của hắn có thể rõ ràng nhìn thấy trong đó phong cảnh.\n\nNgón tay nhẹ nhàng gảy mấy lần, cơ quan sinh dục liền không thể chờ đợi được nữa   bắn ra từng luồng từng luồng dâm thủy, trước mắt bị sương mù bao trùm hoàn toàn mơ hồ, Vân Ly khóc lóc nghẹn ngào, \"Sư huynh. . . A Ly. . . A Ly nơi đó muốn hỏng rồi. . .\"\n\n\"Bé ngoan, sư huynh giúp ngươi có được hay không, nói cho sư huynh, ngươi bây giờ nơi nào khó chịu?\"\n\nTay bị trói ở phía sau, Vân Ly chỉ không được vị trí, cái vú vừa căng đến đau đớn, hắn thân thể cong lên đem bộ ngực hướng về Trác Diên trong miệng đưa, lại sợ nam nhân không hiểu, \"Nơi này. . . Nơi này thật khó chịu, sư huynh nhanh hút hút một cái. \"\n\nTrác Diên giơ tay xoa nhẹ mấy lần cái vú, thẳng đem Vân Ly eo đều kích đến mềm nhũn, cong lên thân thể lại bất lực   rơi xuống.\n\nMột điểm mài súng / cam tề\n\nVân Ly giương môi đỏ, không tiếng động mà thở hổn hển, trơn trợt đầu lưỡi nhân cơ hội duỗi vào, thô bạo   cuốn lên trong miệng hắn nước bọt mút vào hầu như không còn.\n\nĐầu lưỡi bị hút đến táp tới, đầu lưỡi lẫn nhau câu quấn, phát sinh vang dội chà chà trách tiếng nước, thật gọi người nghe được xấu hổ. Hắn dần dần bị hôn thất điên bát đảo, hầu như không còn lý trí.\n\nTrước ngực cái vú bị nam nhân ngậm vào trong miệng liếm tới liếm lui, đầu vú bị ngụm nước hưởng được toả sáng, tràn ra một ít sữa đi ra.\n\nTrác Diên bắt đầu đại lực   mút hút, sữa toàn bộ tiến vào bụng của hắn bên trong, hút sạch sẻ chi ∫།Ÿ sau lại vùi đầu đi tới một bên khác, sức mạnh to lớn, hầu như phải đem Vân Ly toàn bộ bộ ngực hút vào .\n\nHắn cắn một bên đầu vú, ngữ điệu không rõ hỏi: \"A Ly bây giờ là không phải thư thái rất nhiều?\"\n\nVân Ly thoải mái đến không lo được trả lời, trắng nõn mảnh khảnh đùi vòng lên Trác Diên mạnh mẽ vòng eo, bị hút vô cùng, hai chân cũng không nhịn được dùng sức kẹp chặt.\n\nMột chân bị xách trên không trung, từ mắt cá chân hướng về non mềm gốc rễ sờ soạng, Trác Diên mở ra quần của chính mình, mò lên Vân Ly eo liền đem hắn đặt tại chân của mình trên.\n\nVân Ly bị ép dạng chân ở Trác Diên trong người, cái vú bị đè ép đến lại ngứa mấy phần, bên hông mềm nhũn, suýt chút nữa ngã ở trên giường.\n\nĐầu vú đứng thẳng trên không trung sượt nam nhân lòng bàn tay đâm đến đâm tới, tay bị trói ở phía sau, vì duy trì cân bằng, không thể làm gì khác hơn là giương đùi kẹp chặt nam nhân eo.\n\nVân Ly cúi thấp đầu, eo nhỏ bị Trác Diên ôm vào trong ngực qua lại vuốt nhẹ, đuôi mắt ướt át, lại rơi xuống vài giọt rơi lệ đến.\n\nCơ quan sinh dục bị nam nhân dữ tợn cự vật đụng phải run rẩy đến run rẩy đi, vô cùng đáng thương   tràn ra vài tia tuyến dịch đến, vì để tránh cho bị điên hạ xuống, hắn không thể làm gì khác hơn là càng thêm dùng sức mà kẹp lấy nam nhân bên eo.\n\nMãnh liệt va chạm đụng phải hắn không còn khí lực, lý trí tán loạn, cơ quan sinh dục đã mẫn cảm   đỏ lên, phun ra từng luồng từng luồng tinh dịch đến.\n\nHai chân tuột xuống, chỉ còn lại đập ở trên eo tay khổ sở chống thân thể tiếp thu nam nhân bất chấp va chạm.\n\nLại bị đụng tiết một lần, Vân Ly từ Trác Diên trên đùi hạ đi, hắn kẹp chặt chân nức nở nói: \"Sư huynh. . . A Ly không xong rồi. . . Muốn. . . Muốn bắn không ra. . .\"\n\nTrác Diên đưa tay ở ửng hồng cơ quan sinh dục trên xoa xoa mấy lần, dùng đầu gối đẩy ra Vân Ly đùi, ngoắc ngoắc môi, \"A Ly quay về sư huynh làm sao còn vãi lên hoảng rồi?\"\n\nVân Ly bị ép nhìn thẳng chính mình dâm loạn hạ thân, hắn hoảng loạn   đừng mở rộng tầm mắt, thân thể của hắn phóng đãng đến đòi mạng, hiển nhiên một bộ còn không có tận hứng dáng dấp.\n\nSau đó tự giận mình   nới rộng ra hai chân, không còn giãy dụa.\n\nHắn xấu hổ   cắn cắn môi, nhẹ giọng nói rằng: \"Sư huynh không nên lại bắt nạt người, A Ly khó chịu. \"\n\nTrác Diên bị này e lệ thanh âm quấy đến lòng ngứa ngáy mấy phần, thực sự muốn gặp được Vân Ly khóc lóc xin tha dáng dấp, chiều dài áo khẽ nâng, tàn nhẫn mà nuốt vào dưới thân cơ quan sinh dục.\n\nHắn một bên thao chuẩn bị dưới thân người, một bên giải thích, \"Yêu khí đã xâm nhập thân, nhất định phải như vậy mới có thể xếp đi ra. A Ly sau khi nếu là không thoải mái, nhớ tới tìm đến sư huynh. \"\n\nNam nhân nửa người trên vạt áo chỉnh tề, nhìn một bộ ra vẻ đạo mạo dáng dấp.\n\nVân Ly bị đụng phải phần hông đều đỏ lên, một đôi tinh xảo mặt mày bị mỏng mồ hôi thấm ướt, mê người mấy phần. Trong miệng còn đang lung tung rên rỉ lên, làm sao còn lo lắng được tới nghe nam nhân nói.\n\nVô số lần nuốt vào phun ra, cơ quan sinh dục bắn lại bắn, Trác Diên chập trùng tốc độ không có giảm bớt chút nào, trái lại càng lúc càng nhanh.\n\n\"A! Không. . . Không xong rồi. . .\" Vân Ly đắt đỏ   ngâm kêu một tiếng, ngón chân cuộn tròn đến lợi hại, căng thẳng chiều dài áo lại bắn đi ra.\n\nHắn nức nở một cái cắn lấy Trác Diên trên cánh tay, kích thích lại rơi xuống vài giọt lệ, \"Sư huynh, ngươi ôm ta đi tắm. \"\n\nTrác Diên hôn một cái Vân Ly cái trán, cánh tay từ bên hông xuyên qua đem Vân Ly ôm cái đầy cõi lòng.\n\nNgột ngạt hồi lâu tình cảm một khi bộc phát liền trêu đến không có người đúng mực.\n\nHắn lại cúi đầu hôn Vân Ly môi, nhẹ nhàng liếm láp trên môi lưu lại tỉ mỉ vết cắn, tâm vừa mềm mềm nhũn mấy phần, \"A Ly sau đó vẫn là cắn ta đi. \"\n\nVân Ly ý thức không rõ lắm tích, vừa nãy tình ái đã tiêu hao hết tất cả khí lực, hắn miễn cưỡng lặng lẽ mở mắt, lại đang sư huynh trong lồng ngực tìm cái vị trí nhắm mắt nghỉ ngơi.\n\nVề phần trị liệu, hắn tìm Phó Lăng hoặc là tiện chi là được, mà sư huynh. . . Sư huynh quá không thêm cố kỵ, nhiều hơn nữa đến mấy lần hắn khả năng đều phải hỏng rồi.\n\n. . .\n\nTrác Diên ôm Vân Ly trực tiếp teleport đến phía sau núi, xuyên qua gần nhất một mảnh rừng trúc, chỉ thấy suối nước nóng phía trên mây khói lượn lờ, bay lên sương trắng, giống như như Tiên cảnh.\n\nNước suối nhiệt độ vừa vặn, Vân Ly ngâm ở trong đó hầu như buồn ngủ, hắn tựa đầu đệm ở Trác Diên trên bả vai, lưu lại một câu \"Sư huynh giúp ta tẩy\" sau khi liền dần dần không còn ý thức.\n\nTrong mũi hô hấp một chút phun ở gáy, Trác Diên nghiêng đầu đi, đập vào mắt chính là Vân Ly tinh xảo mặt mày, trên mặt của hắn còn lưu lại đỏ mặt, trên môi, cổ, bộ ngực toàn bộ là cái này tiếp theo cái kia ám muội vết đỏ.\n\nTrước ngực bầu vú to càng là hiện đầy dấu răng, dâm loạn đến câu người cực kỳ.\n\nBộ này mỹ cảnh nhìn ra hắn hạ thân lại dữ tợn   sưng lên, cứng đến nỗi đau đớn.\n\nNhẫn nhịn dục hỏa thanh tẩy xong xuôi sau khi, Trác Diên vén lên Vân Ly thân thể lại đang tại chỗ đợi một lúc, sau đó mới lưu luyến mà tròng lên y vật, đem Vân Ly đưa trở về phòng.\n\nĐồ đệ có một chút hắc hóa nhưng không nhiều\n\nTrên bàn đốt hai ngọn ánh nến hơi chập chờn, xuyên thấu qua mông lung lụa mỏng ngờ ngợ có thể thấy được trên giường đạo kia trần trụi uyển chuyển bóng người.\n\nNhư máu giống như tươi đẹp trên giường đệm diện nằm một trần như nhộng mỹ nhân, một bộ tóc đen rải rác tại bên người, cùng diễm sắc ráp trải giường đan dệt, nổi bật lên người trên giường càng trắng loáng như ngọc.\n\nĐoạn Tiện Chi đưa tay đem Vân Ly mặt cái khác sợi tóc lướt nhẹ đi, nhìn một hồi lâu trên người hắn không biết người phương nào lưu lại dấu ấn, nhẹ giọng thở dài, sư tôn làm sao như thế không ngoan đây?\n\nTrước kia hắn còn kiêng kỵ Vân Ly quá mệt mỏi, thân thể không chịu nổi, buổi tối dự định buông tha hắn, ai biết, sư tôn thật đúng là cho hắn một thật lớn kinh hỉ.\n\nPhó Lăng hắn cũng liền nhịn, dù sao Phó Lăng so với hắn còn hơi sớm, nhẫn này một người đã là của hắn cực hạn, nào có nửa đường lại chen vào?\n\nĐoạn Tiện Chi từ bên giường lấy ra chuẩn bị xong màu bạc dây khóa, vừa mới thi pháp, dây khóa liền như bạc xà bình thường quấn lấy Vân Ly tứ chi, đưa hắn vững vàng khóa ở trên cột giường.\n\nVân Ly nhắm mi mắt rung động nhè nhẹ mấy phần, như là không chịu được dây khóa lạnh lẽo xúc cảm, cánh tay cùng hai chân đều không an phận   vặn vẹo mấy lần.\n\nDây khóa là môn phái chuyên môn vì nhốt lại yêu vật luyện chế, càng giãy dụa khóa đến càng căng.\n\nChỉ thấy Vân Ly tứ chi bị bắt căng dây khóa kéo đến mở thêm, cả người bị kéo thành hình chữ đại - hình người nằm dang tay chân nằm ở trên giường.\n\nMảnh khảnh eo mềm, trắng nõn bắp đùi thon dài, trước ngực cặp kia no đủ cái vú hiển lộ không bỏ sót.\n\nĐoạn Tiện Chi không thể chờ đợi được nữa cởi quần áo của mình, đè lên, hắn đem mặt chôn ở Vân Ly hai vú đầy đặn trong lúc đó, liền mút mang gặm, rất nhanh sẽ lưu lại một phiến dâm mị vết đỏ cùng vệt nước.\n\nLưu lại ở trong mắt si mê cùng hừng hực cũng bỏng đến kinh người.\n\nNóng ướt mặt lưỡi chậm rãi từ bộ ngực chuyển qua cổ, lại nhẹ cắn nhẹ.\n\nVân Ly thân thể bị kích thích đến phát run, giương bờ môi rên rỉ một tiếng, hắn mở mắt ra liền gặp đồ đệ ở trên người lại liếm lại cắn, nhất thời thẹn đỏ mặt.\n\nĐưa tay nghĩ muốn mở ra người kia, tay bị vững vàng bó ở trên cột giường, hơi động chỉ có thể nghe thấy keng keng keng keng dây khóa chạm vào nhau thanh.\n\n\"Thả ra. . . A. . .\" Vân Ly lời còn chưa nói hết, một cái trơn trợt đầu lưỡi liền hung hăng   chống đỡ tiến vào, ở trong miệng không ngừng quấy chuẩn bị.\n\nTay của người nọ chỉ nắm bắt hắn đầu vú hơi dùng sức, một luồng xốp mềm xốp mềm cảm giác từ bên tai như điện lưu giống như truyền khắp toàn thân, Vân Ly hai gò má nổi lên ửng đỏ, vô lực nằm ở trên giường.\n\nHắn sữa trướng đến đòi mạng, nam nhân còn phục ở trên người hắn cắn môi của hắn, liếm hắn xương quai xanh, lại cứ tránh được kia hai nơi nhất ngứa địa phương.\n\nVân Ly bị khóa lại tứ chi, tình dục dần trùng, thân thể không nhịn được ở trên giường nhẹ nhàng giãy dụa.\n\nHắn một bên nhẫn nhịn tâm lý xấu hổ, một bên dùng kia ướt nhẹp câu người con mắt nhìn Đoạn Tiện Chi, âm thanh đều mang tới khóc nức nở, \"Tiện chi. . . Nhanh giúp một chút sư tôn, giúp sư tôn trị. . . Chữa bệnh. . .\"\n\n\"Chữa bệnh gì? Ta xem sư tôn tao bị bệnh là cần trị một trị. \" Đoạn Tiện Chi thở hổn hển, tàn nhẫn mà tóm một hồi dưới thân cứng ngắc như đá tử đầu vú.\n\nHắn liếm liếm môi, cúi người cắn đi tới, hầu như vừa mới vào miệng, thơm ngọt sữa liền từ trong đó phun ra ngoài.\n\nTrắng mịn nhũ thịt bị hút tới đỏ lên, thỉnh thoảng còn thoải mái đến co giật mấy lần.\n\nThật thoải mái, sảng khoái. . .\n\nVân Ly bị hút đến lý trí tán loạn, khóe miệng không bị khống chế chảy vài giọt nước miếng, liền ngay cả bị trói trụ tay cũng vô lực   lỏng ra.\n\nCổ chân dây khóa bị thu về, hai cái trắng mỏng chân dài trong khoảnh khắc như dâm xà giống như chặt chẽ   quấn lấy nam nhân vòng eo.\n\nVân Ly hô hấp dồn dập, toàn thân không nhịn được phát ra run rẩy, hai chân đem nam nhân kẹp đến chặt hơn chút nữa.\n\nHắn nghẹn ngào một tiếng một tiếng hô đồ đệ tên, hầu như thoải mái đến tan vỡ.\n\nViền mắt chớp mắt bị lệ dịch dồi dào, cán cũng không có thể kích thích   chảy ra từng tia từng tia tuyến dịch.\n\nĐoạn Tiện Chi hạ thân sưng dương vật dữ tợn khủng bố, rất nhanh nhúc nhích tuôn ra từng luồng từng luồng tinh đặc, hắn tàn bạo mà đem trên eo chân kéo xuống, con ngươi sâu thẳm đến cực hạn.\n\nKhông có cho Vân Ly bất kỳ bước đệm thời gian, chiều dài áo chìm xuống trực tiếp nuốt đến ngọn nguồn.\n\nĐáng thương cơ quan sinh dục chớp mắt bị nuốt chửng hầu như không còn, trêu đến Vân Ly lại không nhịn được kêu lên.\n\n\"A! Ha a. . . Tiện. . . Tiện chi. . . Nhẹ. . . Nhẹ một chút. . .\"\n\nVân Ly bị đụng phải mất lý trí, cơ quan sinh dục gần như sắp muốn đốt thiêu cháy, hắn lưu nước mắt một tiếng một tiếng   kêu, trước ngực cái vú đứt quãng còn đang tràn ra nước.\n\n\"A Ly ngoan, gọi tướng công, ngươi gọi ta liền chậm một chút. \"\n\nĐầu độc tính ngữ quanh quẩn ở đầu óc thật lâu không thể tản đi, trên bàn nến đỏ, dưới thân đỏ tươi ráp trải giường, Vân Ly hoảng hốt trong lúc đó như là thật ở trải qua động phòng hoa chúc đêm.\n\nNước mắt từ lâu mơ hồ con mắt, hắn ngước cổ hơi rung động, \"Ân a. . . Cùng. . . Tướng công. . . A. . . Ngươi đau quá A Ly. . .\"\n\nThân người trên nghe xong lời này chập trùng   càng tùy ý, Vân Ly ngửa đầu xin tha mà nhìn nam nhân, cơ quan sinh dục tràn đầy chảy ra ướt nhẹp tinh thủy.\n\nHắn không chịu được lớn như vậy kích thích, cái vú bị kích đến phun ra một ít cỗ sữa, xấu hổ đến cực hạn.\n\nVân Ly chỉ cho rằng là thanh âm của mình quá nhỏ, lại phóng to một điểm âm thanh, \"Tướng công. . . Cùng. . . Tướng công. . . Chậm một chút. . .\"\n\nNgữ điệu mang theo mơ hồ khóc nức nở, thẳng đem Đoạn Tiện Chi hỏa khí câu đi ra.\n\nHắn đầu tiên là yêu thương   hôn một cái Vân Ly đầu vú, lập tức ngoắc ngoắc khóe môi, bất chấp   đung đưa hông của mình hông, \"Phu nhân, tướng công đêm nay khẳng định hảo hảo thỏa mãn thỏa mãn ngươi. \"\n\nNam nhân tại trên giường nói cũng không thể tin, Vân Ly bị làm được trong miệng réo lên không ngừng. Hắn mỗi hô một tiếng tướng công, cơ quan sinh dục đã bị nuốt đến càng sâu.\n\nThét lên cuối cùng liền ngay cả âm thanh cũng dần dần khàn khàn mấy phần.\n\nThân thể không được mà run runъё ᑯ, cổ tay nơi bị màu bạc dây khóa xiết ra hai vòng cực kỳ yếu ớt vết đỏ.\n\nĐi ngang qua liên tục mấy lần xuất tinh sau khi, Vân Ly triệt để không còn khí lực, mềm oặt   nằm ở trên giường, hai chân còn không có tỉnh táo lại, vẫn cứ run lẩy bẩy.\n\nDưới thân ráp trải giường tràn đầy hắn chảy ra tinh thủy, lành lạnh một mảnh, lại dính mồ hôi lại không khỏe.\n\nBị thả ra thủ đoạn vô cùng đáng thương   siết nam nhân góc áo, hắn ngửa đầu, bên môi lại không bị khống chế   chảy ra vài tia nước bọt.\n\nSợi tóc bị mỏng mồ hôi ngâm cái ướt, tràn đầy đỏ mặt gò má dâm loạn mị người, Vân Ly đem chân tách ra, cán bị vệt nước che đến một mảnh óng ánh.\n\nHắn đuôi mắt xuyết lệ, không được nức nở nói: \"Tướng công, A Ly thật bẩn. . . Muốn. . . Muốn tắm rửa. . .\"\n\nĐoạn Tiện Chi vừa mới chạm, bị mài đến hồng thông thông cơ quan sinh dục lại dựng đứng lên, run lên một cái đáng thương cực kỳ.\n\nLàm pháp thuật thanh khiết sau khi, hắn cầm lấy Vân Ly tay đè đi tới, \"A Ly sờ sờ, đã không ô uế. \"\n\nĐại khái là Vân Ly kia ăn ở qua với thanh tú, Đoạn Tiện Chi không chút do dự mà cúi đầu nuốt tiến vào, hắn ngước mắt nhìn dưới thân người ửng hồng đuôi mắt, nhẹ sưng bờ môi, càng ra sức.\n\n\"A Ly, tướng công giúp ngươi mút vào đến có được hay không?\"\n\n\"Hảo. . . A --\" Vân Ly ngăn chặn không được hét lên một tiếng, hai chân mang theo nam nhân đầu điên cuồng run rẩy, linh hồn đều phảng phất bị hút vào.\n\nNam nhân thỉnh thoảng còn dùng đầu lưỡi một hồi dưới đâm dị ứng cảm giác mã nhãn, Vân Ly chỉ chốc lát sau liền xụi lơ ở trên giường, phát sinh một tiếng đắt đỏ ngâm gọi, cắn răng bắn ra ngoài.\n\nĐoạn Tiện Chi đem trong miệng tinh dịch hết mức nuốt xuống, hắn xoa xoa Vân Ly vung ra đỏ lên cái vú, đau lòng nói: \"A Ly làm sao không yêu quý thân thể của chính mình đây?\"\n\n\"Không. . . A. . . Không muốn. . .\" Vân Ly cho rằng nam nhân còn phải tiếp tục, khóc đến nước mắt như mưa, xem ra thê thảm cực kỳ.\n\nLàm việc này tự nhiên là vui sướng, thế nhưng hắn. . . Hắn thật không có đồ.\n\nVân Ly xấu hổ   kẹp chặt chân, nước mắt dịu dàng   nhìn chằm chằm nam nhân, \"Ngày mai. . . Ngày mai lại tiếp tục có được hay không?\"\n\nNgày mai hắn hay là muốn chữa bệnh, tạm thời đem tên đồ đệ này đuổi đi, Vân Ly có phần chột dạ phiêu mắt, lôi kéo Đoạn Tiện Chi ống tay áo nhẹ giọng hô, \"Tướng công, ta nghĩ đi tắm. \"\n\nĐoạn Tiện Chi nhẹ nhàng lôi kéo liền đem Vân Ly kéo đến trong lòng, kia thanh tướng công làm cho hắn đáy lòng nhẹ nóng, hầu như huyết dịch cả người đều sôi trào lên, \"A Ly, lại gọi một tiếng. \"\n\nRơi vào tình dục không có ý thức tiếng la cùng tỉnh táo tình hình dưới tất nhiên là khác biệt to lớn, Đoạn Tiện Chi không khống chế được muốn tiếp tục nghe Vân Ly kêu một tiếng.\n\nHắn nhìn Vân Ly mặt đỏ lên hướng về trong lồng ngực của mình lui dáng dấp, tiếng lòng bị động đến mấy phần, \"A Ly ngoan, lại hô một tiếng. \"\n\nVân Ly chôn ở trong ngực nam nhân thẹn đến cơ hồ muốn khóc lên, gò má cũng giống như bốc lên nóng hổi khí.\n\nNgón tay thẹn thùng   câu qua nam nhân cái cổ, âm thanh hầu như nhỏ đến mức không thể nghe thấy, \"Tướng công. . .\"\n\nNhận ra được áp sát vào trước ngực kia hai đám thịt mềm, Đoạn Tiện Chi đáy lòng nhộn nhạo một phen, nghĩ đến Vân Ly chịu đến kích thích quá nhiều, vừa tàn nhẫn quyết tâm từ bỏ.\n\nHắn ôm lấy Vân Ly đi tới bên cạnh thùng tắm, thừa dịp thanh tẩy công phu lại ở trên người sờ tới sờ lui, chiếm rất nhiều tiện nghi.\n\n. . ."},{"id":"ch3","title":"Phần 3 (end)","content":"Không bằng một người một ngày đi\n\nVân Ly khi tỉnh lại, cả người còn co rúc ở Đoạn Tiện Chi trong lồng ngực, hắn lặng lẽ ra bên ngoài di chuyển dời thân tử, còn không có chờ hoàn toàn lui ra cái này ôm ấp, bên cạnh nam nhân liền đè lên.\n\n\"Sư tôn đại sáng sớm liền cởi sạch y vật, dùng cái vú sượt ta, đây là đang hết sức câu dẫn?\" Đoạn Tiện Chi nhếch miệng cười trêu nói.\n\nVân Ly bị nam nhân trả đũa   khí đến, tối hôm qua lúc ngủ, rõ ràng là nam nhân nói muốn ngậm lấy hắn đầu vú ngủ, không cho mặc quần áo, hôm nay là được hắn câu dẫn.\n\nCái này liệt đồ!\n\nVân Ly trực tiếp cắn đi tới, có lẽ là nam nhân cánh tay quá cứng ngắc, chỉ chỉ còn sót lại cùng nhau nhợt nhạt dấu răng.\n\nHắn thấy vậy đưa tay đẩy ra Đoạn Tiện Chi, nghiêm mặt không khỏi đạp một cước, người kia không có phòng bị, bị đạp phải lăn xuống giường đi.\n\nMặc dù như thế, đứng dậy lúc còn mang theo gương mặt ý cười, thậm chí lôi kéo Vân Ly duỗi ra chân dài liếm một liếm, rất giống là một lên đồ lãng tử.\n\nVân Ly đáy mắt toát ra một tia khiếp sợ cùng xấu hổ, hắn đỏ dái tai di chuyển ra chân của mình, cả người lại bị đặt ở trên giường.\n\n\"Đoạn Tiện Chi, ta muốn đi ra ngoài. \"\n\n\"Sư tôn lại phải đi tìm ai, bọn họ có ta XXX ngươi làm được thoải mái sao?\" Đoạn Tiện Chi cắn Vân Ly bờ môi, ngữ khí có vẻ hơi nghiến răng nghiến lợi.\n\nỞ đem Vân Ly hôn thở không nổi lúc, hắn vuốt ve Vân Ly đỉnh đầu, vạn ngàn tâm tư quanh quẩn ở trong đầu, âm thanh lại bình tĩnh lại, chỉ là mang theo một loại nào đó ngột ngạt, \"Sư tôn nghĩ đi thì đi đi. \"\n\nĐen kịt trong con ngươi xẹt qua một tia cay đắng.\n\nHắn từ trước đến giờ đều biết, sư tôn đối với hắn mà nói dường như trăng trong nước, hoa trong gương, ngắn ngủi nắm giữ đã đúng là không dễ, hắn lại làm sao có khả năng can thiệp sư tôn lựa chọn?\n\nHôm qua là hắn lỗ mãng, suy nghĩ qua ít, người kia nếu là ép buộc sư tôn cũng thì thôi, khoảng chừng bất quá một cái mạng, giết cho tốt.\n\nCó thể sư tôn hôm nay còn muốn đi tìm người kia, hiển nhiên không phải ép buộc đơn giản như vậy.\n\n\"Sư tôn, người kia là ai?\" Đoạn Tiện Chi vẫn là không nhịn được hỏi lên.\n\nCâu nói này hỏi được Vân Ly sững sờ, người nào?\n\nHắn bị nam nhân ép tới có phần khó chịu, bộ ngực kia hai đám bị đè ép đến càng làm cho hắn có phần không thở nổi, hô hấp thoáng gấp gáp.\n\nTrên tay dẫn theo chút lực, đẩy nam nhân cường tráng lồng ngực, hắn yên lặng nháy mắt, chậm rãi đáp, \"Tự nhiên là sư huynh. \"\n\nTuy rằng không biết Đoạn Tiện Chi ở hỏi chút gì, nhưng Vân Ly thói quen, có chuyện gì tất cả đều giao cho sư huynh là tốt rồi.\n\nMặc kệ đã xảy ra chuyện gì, sư huynh đều sẽ giúp hắn giải quyết.\n\nVừa dứt lời, Đoạn Tiện Chi liền ức chế không được mà đem Vân Ly vò tiến vào trong lồng ngực, dù cho từ lâu chuẩn bị kỹ càng, hắn vẫn không thể chịu đựng sư tôn yêu sự thực của người khác.\n\nCánh tay càng thu càng chặt, mãnh liệt ghen ghét như là móng vuốt sắc bén không ngừng lôi kéo nội tâm của hắn, nhưng mà nghe được Vân Ly thở hổn hển sau, hắn lại buông lỏng tay ra cánh tay.\n\n\"Sư tôn, kia ta đối với ngươi mà nói tính là gì đây?\"\n\nHỏi ra câu nói này lúc, Đoạn Tiện Chi đầu óc còn không bị khống chế   nghĩ đến Vân Ly đêm qua gọi hắn tướng công tình cảnh.\n\nHai nơi cảnh tượng không ngừng luân phiên, hầu như kích hội lý trí của hắn.\n\nVân Ly có phần không hiểu ra sao, nhưng vẫn là chờ tâm tư trả lời nam nhân nói, \"Ngươi đương nhiên là đệ tử của ta. \"\n\nĐoạn Tiện Chi trong mắt u ám để Vân Ly nội tâm hơi bồn chồn, tên khốn này sẽ không cần khi sư diệt tổ đi.\n\nHắn lặng lẽ hướng về bên cạnh dịch một điểm, nhân cơ hội giẫm trên đất nhặt lên y vật.\n\nNói đến thần kỳ, có lẽ là tất cả mọi người không nỡ Vân Ly chịu khổ, hắn phép thuật đẳng cấp ở trong vài người là thấp nhất, cho dù là đệ tử của nàng, tu vi cũng rất sớm vượt qua hắn.\n\nVân Ly không cảm giác đến mình nói sai cái gì, chỉ làm Đoạn Tiện Chi lại đã phát điên.\n\nHắn cau mày nói bổ sung: \"Ngươi, Phó Lăng còn có Trác sư huynh, đều là ta người thân cận nhất. \"\n\nTuy rằng ngoài miệng nói như thế, Vân Ly đáy lòng vẫn là đem chính mình đặt ở vị trí đầu não, hắn hai vị đệ tử cùng sư huynh hằng ngày chăm sóc hắn cũng cực kỳ thoải mái, này đây, câu nói này cũng không tính như lừa người.\n\nHơn nữa mấy người đều cùng hắn từng làm loại kia thân mật chuyện, còn sót lại một điểm chột dạ cũng hoàn toàn tản đi.\n\nVân Ly quay về nam nhân tiếp tục nói: \"Ngươi cùng bọn họ là giống nhau. \" vì vậy đừng vọng tưởng sẽ có ưu đãi.\n\nHắn tự cho là lời cảnh cáo đến Đoạn Tiện Chi trong tai, nhưng dường như trên đời tươi đẹp nhất nốt nhạc.\n\nChỉ thấy hắn con ngươi ngâm trên điểm điểm ý cười, liền ngữ khí cũng mang tới mấy phần sung sướng, \"Sư tôn nói, đệ tử tự sẽ không quên. \"\n\nVân Ly gật gù, mới vừa muốn nói gì, môi bị ngăn tới, hắn bị ép cùng nam nhân trao đổi một triền miên hôn.\n\nHai người hôn đến nơi sâu xa, cửa phòng bị đẩy ra.\n\nTrừ qua hôn môi tiếng nước, gian phòng lại vang lên cùng nhau quen thuộc lại thanh âm trầm thấp, \"Các ngươi đang làm gì?\"\n\nLà sư huynh.\n\nVân Ly vừa định đẩy ra nam nhân, lại bị theo vào trong ngực càng thêm tùy ý   hôn, từ hắn cái góc độ này, có thể rõ ràng nhìn thấy sư huynh càng mặt âm trầm sắc.\n\nTrong lòng né qua một vẻ bối rối, nhưng mà mở miệng chỉ còn lại dưới a a a tiếng kêu, chiều dài áo cũng bị nam nhân chăm chú cầm cố ở trong ngực.\n\nSư huynh bóng người càng gần, Vân Ly bị hôn say xe, khóe mắt cũng bởi vì thiếu dưỡng tràn ra vài tia nước mắt, điều này làm cho đầu óc của hắn càng thêm trống không.\n\nNgón tay không biết làm sao   bám vào nam nhân góc áo.\n\nTrác Diên đen kịt trong con ngươi đầy rẫy dục vọng cùng phẫn nộ, hắn nhìn Vân Ly trần trụi   bị nam nhân ôm vào trong ngực.\n\nMột mặt bị Vân Ly như vậy mê người dáng dấp hấp dẫn, một mặt vừa hận người kia vì sao không phải là mình.\n\nTừ nhỏ cùng Vân Ly cùng nhau lớn lên, có thể nói hắn là hiểu rõ nhất Vân Ly người, cũng bởi vậy hắn tinh tường biết Vân Ly không phải là bị ép buộc.\n\nTrác Diên cùng Vân Ly đối diện, hắn phảng phất tự ngược bình thường căng nhìn mình chằm chằm âu yếm sư đệ ở người khác trong lồng ngực rên rỉ. A Ly nhỏ nhắn xinh xắn một con, trần trụi thân thể cũng bị nam nhân chặn đến chặt chẽ.\n\nĐáy mắt nổi lên sát ý, Trác Diên từ Đoạn Tiện Chi trong lòng đoạt lấy Vân Ly, một cái lợi kiếm xông thẳng Đoạn Tiện Chi bụng mà đi, kiếm chu toả ra hàn ý tận xương, chớp mắt tràn ngập ra.\n\nVân Ly bị nhẹ nhàng mà đặt ở bên giường, hai người đàn ông e sợ cho tổn thương Vân Ly, ra ngoài phòng ngươi tới ta đi đánh thành một đoàn.\n\nĐoạn Tiện Chi có thể nói là thiên đạo quan tâm người, vẻn vẹn trăm năm công phu, tu vi liền sắp đuổi tới Trác Diên.\n\nCoi như như vậy, Trác Diên vẫn là chiếm thượng phong.\n\nVân Ly mặc y vật cuống quít chạy đi ngoài phòng, hắn có thể nhận ra được hai người kia tâm tình rất không đúng, chờ hắn đến địa phương, trước mặt hỗn loạn cảnh tượng càng làm cho hắn cả kinh.\n\nNgoài phòng hai người chẳng biết lúc nào thành ba người, mấy người khóe miệng đều dẫn theo từng tia từng tia vết máu, hiển nhiên thương không phải nhẹ.\n\nVân Ly cũng không dám tùy tiện tiến lên, tu vi của hắn hạ thấp, nội tâm vẫn là rất tiếc mệnh, song khi nhìn thấy xung quanh bị một chúng đệ tử nuông chiều cánh hoa dần dần thưa thớt, trong lòng dẫn theo chút tức giận.\n\nĐó là hắn thích nhất hoa.\n\n\"Các ngươi lại không tới, liền vĩnh viễn cũng đừng tới tìm ta. \"\n\nVân Ly vừa dứt lời, ba người kia phảng phất chịu đến gọi đến tựa như, cái này tiếp theo cái kia bay đi.\n\nXác nhận mấy người còn đang yên đang lành sống sót sau khi, Vân Ly ngẩng đầu nhìn một chút, hắn cũng không biết này có cái gì có thể đánh, hắn mấy ngày nay thật sự là buồn ngủ cực kỳ, ngữ khí cũng mất kiên trì, \"Ngày sau các ngươi một người theo ta một ngày, hôm qua là tiện chi, hôm nay liền Phó Lăng đi. \"\n\nHắn lôi kéo Trác Diên tay, nở nụ cười, \"Sư huynh ngày mai tới tìm ta đi. \"\n\nVân Ly sau khi nói xong liền lôi kéo Phó Lăng rời đi, cũng không quản kia mấy nam nhân trong mắt làm sao cuồn cuộn sóng ngầm, làm sao sát ý tàn phá.\n\nNày không có quan hệ gì với hắn.\n\nMột ít giả thiết\n\nTrước nghĩ tới một thụ, bởi vì cùng sư huynh có chút va chạm thiết, không viết, đem não động phát một hồi:\n\nSư thúc là công trưởng bối, thế nhưng tuổi tác cách biệt cũng không lớn.\n\nCông ở sư thúc trước mặt là khá là ngoan, dù sao sư thúc xem ra lạnh như băng.\n\nBởi trước bị yêu vật chơi sau khi dài ra một đôi đại làm sao, công tới tìm sư thúc thời điểm quấn lấy ngực.\n\nThế nhưng đây, sư thúc biết tất cả mọi chuyện.\n\nGương mặt lạnh lùng hỏi công có phải là cấu kết yêu vật, không phải vậy trong người tại sao có yêu khí?\n\nCông bị giật mình, mau mau giải thích, cuối cùng nói thẳng chân tướng. Sợ sư thúc không tin, còn đem quấn ngực vải bố cởi ra.\n\nSư thúc như vậy sắc mặt mới tốt một điểm, ra hiệu chính mình hiểu biết, sau đó đi tới đàng hoàng trịnh trọng   tử quan sát kỹ, nói hắn hiện tại phải giúp công tới trừ yêu khí.\n\nCông ngoan ngoãn nghe sư thúc   cởi áo cánh, sư thúc còn nói hạ thân cũng có yêu khí, trực tiếp tự mình bắt đầu xé rách công quần, để công trần như nhộng   đứng ở nơi đó.\n\nSư thúc dùng pháp khí (khá giống giới xích) bốc lên công ngực, nhìn từ trên xuống dưới, công có phần ngượng ngùng, r đầu cứng rồi, hạ thân cũng bị kích thích ra phản ứng, mau mau kẹp chặt chân.\n\nSư thúc vẫn là mặt lạnh để công đem chân tách ra, giới xích từ bắp đùi lướt qua, công chân mềm nhũn trực tiếp nhào vào sư thúc trong lồng ngực, một bộ dáng vẻ muốn khóc.\n\nSư thúc dùng giới xích vỗ vỗ công đại làm sao, công bị kích thích đếnru chất lỏng phun ra ngoài.\n\nCông hiện tại cả người núp ở sư thúc trong lồng ngực, xấu hổ đến cực điểm, sư thúc trái lại dịu dàng chút, xoa xoa công tóc nói hắn tìm tới yêu khí khởi nguồn. Để công yên tâm.\n\nSau đó hút sạch làm sao, ép khô chất lỏng.\n\nPhiên ngoại một: Công nhặt được một quả trứng, tưởng chính mình sinh, vì vậy muốn ấp trứng. (bởi vì trứng là xúc tu, công bởi vì là hắn và yêu vật trứng, trên thực tế không phải là bất cứ cái gì. )\n\nTheo nào đó bản thư ghi lại, trứng cần dùng sữa đúc. Công mỗi ngày liền thân thể trần truồng nằm lỳ ở trên giường vắt sữa, sau đó bị một thụ không nhịn được ăn đi.\n\nPhiên ngoại hai: Trứng lớn rồi ăn đi công.\n\nPhiên ngoại ba: Thiếu niên sư tôn, thời niên thiếu cùng sư huynh hằng ngày.\n\nGiả thiết phiên ngoại không nhất định theo trình tự viết, gần nhất không muốn viếtH, chờ qua một thời gian ngắn lại đăng phiên ngoại đi.\n\nBởi vì phải đủ một ngàn chữ, phía dưới phục chế không cần nhìn.\n\n------------\n\nSư thúc là công trưởng bối, thế nhưng tuổi tác cách biệt cũng không lớn.\n\nCông ở sư thúc trước mặt là khá là ngoan, dù sao sư thúc xem ra lạnh như băng.\n\nBởi trước bị yêu vật chơi sau khi dài ra một đôi đại làm sao, công tới tìm sư thúc thời điểm quấn lấy ngực.\n\nThế nhưng đây, sư thúc biết tất cả mọi chuyện.\n\nGương mặt lạnh lùng hỏi công có phải là cấu kết yêu vật, không phải vậy trong người tại sao có yêu khí?\n\nCông bị giật mình, mau mau giải thích, cuối cùng nói thẳng chân tướng. Sợ sư thúc không tin, còn đem quấn ngực vải bố cởi ra.\n\nSư thúc như vậy sắc mặt mới tốt một điểm, ra hiệu chính mình hiểu biết, sau đó đi tới đàng hoàng trịnh trọng   tử quan sát kỹ, nói hắn hiện tại phải giúp công tới trừ yêu khí.\n\nCông ngoan ngoãn nghe sư thúc   cởi áo cánh, sư thúc còn nói hạ thân cũng có yêu khí, trực tiếp tự mình bắt đầu xé rách công quần, để công trần như nhộng   đứng ở nơi đó.\n\nSư thúc dùng pháp khí (khá giống giới xích) bốc lên công ngực, nhìn từ trên xuống dưới, công có phần ngượng ngùng, r đầu cứng rồi, hạ thân cũng bị kích thích ra phản ứng, mau mau kẹp chặt chân.\n\nSư thúc vẫn là mặt lạnh để công đem chân tách ra, giới xích từ bắp đùi lướt qua, công chân mềm nhũn trực tiếp nhào vào sư thúc trong lồng ngực, một bộ dáng vẻ muốn khóc.\n\nSư thúc dùng giới xích vỗ vỗ công đại làm sao, công bị kích thích đếnru chất lỏng phun ra ngoài.\n\nCông hiện tại cả người núp ở sư thúc trong lồng ngực, xấu hổ đến cực điểm, sư thúc trái lại dịu dàng chút, xoa xoa công tóc nói hắn tìm tới yêu khí khởi nguồn. Để công yên tâm.\n\nSau đó hút sạch làm sao, ép khô chất lỏng.\n\nPhiên ngoại một, ấp trứng\n\nTừ hôm qua lên, Vân Ly liền muốn gánh vác lên ấp trứng chức trách.\n\nViên này trứng cũng không biết là nơi nào tới, lặng lẽ liền chạy tới bên cạnh hắn, Vân Ly đưa tay thăm dò, trong trứng là một cái nhỏ xúc tu.\n\nLần này hắn triệt để rõ ràng, đó là hắn sinh ra được trứng.\n\nHẳn là hắn cùng với con kia yêu vật hài tử, yêu vật kia bản liền không giống bình thường, sẽ cho người đẻ trứng cũng là rất có thể.\n\nNghĩ đến mấy ngày trước đây sữa đạt được nhiều không được, cũng là cùng đứa nhỏ này có quan hệ đi.\n\nVân Ly lòng sinh sầu lo, một mình hắn loại nên phải như thế nào ấp trứng, dù sao trứng là từ thân thể hắn ra tới, sao có thể cứ như vậy liều mạng   nhậm diệt vong.\n\nSư huynh bọn họ cũng không giải quyết được chuyện này, hay là đi Tàng thư các lật lật sách tìm một chút đi.\n\nVân Ly ôm trứng đi tới Tàng thư các, trông coi người nghe xong cũng nhíu nhíu mày, đều là tu tiên sách, ở đâu ra ấp trứng giáo trình?\n\nCuối cùng vẫn là không cưỡng được Vân Ly, đi lật qua lật lại, ngược lại cũng thật là làm cho hắn tìm được rồi, hắn sau khi xem xong ngẩn người, đem sách đưa cho Vân Ly.\n\nVân Ly mang theo sách cùng trứng lại trở về phòng, theo trong sách ghi chép, hắn cần ngày ngày dùng sữa đúc trứng vỏ bọc, còn muốn đem thân thể nhiệt độ lan truyền cho trứng, đại khái mười tám ngày qua đi vỏ trứng nứt ra, trứng cũng là ấp xong rồi.\n\nMười tám ngày, cũng cũng không phải là không thể tiếp thu, dù sao hắn bây giờ sữa cũng nhiều vô cùng, sư huynh uống không hết cũng là lãng phí.\n\n. . .\n\nPhó Lăng đến gian phòng, nhìn thấy trên giường mân mê no đủ mông, vùi lấp xuống eo nhỏ, dưới thân dương vật đã cứng ngắc đến không được.\n\nHắn lại tới gần thưởng thức một hồi trên giường phong quang, cánh tay từ phía sau lưng ôm Vân Ly chuẩn xác không có sai sót mò tới trước ngực đôi kia trên bầu vú, khẽ véo nhẹ mấy lần, sữa liền bắn đi ra, \"Sư tôn làm sao ban ngày liền phát mắc cở?\"\n\nVân Ly nửa nằm lỳ ở trên giường, dưới thân còn ôm viên này trứng, to lớn cái mông bị ép nhổng lên thật cao, một hồi bị nam nhân nắm đến không còn khí lực, vô lực hạ ở trên giường.\n\nTay che chở viên này trứng giãy dụa không được, hắn cũng không biết cùng Phó Lăng nói cái gì, đang chuẩn bị đứng dậy tránh ra hắn tiếp tục ấp trứng, đầu vú bị người mạnh mẽ tóm một hồi.\n\nChiều dài áo mềm nhũn, đã bị tay mắt lanh lẹ Phó Lăng mò tiến vào trong lồng ngực.\n\nVân Ly khóe mắt mang theo lệ, trước ngực ngứa sưng cảm giác một trận tiếp theo một trận, hắn rên rỉ vài tiếng, kiên trì eo đem cái vú chậm rãi ở vỏ trứng ma sát.\n\nSữa tùy ý   chảy xuống, ráp trải giường cũng bị trên dưới hai nơi nước làm cho ướt đẫm, thanh tú cơ quan sinh dục run lên một cái, tục tĩu đến rối tinh rối mù.\n\nHai vú bị trứng đè ép đến thay đổi hoàn toàn hình, Vân Ly hô hấp thoáng gấp gáp, hắn ngửa đầu kêu ra tiếng, \"A Lăng. . . Ha a. . . Thật khó chịu. . .\"\n\nThân thể lại khó chịu lại không có khí lực, Vân Ly vùi ở trong ngực nam nhân nhẹ nhàng thở dốc, sữa lỗ bị sượt đến bắn ra từng luồng từng luồng sữa tươi, mùi sữa thơm phân tán.\n\nTách ra đùi bị nam nhân nắm chặt đến mở rộng ở trên giường, tay từ bắp đùi xuyên qua, rất quen   xoa xoa cái kia mẫn cảm đỏ lên cơ quan sinh dục.\n\n\"A Lăng. . . Ân. . . A Lăng nhanh giúp ta một chút. . .\" Vân Ly kiên trì bộ ngực, đem trứng kẹp ở giữa hai người, hai tay bám ở Phó Lăng trên eo dùng sức ôm chặt.\n\nĐỉnh bị một ngón tay ngăn chặn, bởi trữ không phát ra được đi, bị no đến mức càng đến hồng. Cơ quan sinh dục run lên một cái trên dưới điên, sưng cảm giác chơi đùa hắn sắp thất thần trí.\n\nThân thể không chịu đựng được như vậy kích thích, Vân Ly cả người run rẩy rẩy té ngã ở nam nhân trên đùi, cái vú bên trong cũng tựa hồ có thể cảm giác được sữa lưu động.\n\nHắn lôi kéo đầu vú lại nắm lại kéo, sữa bắn tung tóe một thân, có vẻ cả người dâm đãng cực kỳ, một cái tay không thể tận hứng, lại không thể buông tay ra bên trong trứng.\n\nVân Ly đuôi mắt hiện ra hồng, dục hỏa đưa hắn thiêu đến rối tinh rối mù, dù cho hạ thân bị ngón tay vững vàng ngăn chặn vẫn là không nhịn được tràn ra không ít tuyến dịch.\n\nPhó Lăng gặp thời cơ thành thục cũng không lại làm phiền, y vật cởi ở một bên trực tiếp cưỡi đi tới, khiến người ta bất mãn là, đầu vú bị kẹp ở giữa trứng che cái chặt chẽ.\n\nPhó Lăng nặng nề nuốt dưới thân người cơ quan sinh dục.\n\nTê tê dại dại kích thích từ dưới thân lan tràn đến toàn thân, Vân Ly hét lên một tiếng, bị nuốt cơ quan sinh dục tinh thủy càng chảy càng nhiều, ở trên giường tụ thành một nước tiểu than.\n\nTrên tay không còn khí lực, trứng bị không ngừng lay động cái vú vung đến cơ hồ bay ra ngoài, Vân Ly căng thẳng mũi chân, dùng sức ôm lấy trứng, hắn miễn cưỡng mở mắt ra nhìn trong người Phó Lăng, \"Chậm. . . Chậm một chút. . . Trứng. . .\"\n\nPhó Lăng động tác thậm chí nhanh hơn chút, ôm trứng ném tới một bên, mỗi lần ngồi xuống lúc dùng sức đem mặt vùi vào trước mặt mềm mại hai vú bên trong, thỉnh thoảng cắn đầu vú lại hút lại liếm, thẳng đem Vân Ly hút đến lên tiếng rên rỉ.\n\nCả cây liên tục không ngừng bị nuốt đi vào, Vân Ly lắc mông càng làm trứng ôm trở về, hắn bị nam nhân làm được cả người vô lực, trứng lại suýt chút nữa rớt xuống.\n\nTứ chi mềm nhũn, tay còn đang khẽ run, Vân Ly nức nở ôm chặt trong lòng trứng, \"A Lăng, chậm. . . Chậm một chút. . . Sư tôn không khí lực. . .\"\n\nPhó Lăng cười khẽ một tiếng, xoa xoa trước mặt bầu vú to, \"Sư tôn, đem sữa bắn trong miệng ta. \"\n\nVân Ly nghe lời   dùng sức nặn nặn chính mình đầu vú, hắn sợ sệt chính mình trứng bị quăng xuống, chỉ hy vọng nam nhân uống sữa sẽ chậm một chút.\n\nBị tay nắm đến bên kia đầu vú thoải mái đến co quắp mấy lần, thành cỗ sữa tụ tập cùng một chỗ bắn đi ra, vú trong nháy mắt thông suốt không ít, Vân Ly cả người lại run rẩy động, cao vút   ngâm kêu vài tiếng.\n\nSữa bắn ra ngược lại cũng tinh chuẩn, Phó Lăng uống trọn vẹn xác thực đáp ứng hứa hẹn của mình, tốc độ chậm lại.\n\nNhưng mà nhìn chằm chằm Vân Ly tao lãng   ưỡn ẹo thân thể dáng dấp, ánh mắt dần dần sâu thẳm.\n\nHắn đập Vân Ly eo mềm, đột nhiên đứng dậy lại cực tốc ngồi xuống, khí lực càng đến lớn, hầu như mỗi một lần đều là nguyên cả cây nuốt vào.\n\nTrong người ra một tầng mồ hôi mỏng, mấy sợi tóc dính ở trên mặt, Vân Ly sắc mặt ửng hồng, hồng mềm cái lưỡi ở rên rỉ lúc như ẩn như hiện, câu người cực kỳ.\n\nCơ quan sinh dục bị nuốt trên nuốt vào, mũi chân của hắn căng ra đến mức thẳng tắp trên không trung run rẩy, đuôi mắt ửng hồng ướt át, rất nhanh cắn răng bắn đi ra.\n\nNam nhân vẫn là không buông tha hắn, cơ quan sinh dục lại nuốt xuống, kịch liệt khoái cảm như thủy triều bao phủ tới, con mắt bị nước mắt thấm ướt một mảnh mơ hồ, Vân Ly thoải mái đến thất thần, lại ngăn chặn không được lớn tiếng rên rỉ lên.\n\n\"Ân a. . . Sảng khoái. . . Ha. . . A Lăng. . . Chậm. . . Chậm một chút. . .\"\n\nPhó Lăng cúi người xuống, lè lưỡi liếm liếm Vân Ly trong người chảy ra sữa, chiều dài áo còn đang điên cuồng chập trùng.\n\nLàm được cuối cùng, Vân Ly cũng không biết chính mình cuối cùng bắn mấy lần, lại thoải mái lại mệt, đầu cũng chóng mặt, nằm ở trên giường ngủ thiếp đi.\n\nTrong giấc mộng, cánh tay vẫn cứ không ngừng mà run, nhưng vẫn là ôm thật chặt trong lòng trứng.\n\nPhiên ngoại hai\n\nTrước người nam nhân thân hình cao to, toàn thân trần trụi, phía sau hiện ra đại lượng xúc tu trên không trung lộ liễu, Vân Ly bị bức ép đến lùi ở góc, tâm ầm ầm nhảy lên, \"Tiểu Chương, ngươi trước tiên đem y phục mặc hảo. \"\n\nChương Cảnh cười khẽ một tiếng, lôi kéo Vân Ly cánh tay dắt vào trong ngực.\n\n\"Đừng đụng ta. . .\" Vân Ly đẩy trước người tay của người nọ, giẫy giụa lui về sau một bước, có vài xúc tu thoáng chốc ngăn chặn môi của hắn, khêu lấy khoang miệng, trong miệng chảy ra đại lượng nước dãi.\n\nHắn a a   ngậm lấy xúc tu nghẹn ngào, trước ngực hai vú bị nam nhân giữ cùng nhau gây xích mích, thật nhỏ tua vòi từ nam nhân ngón tay duỗi ra hướng về nhũ lỗ đỉnh, sữa tươi chảy tràn toàn thân đều là, trong người xúc tu lại bắt đầu tranh nhau chen lấn cướp thực mút vào.\n\n\"Mẫu thân, ta đói. \" Chương Cảnh bỏ mặc xúc tu hút Vân Ly sữa tươi, sau đó bốc lên cằm của hắn, nhìn từ trên cao xuống mà nhìn xuống Vân Ly bị đùa bỡn đến không được dáng dấp.\n\nHắn rút đi tràn ngập ở Vân Ly khoang miệng xúc tu, nhéo càm cáp thô bạo   chặn lại đi tới, xúc tu quấn chặt eo nhỏ đi phía trước lôi, hai thân thể của con người chặt chẽ   dính vào cùng nhau.\n\n\"Tiểu Chương, không muốn. . . Ta là cha ngươi a. . .\" Vân Ly nức nở đánh nam nhân vai, hai vú vung một cái vung một cái tràn ra nước, tao biết dùng người mấy cái phát cứng ngắc.\n\nChương Cảnh cười nhạo một tiếng, xúc tu tùy theo nâng Vân Ly cái vú chen lấn, sữa tươi lại thành cỗ   dâng trào ra, \"Mẫu thân, ta chỉ là muốn bú sữa mẹ. \"\n\nCảm giác được cẳng chân bị mấy cây tráng kiện xúc tu leo lên mà lên, Vân Ly run rẩy kẹp chặt hai chân, cẩn thận tỉ mỉ hướng về đạp lên gót chân lui về phía sau, hắn nhìn nam nhân sâu thẳm con ngươi, lại ngừng lại động tác giơ cao cái vú.\n\n\"Kia. . . Vậy ngươi bú sữa mẹ, đừng đụng ta. . .\"\n\nHắn đỏ mắt chen lấn hai vú của chính mình, từ lâu chín đầu vú như là nho như thế dâm mị mê người, màu trắng sữa tươi lách tách treo ở nhũ lỗ thẳng chảy xuống.\n\nTo lớn nhũ thịt phủ kín ám muội vết đỏ, có đồ đệ, có sư huynh, còn có con trai của hắn. . .\n\nKhi hắn hướng về cốc vắt sữa thời điểm, hai chân lại bị hung hăng   gỡ bỏ, nhếch lên cơ quan sinh dục tích tí tách chảy ra tuyến dịch, Chương Cảnh lại nắm bắt môi của hắn, đầu lưỡi quấy chuẩn bị khoang miệng cuốn đi nước bọt, \"A Ly tao mấy cái ngứa đi. \"\n\n\"Thực sự là đủ tao, quay về con trai của chính mình đều có thể động dục. \"\n\n\"Không. . .\"\n\nKhông phải như vậy.\n\nVân Ly nức nở nhẹ nhàng lắc đầu, đầu vú bị hút khoái cảm để hắn lại không nhịn được rên rỉ, trong miệng nước dãi phun đầy, thân thể run rẩy đến không được, \"Ân a. . .\"\n\nHắn nhẹ nhàng giãy dụa mấy lần, hai chân lại bị xúc tu quấn quít lấy cổ chân, phân đến mở thêm, xúc tu đùa bỡn hắn cơ quan sinh dục, đầu óc bị tình dục hành hạ đến có phần thần trí không rõ.\n\nVui thích nước mắt phủ kín viền mắt, trên mặt phủ kín đỏ mặt, hắn hoàn toàn quên trước mặt nam nhân thân phận, lắc mông đi phía trước di động, cái vú sượt Chương Cảnh mặt lung tung xoa xoa, \"Ân. . . Hút hút một cái. . .\"\n\nĐầu vú bị người cắn vào nghiền nát, kích thích sữa lại không được   ra bên ngoài tuôn ra, xúc tu khuấy động lấy cơ quan sinh dục chậm rãi quấn chặt lại nhất thời thả lỏng, Vân Ly bị chơi đến nói không ra lời, môi đỏ hé, gấp gáp   thở hổn hển.\n\nMột cái xúc tu ngăn chặn linh khẩu, trọc dịch lưu không ra, cơ quan sinh dục bị dằn vặt   sung huyết đỏ lên, hắn cong lên cái mông chuyển qua Chương Cảnh trong lồng ngực, đưa tay ôm nam nhân eo, trên vai oa sượt sượt, \"Đừng bắt nạt ta. . . Không muốn. . .\"\n\n\"Mẫu thân ngoan, có muốn ta giúp ngươi một tay hay không?\"\n\nVân Ly đầu óc không rõ ràng lắm, hắn lung tung nghênh hợp với nam nhân nói, eo nhỏ vào trong ngực lắc lắc, khắp nơi điểm nổi lên dục hỏa.\n\nHắn bị nam nhân đẩy ngã xuống trên giường, sợi tóc bị sữa ngâm đến toả sáng, sưng đỏ môi khẽ nhếch, tiết ra một tiếng lại một thanh phóng đãng rên rỉ.\n\nCơ quan sinh dục bị ngăn chặn run lên một cái mà bốc lên bọt nước, nhìn đáng thương cực kỳ, Chương Cảnh hầu như mới vừa đem xúc tu thu hồi, một ít cỗ tinh dịch đã bị phun lưu ở cán, đi xuống lại đầy tràn giữa hai chân, tục tĩu không thể tả.\n\nHai vú cũng bị tóm làm   tràn ra sữa tươi, ba chỗ đều ở chảy ra dâm thủy, nổi bật lên Vân Ly lại dâm đãng lại đáng yêu.\n\nHạ thân bị nuốt hết trong nháy mắt, Vân Ly siết chặt ráp trải giường không khống chế được   dâm khiếu một tiếng, chân run rẩy lợi hại, cái vú cũng co quắp kéo đầu vú.\n\nChương Cảnh đung đưa phần eo, không ngừng trên dưới không ngừng chập trùng, không có chương pháp gì động tác trêu đến dưới thân người kia nhịn không được âm thanh rên rỉ, khóe mắt tích đầy lệ dịch chảy xuống thệ, Vân Ly không thấy rõ cái gì, hắn như là lạc đường thuyền nhỏ, bị sóng lớn nắm bắt mông đánh.\n\nChe ngợp bầu trời khoái cảm đưa hắn nuốt hết, hạ thân cơ quan sinh dục bị thao đến đỏ lên, núm vú cũng bị xúc tu qua lại gảy, toàn thân mẫn cảm địa phương bị Chương Cảnh vững vàng nắm giữ, hắn ngâm ở trong dục vọng trầm luân, mở đùi mặc cho nam nhân đùa bỡn.\n\nBờ môi bị ấm áp đặt lên, Vân Ly gần như thuận theo   mở ra môi, hồng mềm cái lưỡi duỗi ra cùng nam nhân tại ngoài môi quấn làm, chà chà tiếng nước vang vọng, nước dãi tràn đầy mà ra lại bị nam nhân cắn môi toàn bộ liếm láp.\n\nHai người hôn hồi lâu, mãi đến tận hắn thở không nổi lúc, Chương Cảnh mới lại đứng dậy tiếp tục bất chấp   chập trùng, miệng hầu như không nghỉ thời gian nào lại bắt đầu dâm khiếu, hắn bị kích thích đến hai chân run rẩy, mũi chân căng thẳng trên không trung múa lên.\n\nTần suất càng nhanh hơn, ngập đầu khoái cảm tùy theo mà đến, Vân Ly cắn môi bắn ra ngoài, trước mắt của hắn hoàn toàn mơ hồ, đầu óc trống không, hầu như còn không có phục hồi tinh thần lại lại ngay sau đó bị dắt vào bể dục.\n\n. . .\n\nKhi hắn sắp bất tỉnh ngủ thiếp đi lúc, hoảng hốt trong lúc đó chỉ nhớ rõ chính mình khóc nức nở xin tha cùng liên tiếp đối với dục vọng thỏa hiệp. . ."}];
+    let currentChapIndex = 0;
+    let currentFontSize = 1.2;
+
+    // Tùy Chỉnh Reader Settings
+    function changeFontSize(delta) {
+        currentFontSize = Math.max(0.9, Math.min(1.8, currentFontSize + delta));
+        const contentElem = document.getElementById('story-content-body');
+        if (contentElem) {
+            contentElem.style.fontSize = currentFontSize + 'rem';
+        }
+        localStorage.setItem('reader_font_size', currentFontSize);
+    }
+
+    function changeFontFamily(fontVal) {
+        const contentElem = document.getElementById('story-content-body');
+        if (contentElem) {
+            contentElem.style.fontFamily = fontVal;
+        }
+        localStorage.setItem('reader_font_family', fontVal);
+    }
+
+    function setTheme(themeName) {
+        document.body.className = 'theme-' + themeName;
+        document.querySelectorAll('.theme-circle').forEach(el => el.classList.remove('active'));
+        const activeCircle = document.querySelector('.theme-circle.' + themeName);
+        if (activeCircle) activeCircle.classList.add('active');
+        localStorage.setItem('reader_theme', themeName);
+    }
+
+    function loadReaderSettings() {
+        const savedSize = localStorage.getItem('reader_font_size');
+        const savedFont = localStorage.getItem('reader_font_family');
+        const savedTheme = localStorage.getItem('reader_theme');
+
+        if (savedSize) {
+            currentFontSize = parseFloat(savedSize);
+            const contentElem = document.getElementById('story-content-body');
+            if (contentElem) contentElem.style.fontSize = currentFontSize + 'rem';
+        }
+
+        if (savedFont) {
+            const contentElem = document.getElementById('story-content-body');
+            if (contentElem) contentElem.style.fontFamily = savedFont;
+            const fontSelect = document.querySelector('.font-select');
+            if (fontSelect) fontSelect.value = savedFont;
+        }
+
+        if (savedTheme) {
+            setTheme(savedTheme);
+        }
+    }
+
+    function updateNavButtons() {
+        const prevBtn = document.getElementById('prevChapBtn');
+        const nextBtn = document.getElementById('nextChapBtn');
+        if (prevBtn) prevBtn.disabled = (currentChapIndex <= 0);
+        if (nextBtn) nextBtn.disabled = (currentChapIndex >= storyData.length - 1);
+    }
+
+    function switchChapter(btn, cId) {
+        document.querySelectorAll('.chapter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const foundIndex = storyData.findIndex(item => item.id === cId);
+        if(foundIndex !== -1) {
+            currentChapIndex = foundIndex;
+            document.getElementById('story-content-body').textContent = storyData[foundIndex].content;
+            updateNavButtons();
+        }
+    }
+
+    function navigateChapter(direction) {
+        const newIndex = currentChapIndex + direction;
+        if (newIndex >= 0 && newIndex < storyData.length) {
+            const targetChap = storyData[newIndex];
+            const targetBtn = document.querySelector(`.chapter-btn[data-chap-id="${targetChap.id}"]`);
+            if (targetBtn) {
+                switchChapter(targetBtn, targetChap.id);
+                scrollToNav();
+            }
+        }
+    }
+
+    function scrollToNav() {
+        const navElem = document.getElementById('chapterNav');
+        if (navElem) {
+            navElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    function initBookmark() {
+        const bookmarks = JSON.parse(localStorage.getItem('story_bookmarks') || '[]');
+        const btn = document.querySelector('.bookmark-btn');
+        if (btn && bookmarks.includes(storyId)) {
+            btn.classList.add('bookmarked');
+            btn.querySelector('.bm-text').textContent = 'Đã Bookmark';
+        }
+    }
+
+    function toggleBookmark() {
+        let bookmarks = JSON.parse(localStorage.getItem('story_bookmarks') || '[]');
+        const btn = document.querySelector('.bookmark-btn');
+
+        if (bookmarks.includes(storyId)) {
+            bookmarks = bookmarks.filter(id => id !== storyId);
+            btn.classList.remove('bookmarked');
+            btn.querySelector('.bm-text').textContent = 'Bookmark';
+        } else {
+            bookmarks.push(storyId);
+            btn.classList.add('bookmarked');
+            btn.querySelector('.bm-text').textContent = 'Đã Bookmark';
+        }
+        localStorage.setItem('story_bookmarks', JSON.stringify(bookmarks));
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initBookmark();
+        updateNavButtons();
+        loadReaderSettings();
+    });
+</script>
+
+</body>
+</html>
