@@ -165,6 +165,36 @@
             border-color: var(--soft-orange);
         }
 
+        /* Nút 4: Đọc Online - Màu Xanh Mint */
+        .btn-read {
+            background-color: #f0faf7;
+            color: #319795;
+            border: 1.5px solid #c6f6d5;
+        }
+
+        .btn-read:hover {
+            background-color: #319795;
+            color: #ffffff;
+            transform: translateY(-4px);
+            box-shadow: 0 14px 30px rgba(49, 151, 149, 0.35);
+            border-color: #319795;
+        }
+
+        /* Nút 5: Admin Đọc Online - Màu Tím Nhẹ */
+        .btn-admin-read {
+            background-color: #f8f5ff;
+            color: #805ad5;
+            border: 1.5px solid #e9d8fd;
+        }
+
+        .btn-admin-read:hover {
+            background-color: #805ad5;
+            color: #ffffff;
+            transform: translateY(-4px);
+            box-shadow: 0 14px 30px rgba(128, 90, 213, 0.35);
+            border-color: #805ad5;
+        }
+
         .btn-icon {
             font-size: 1.2rem;
             line-height: 1;
@@ -218,6 +248,18 @@
             <a href="https://phamnhadoan.github.io/note/" class="btn-link btn-note">
                 <span class="btn-icon">>⩊<</span>
                 <span>Nhật Ký Đọc Sách</span>
+                <svg class="arrow-svg" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+
+            <a href="https://phamnhadoan.github.io/read/index.html" class="btn-link btn-read">
+                <span class="btn-icon">>⩊<</span>
+                <span>Đọc Online</span>
+                <svg class="arrow-svg" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+
+            <a href="https://phamnhadoan.github.io/read/index5.html" class="btn-link btn-admin-read">
+                <span class="btn-icon">>⩊<</span>
+                <span>Admin Đọc Online</span>
                 <svg class="arrow-svg" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
         </nav>
