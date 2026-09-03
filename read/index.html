@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đọc online (truyện sủng công, hstc, công khống)</title>
+    <title>Đọc online</title>
     <!-- Font chữ tròn xinh xắn, dịu mắt -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -197,16 +197,24 @@
             gap: 20px;
         }
 
-        .story-card {
-            background: var(--card-bg);
-            border-radius: 22px;
-            padding: 20px;
-            border: 1.5px solid var(--border-line);
-            display: grid;
-            grid-template-columns: 120px 1fr;
-            gap: 18px;
-            align-items: start;
-        }
+       /* Áp dụng cho các lớp khung (.main-card, .story-card, .post-card, .cp-container) */
+.story-card {
+    background: var(--card-bg);
+    border-radius: 22px;
+    padding: 20px;
+    
+    /* 1. Viền nét liền mỏng ở ngoài */
+    border: 1.5px solid var(--border-line);
+    
+    /* 2. Viền nét chấm đứt (dotted) ở trong nằm cách viền ngoài một khoảng */
+    outline: 2px dotted #f0e2d8;
+    outline-offset: -8px; /* Đẩy viền dotted thụt vào bên trong */
+
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 18px;
+    align-items: start;
+}
 
         @media (max-width: 520px) {
             .story-card {
