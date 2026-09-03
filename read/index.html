@@ -44,9 +44,9 @@
             color: var(--warm-brown);
             min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            padding: 25px 15px;
+            padding: 35px 15px;
             /* Họa tiết chấm bi chìm nhẹ nhàng */
             background-image: radial-gradient(#ecc7b7 1.2px, transparent 1.2px);
             background-size: 24px 24px;
@@ -55,7 +55,7 @@
         .main-card {
             background: var(--card-bg);
             width: 100%;
-            max-width: 460px;
+            max-width: 480px;
             border-radius: 28px;
             padding: 36px 28px;
             box-shadow: var(--shadow-soft);
@@ -64,6 +64,7 @@
             outline-offset: -8px;
             text-align: center;
             position: relative;
+            margin-bottom: 40px;
         }
 
         /* Huy hiệu nhỏ trang trí */
@@ -187,6 +188,119 @@
             border-top: 1px dashed #f0e2d8;
             padding-top: 18px;
         }
+
+        /* --- STYLES PHẦN TRUYỆN MỚI CẬP NHẬT --- */
+        .updates-container {
+            width: 100%;
+            max-width: 680px;
+        }
+
+        .updates-title {
+            font-family: 'Comfortaa', cursive;
+            font-size: 1.25rem;
+            color: var(--warm-brown);
+            margin-bottom: 20px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        #story-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .story-card {
+            background: var(--card-bg);
+            border-radius: 22px;
+            padding: 20px;
+            border: 1.5px solid var(--border-line);
+            box-shadow: var(--shadow-soft);
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 18px;
+            align-items: start;
+            transition: all 0.3s ease;
+        }
+
+        .story-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(232, 180, 160, 0.3);
+        }
+
+        @media (max-width: 520px) {
+            .story-card {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .cover-wrapper {
+            width: 100%;
+            height: 160px;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--border-line);
+            background: #fff;
+        }
+
+        .cover-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .story-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .story-name {
+            font-family: 'Comfortaa', cursive;
+            font-size: 1.15rem;
+            color: var(--coral-text);
+            font-weight: 700;
+        }
+
+        .story-author {
+            font-size: 0.88rem;
+            color: var(--blue-text);
+            font-weight: 700;
+        }
+
+        .story-note {
+            font-size: 0.88rem;
+            color: var(--text-light);
+            background: var(--amber-bg);
+            border-left: 3px solid var(--amber-border);
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        .read-now-btn {
+            align-self: flex-start;
+            margin-top: 10px;
+            background-color: var(--coral-bg);
+            color: var(--coral-text);
+            border: 1.5px solid var(--coral-border);
+            text-decoration: none;
+            padding: 7px 16px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            transition: all 0.25s ease;
+        }
+
+        .read-now-btn:hover {
+            background-color: var(--coral-text);
+            color: #ffffff;
+            box-shadow: 0 8px 18px rgba(224, 109, 83, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -224,6 +338,15 @@
             PhamNhaDoan &bull; Reading Corner
         </footer>
     </main>
+
+    <!-- KHO TRUYỆN MỚI CẬP NHẬT -->
+    <section class="updates-container">
+        <h2 class="updates-title"><span>♥</span> Những Truyện Mới Cập Nhật <span>♥</span></h2>
+
+        <div id="story-list">
+            <!-- CÁC BÀI ĐĂNG TỪ INDEX4 SẼ TỰ ĐỘNG CHÈN LÊN TRÊN ĐÂY -->
+        </div>
+    </section>
 
 </body>
 </html>
