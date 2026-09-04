@@ -201,8 +201,8 @@
     // Hàm trích xuất dữ liệu mảng chương thông minh từ file lớn
     // ✅ Đoạn code mới quét mảng chuẩn xác 100% không lo lỗi định dạng
 // Hàm trích xuất dữ liệu mảng chương siêu việt (chống mọi loại lỗi định dạng/Regex)
+// ✅ Hàm quét dữ liệu mảng chương bằng thuật toán đếm ngoặc (chống lỗi file dài)
 function extractChaptersData(html) {
-    // 1. Tìm vị trí khai báo biến mảng (storyData, chapters, chapterList)
     const varMatch = html.match(/(?:const|let|var)\s+(storyData|chapters|chapterList)\s*=\s*\[/);
     if (!varMatch) return null;
 
@@ -210,7 +210,6 @@ function extractChaptersData(html) {
     const startIndex = html.indexOf('[', varMatch.index);
     if (startIndex === -1) return null;
 
-    // 2. Thuật toán đếm cặp ngoặc [] để lấy chính xác mảng JSON bất chấp xuống dòng
     let bracketCount = 0;
     let endIndex = -1;
     let inString = false;
@@ -220,7 +219,6 @@ function extractChaptersData(html) {
         const char = html[i];
         const prevChar = i > 0 ? html[i - 1] : '';
 
-        // Xử lý chuỗi (tránh đếm ngoặc nằm bên trong nội dung truyện)
         if ((char === '"' || char === "'" || char === '`') && prevChar !== '\\') {
             if (!inString) {
                 inString = true;
@@ -249,24 +247,13 @@ function extractChaptersData(html) {
 
     try {
         const parsedData = JSON.parse(jsonString);
-        return {
-            data: parsedData,
-            rawMatch: rawMatch,
-            varName: varName
-        };
+        return { data: parsedData, rawMatch: rawMatch, varName: varName };
     } catch (e) {
-        console.error("Lỗi parse JSON:", e);
-        // Trường hợp file cũ bị dán thiếu ngoặc hoặc lỗi ký tự đặc biệt
         try {
-            // Thử eval an toàn nếu JSON.parse bị nghẽn do ký tự xuống dòng thô
             const evalData = Function('"use strict";return (' + jsonString + ')')();
-            return {
-                data: evalData,
-                rawMatch: rawMatch,
-                varName: varName
-            };
+            return { data: evalData, rawMatch: rawMatch, varName: varName };
         } catch (errEval) {
-            console.error("Lỗi Eval:", errEval);
+            console.error("Lỗi parse:", errEval);
         }
     }
     return null;
