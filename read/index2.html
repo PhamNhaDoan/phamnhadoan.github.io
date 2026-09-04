@@ -633,28 +633,41 @@
             background: #3b535e;
         }
 
-        .cbox-chat-section {
-            border-top: 1px dashed var(--border-dash);
-            padding-top: 25px;
-            margin-top: 30px;
-        }
+       .cbox-chat-section {
+    border-top: 1px dashed var(--border-dash);
+    padding-top: 25px;
+    margin-top: 30px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
 
-        .cbox-title {
-            font-size: 1.25rem;
-            color: var(--accent-green);
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-        body.theme-dark .cbox-title { color: #8ab4f8; }
+.cbox-title {
+    font-size: 1.25rem;
+    color: var(--accent-green);
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+body.theme-dark .cbox-title { color: #8ab4f8; }
 
-        .cbox-frame-wrapper {
-            background: #fff;
-            padding: 6px;
-            border-radius: 12px;
-            border: 1px dashed var(--border-dash);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            overflow: hidden;
-        }
+.cbox-frame-wrapper {
+    background: #fff;
+    padding: 6px;
+    border-radius: 12px;
+    border: 1px dashed var(--border-dash);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    overflow: hidden;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.cbox-frame-wrapper iframe {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block;
+    box-sizing: border-box;
+}
     </style>
 </head>
 <body class="theme-cream">
