@@ -199,73 +199,67 @@
     }
 
     // ✅ Thuật toán đếm ngoặc siêu chuẩn - xử lý chính xác file truyện 10, 30 đến 130+ chương
-    function extractChaptersData(html) {
-        const varMatch = html.match(/(?:const|let|var)\s+(storyData|chapters|chapterList)\s*=\s*\[/);
-        if (!varMatch) return null;
+   // ✅ Hàm cắt mảng chương bằng indexOf - Chấp mọi file truyện dài 50-500 chương
+function extractChaptersData(html) {
+    // 1. Định vị từ khóa khai báo mảng
+    const varMatch = html.match(/(?:const|let|var)\s+(storyData|chapters|chapterList)\s*=\s*/);
+    if (!varMatch) return null;
 
-        const varName = varMatch[1];
-        const startIndex = html.indexOf('[', varMatch.index);
-        if (startIndex === -1) return null;
+    const varName = varMatch[1];
+    const startIndex = html.indexOf('[', varMatch.index);
+    if (startIndex === -1) return null;
 
-        let bracketCount = 0;
-        let endIndex = -1;
-        let inString = false;
-        let quoteChar = '';
+    // 2. Thuật toán đếm ngoặc bỏ qua chuỗi
+    let bracketCount = 0;
+    let endIndex = -1;
+    let inString = false;
+    let quoteChar = '';
 
-        for (let i = startIndex; i < html.length; i++) {
-            const char = html[i];
-            const prevChar = i > 0 ? html[i - 1] : '';
+    for (let i = startIndex; i < html.length; i++) {
+        const char = html[i];
+        const prevChar = i > 0 ? html[i - 1] : '';
 
-            // Bỏ qua các dấu ngoặc vuông nằm bên trong chuỗi văn bản của truyện
-            if ((char === '"' || char === "'" || char === '`') && prevChar !== '\\') {
-                if (!inString) {
-                    inString = true;
-                    quoteChar = char;
-                } else if (char === quoteChar) {
-                    inString = false;
-                }
-            }
-
+        if ((char === '"' || char === "'" || char === '`') && prevChar !== '\\') {
             if (!inString) {
-                if (char === '[') bracketCount++;
-                else if (char === ']') {
-                    bracketCount--;
-                    if (bracketCount === 0) {
-                        endIndex = i;
-                        break;
-                    }
+                inString = true;
+                quoteChar = char;
+            } else if (char === quoteChar) {
+                inString = false;
+            }
+        }
+
+        if (!inString) {
+            if (char === '[') bracketCount++;
+            else if (char === ']') {
+                bracketCount--;
+                if (bracketCount === 0) {
+                    endIndex = i;
+                    break;
                 }
             }
         }
-
-        if (endIndex === -1) return null;
-
-        const jsonString = html.substring(startIndex, endIndex + 1);
-        const rawMatch = `${varMatch[0].split('=')[0].trim()} = ${jsonString};`;
-
-        try {
-            const parsedData = JSON.parse(jsonString);
-            return {
-                data: parsedData,
-                rawMatch: rawMatch,
-                varName: varName
-            };
-        } catch (e) {
-            console.error("Lỗi parse JSON:", e);
-            try {
-                // Thử eval an toàn nếu JSON.parse bị nghẽn do ký tự xuống dòng đặc biệt
-                const evalData = Function('"use strict";return (' + jsonString + ')')();
-                return {
-                    data: evalData,
-                    rawMatch: rawMatch,
-                    varName: varName
-                };
-            } catch (errEval) {
-                console.error("Lỗi Eval:", errEval);
-            }
-        }
-        return null;
     }
+
+    if (endIndex === -1) return null;
+
+    const jsonString = html.substring(startIndex, endIndex + 1);
+    const rawMatch = html.substring(varMatch.index, endIndex + 1) + ';';
+
+    try {
+        // Thử parse JSON
+        const parsedData = JSON.parse(jsonString);
+        return { data: parsedData, rawMatch: rawMatch, varName: varName };
+    } catch (e) {
+        try {
+            // Thử Eval an toàn nếu văn bản chứa ký tự xuống dòng thô (\n)
+            const evalData = Function('"use strict";return (' + jsonString + ')')();
+            return { data: evalData, rawMatch: rawMatch, varName: varName };
+        } catch (errEval) {
+            console.error("Lỗi parse mảng:", errEval);
+        }
+    }
+    return null;
+}
 
     async function handleAddChapter(e) {
         e.preventDefault();
