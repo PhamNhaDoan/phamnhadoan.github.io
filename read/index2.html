@@ -171,7 +171,7 @@
         </div>
 
         <div class="form-group">
-            <label>Hoặc Dán URL Bìa Truyện (không có thì dán https://picsum.photos/200/300 vô cho đẹp</label>
+            <label>Hoặc Dán URL Bìa Truyện (không có thì dán https://picsum.photos/200/300 vô cho đẹp)</label>
             <input type="text" id="coverUrl" placeholder="https://domain.com/anh-bia.jpg">
         </div>
 
@@ -445,7 +445,7 @@
             color: #555;
             font-style: italic;
             margin-top: 6px;
-             white-space: pre-wrap;
+            white-space: pre-wrap;
             margin-bottom: 25px;
             line-height: 1.65;
         }
@@ -566,7 +566,7 @@
             border-color: var(--accent-green);
         }
 
-      .story-content {
+        .story-content {
             font-size: 1.2rem;
             line-height: 1.65;
             text-align: justify;
@@ -633,28 +633,23 @@
             background: #3b535e;
         }
 
-        .cbox-chat-section {
+        /* Phần bình luận Facebook */
+        .fb-comments-section {
             border-top: 1px dashed var(--border-dash);
             padding-top: 25px;
             margin-top: 30px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 12px;
         }
 
-        .cbox-title {
+        .fb-comments-title {
             font-size: 1.25rem;
             color: var(--accent-green);
             margin-bottom: 15px;
             font-weight: 700;
         }
-        body.theme-dark .cbox-title { color: #8ab4f8; }
-
-        .cbox-frame-wrapper {
-            background: #fff;
-            padding: 6px;
-            border-radius: 12px;
-            border: 1px dashed var(--border-dash);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            overflow: hidden;
-        }
+        body.theme-dark .fb-comments-title { color: #8ab4f8; }
     </style>
 </head>
 <body class="theme-cream">
@@ -722,22 +717,18 @@
             <button class="nav-action-btn" id="nextChapBtn" onclick="navigateChapter(1)">Chương sau →</button>
         </div>
 
-        <!-- Khung Cbox Chat -->
-        <div class="cbox-chat-section">
-            <h3 class="cbox-title">Trò Chuyện & Bình Luận Công Khai</h3>
-            <div class="cbox-frame-wrapper">
-                <iframe src="https://www5.cbox.ws/box/?boxid=966044&boxtag=ScPKVa" 
-                        width="100%" 
-                        height="450" 
-                        allowtransparency="yes" 
-                        allow="autoplay" 
-                        frameborder="0" 
-                        marginheight="0" 
-                        marginwidth="0" 
-                        scrolling="auto" 
-                        style="border: none; border-radius: 8px;">
-                </iframe>
-            </div>
+        <!-- Khung Bình Luận Facebook -->
+        <div class="fb-comments-section">
+            <h3 class="fb-comments-title">Bình Luận</h3>
+            <div id="fb-root"></div>
+            <script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v18.0"><\/script>
+            <div class="fb-comments" id="fb-comment-box" data-width="100%" data-numposts="5"></div>
+            <script>
+              (function() {
+                var currentUrl = window.location.protocol + '//' + window.location.host + window.location.pathname;
+                document.getElementById('fb-comment-box').setAttribute('data-href', currentUrl);
+              })();
+            <\/script>
         </div>
     </article>
 </div>
