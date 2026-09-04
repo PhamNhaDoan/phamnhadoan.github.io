@@ -198,7 +198,7 @@
         return 'read/' + url;
     }
 
-    // ✅ Thuật toán đếm cặp ngoặc siêu tốc - Đọc chính xác file dài 10 đến 500+ chương
+    // ✅ Thuật toán đếm cặp ngoặc [] chuẩn xác - Đọc ngon lành file 10, 50 đến 500+ chương
     function extractChaptersData(html) {
         const varMatch = html.match(/(?:const|let|var)\s+(storyData|chapters|chapterList)\s*=\s*/);
         if (!varMatch) return null;
@@ -250,7 +250,7 @@
                 const evalData = Function('"use strict";return (' + jsonString + ')')();
                 return { data: evalData, rawMatch: rawMatch, varName: varName };
             } catch (errEval) {
-                console.error("Lỗi parse:", errEval);
+                console.error("Lỗi parse mảng:", errEval);
             }
         }
         return null;
@@ -301,11 +301,11 @@
                 content: newContent
             });
 
-            // Ghi đè lại mảng dữ liệu đã thêm chương mới
+            // Ghi đè mảng dữ liệu đã chèn chương mới
             const updatedStoryDataStr = `const storyData = ${JSON.stringify(chapters)};`;
             htmlContent = htmlContent.replace(extracted.rawMatch, updatedStoryDataStr);
 
-            // Tự động dựng lại toàn bộ dàn nút bấm mục lục
+            // Tự động dựng lại dàn nút bấm mục lục
             const allChapBtnsHtml = chapters.map((ch, idx) => 
                 `<button class="chapter-btn ${idx === 0 ? 'active' : ''}" data-chap-id="${ch.id}" onclick="switchChapter(this, '${ch.id}')">${escapeHtml(ch.title)}</button>`
             ).join('\n                ');
