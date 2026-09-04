@@ -143,7 +143,7 @@
         </div>
         <div class="form-group">
             <label>Link Truyện Cần Chỉnh Sửa</label>
-            <input type="text" id="storyUrl" placeholder="Ví dụ: https://phamnhadoan.github.io/read/giam-cam-ngay.html" required>
+            <input type="text" id="storyUrl" placeholder="Ví dụ: https://phamnhadoan.github.io/read/hoan-nghenh-nghe-dai-hoa-bien-quy.html" required>
         </div>
     </div>
 
@@ -198,7 +198,7 @@
         return 'read/' + url;
     }
 
-    // ✅ Thuật toán đếm cặp ngoặc [] chuẩn xác - Đọc ngon lành file 10, 50 đến 500+ chương
+    // Thuật toán đếm ngoặc [] chuẩn xác - Đọc ngon lành mọi file từ 3 đến vài trăm chương
     function extractChaptersData(html) {
         const varMatch = html.match(/(?:const|let|var)\s+(storyData|chapters|chapterList)\s*=\s*/);
         if (!varMatch) return null;
