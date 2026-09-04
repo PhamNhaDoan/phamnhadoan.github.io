@@ -198,72 +198,69 @@
         return 'read/' + url;
     }
 
-    // Hàm trích xuất dữ liệu mảng chương thông minh từ file lớn
-    // ✅ Đoạn code mới quét mảng chuẩn xác 100% không lo lỗi định dạng
-// Hàm trích xuất dữ liệu mảng chương siêu việt (chống mọi loại lỗi định dạng/Regex)
-// ✅ Hàm quét dữ liệu mảng chương bằng thuật toán đếm ngoặc (chống lỗi file dài)
-function extractChaptersData(html) {
-    const varMatch = html.match(/(?:const|let|var)\s+(storyData|chapters|chapterList)\s*=\s*\[/);
-    if (!varMatch) return null;
+    // Hàm trích xuất dữ liệu mảng chương siêu việt bằng thuật toán đếm ngoặc []
+    function extractChaptersData(html) {
+        const varMatch = html.match(/(?:const|let|var)\s+(storyData|chapters|chapterList)\s*=\s*\[/);
+        if (!varMatch) return null;
 
-    const varName = varMatch[1];
-    const startIndex = html.indexOf('[', varMatch.index);
-    if (startIndex === -1) return null;
+        const varName = varMatch[1];
+        const startIndex = html.indexOf('[', varMatch.index);
+        if (startIndex === -1) return null;
 
-    let bracketCount = 0;
-    let endIndex = -1;
-    let inString = false;
-    let quoteChar = '';
+        let bracketCount = 0;
+        let endIndex = -1;
+        let inString = false;
+        let quoteChar = '';
 
-    for (let i = startIndex; i < html.length; i++) {
-        const char = html[i];
-        const prevChar = i > 0 ? html[i - 1] : '';
+        for (let i = startIndex; i < html.length; i++) {
+            const char = html[i];
+            const prevChar = i > 0 ? html[i - 1] : '';
 
-        if ((char === '"' || char === "'" || char === '`') && prevChar !== '\\') {
-            if (!inString) {
-                inString = true;
-                quoteChar = char;
-            } else if (char === quoteChar) {
-                inString = false;
+            if ((char === '"' || char === "'" || char === '`') && prevChar !== '\\') {
+                if (!inString) {
+                    inString = true;
+                    quoteChar = char;
+                } else if (char === quoteChar) {
+                    inString = false;
+                }
             }
-        }
 
-        if (!inString) {
-            if (char === '[') bracketCount++;
-            else if (char === ']') {
-                bracketCount--;
-                if (bracketCount === 0) {
-                    endIndex = i;
-                    break;
+            if (!inString) {
+                if (char === '[') bracketCount++;
+                else if (char === ']') {
+                    bracketCount--;
+                    if (bracketCount === 0) {
+                        endIndex = i;
+                        break;
+                    }
                 }
             }
         }
-    }
 
-    if (endIndex === -1) return null;
+        if (endIndex === -1) return null;
 
-    const jsonString = html.substring(startIndex, endIndex + 1);
-    const rawMatch = `${varMatch[0].split('=')[0].trim()} = ${jsonString};`;
+        const jsonString = html.substring(startIndex, endIndex + 1);
+        const rawMatch = `${varMatch[0].split('=')[0].trim()} = ${jsonString};`;
 
-    try {
-        const parsedData = JSON.parse(jsonString);
-        return { data: parsedData, rawMatch: rawMatch, varName: varName };
-    } catch (e) {
         try {
-            const evalData = Function('"use strict";return (' + jsonString + ')')();
-            return { data: evalData, rawMatch: rawMatch, varName: varName };
-        } catch (errEval) {
-            console.error("Lỗi parse:", errEval);
+            const parsedData = JSON.parse(jsonString);
+            return { data: parsedData, rawMatch: rawMatch, varName: varName };
+        } catch (e) {
+            try {
+                const evalData = Function('"use strict";return (' + jsonString + ')')();
+                return { data: evalData, rawMatch: rawMatch, varName: varName };
+            } catch (errEval) {
+                console.error("Lỗi parse:", errEval);
+            }
         }
+        return null;
     }
-    return null;
-}
 
     async function handleAddChapter(e) {
         e.preventDefault();
         const statusMsg = document.getElementById('statusMsg');
         statusMsg.style.color = '#333';
-        statusMsg.textContent = 'Đang đọc dữ liệu 130 chương từ GitHub...';
+        statusMsg.textContent = 'Đang đọc dữ liệu các chương từ GitHub...';
 
         const token = document.getElementById('githubToken').value.trim();
         const storyUrl = document.getElementById('storyUrl').value.trim();
@@ -305,7 +302,7 @@ function extractChaptersData(html) {
             });
 
             // Ghi đè lại mảng dữ liệu đã thêm chương mới
-            const updatedStoryDataStr = `const storyData = ${JSON.stringify(chapters)};`;
+            const updatedStoryDataStr = `const ${extracted.varName} = ${JSON.stringify(chapters)};`;
             htmlContent = htmlContent.replace(extracted.rawMatch, updatedStoryDataStr);
 
             // Thêm nút chương mới vào thanh chuyển chương
@@ -391,7 +388,7 @@ function extractChaptersData(html) {
 
             chapters.splice(targetIndex, 1);
 
-            const updatedStoryDataStr = `const storyData = ${JSON.stringify(chapters)};`;
+            const updatedStoryDataStr = `const ${extracted.varName} = ${JSON.stringify(chapters)};`;
             htmlContent = htmlContent.replace(extracted.rawMatch, updatedStoryDataStr);
 
             const newChapBtnsHtml = chapters.map((ch, idx) => 
