@@ -200,21 +200,77 @@
 
     // Hàm trích xuất dữ liệu mảng chương thông minh từ file lớn
     // ✅ Đoạn code mới quét mảng chuẩn xác 100% không lo lỗi định dạng
+// Hàm trích xuất dữ liệu mảng chương siêu việt (chống mọi loại lỗi định dạng/Regex)
 function extractChaptersData(html) {
-    const match = html.match(/(?:const|let|var)\s+(?:storyData|chapters|chapterList)\s*=\s*(\[\s*[\s\S]*?\]);/);
-    if (match) {
+    // 1. Tìm vị trí khai báo biến mảng (storyData, chapters, chapterList)
+    const varMatch = html.match(/(?:const|let|var)\s+(storyData|chapters|chapterList)\s*=\s*\[/);
+    if (!varMatch) return null;
+
+    const varName = varMatch[1];
+    const startIndex = html.indexOf('[', varMatch.index);
+    if (startIndex === -1) return null;
+
+    // 2. Thuật toán đếm cặp ngoặc [] để lấy chính xác mảng JSON bất chấp xuống dòng
+    let bracketCount = 0;
+    let endIndex = -1;
+    let inString = false;
+    let quoteChar = '';
+
+    for (let i = startIndex; i < html.length; i++) {
+        const char = html[i];
+        const prevChar = i > 0 ? html[i - 1] : '';
+
+        // Xử lý chuỗi (tránh đếm ngoặc nằm bên trong nội dung truyện)
+        if ((char === '"' || char === "'" || char === '`') && prevChar !== '\\') {
+            if (!inString) {
+                inString = true;
+                quoteChar = char;
+            } else if (char === quoteChar) {
+                inString = false;
+            }
+        }
+
+        if (!inString) {
+            if (char === '[') bracketCount++;
+            else if (char === ']') {
+                bracketCount--;
+                if (bracketCount === 0) {
+                    endIndex = i;
+                    break;
+                }
+            }
+        }
+    }
+
+    if (endIndex === -1) return null;
+
+    const jsonString = html.substring(startIndex, endIndex + 1);
+    const rawMatch = `${varMatch[0].split('=')[0].trim()} = ${jsonString};`;
+
+    try {
+        const parsedData = JSON.parse(jsonString);
+        return {
+            data: parsedData,
+            rawMatch: rawMatch,
+            varName: varName
+        };
+    } catch (e) {
+        console.error("Lỗi parse JSON:", e);
+        // Trường hợp file cũ bị dán thiếu ngoặc hoặc lỗi ký tự đặc biệt
         try {
+            // Thử eval an toàn nếu JSON.parse bị nghẽn do ký tự xuống dòng thô
+            const evalData = Function('"use strict";return (' + jsonString + ')')();
             return {
-                data: JSON.parse(match[1]),
-                rawMatch: match[0],
-                varName: match[0].match(/(?:const|let|var)\s+([a-zA-Z0-9_$]+)/)[1]
+                data: evalData,
+                rawMatch: rawMatch,
+                varName: varName
             };
-        } catch (e) {
-            console.error("Lỗi parse JSON:", e);
+        } catch (errEval) {
+            console.error("Lỗi Eval:", errEval);
         }
     }
     return null;
-    }
+}
 
     async function handleAddChapter(e) {
         e.preventDefault();
