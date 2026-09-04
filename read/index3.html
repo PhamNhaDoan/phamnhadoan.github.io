@@ -198,74 +198,69 @@
         return 'read/' + url;
     }
 
-    // ✅ Thuật toán đếm ngoặc siêu chuẩn - xử lý chính xác file truyện 10, 30 đến 130+ chương
-   // ✅ Hàm cắt mảng chương bằng indexOf - Chấp mọi file truyện dài 50-500 chương
-function extractChaptersData(html) {
-    // 1. Định vị từ khóa khai báo mảng
-    const varMatch = html.match(/(?:const|let|var)\s+(storyData|chapters|chapterList)\s*=\s*/);
-    if (!varMatch) return null;
+    // ✅ Thuật toán đếm cặp ngoặc siêu tốc - Đọc chính xác file dài 10 đến 500+ chương
+    function extractChaptersData(html) {
+        const varMatch = html.match(/(?:const|let|var)\s+(storyData|chapters|chapterList)\s*=\s*/);
+        if (!varMatch) return null;
 
-    const varName = varMatch[1];
-    const startIndex = html.indexOf('[', varMatch.index);
-    if (startIndex === -1) return null;
+        const varName = varMatch[1];
+        const startIndex = html.indexOf('[', varMatch.index);
+        if (startIndex === -1) return null;
 
-    // 2. Thuật toán đếm ngoặc bỏ qua chuỗi
-    let bracketCount = 0;
-    let endIndex = -1;
-    let inString = false;
-    let quoteChar = '';
+        let bracketCount = 0;
+        let endIndex = -1;
+        let inString = false;
+        let quoteChar = '';
 
-    for (let i = startIndex; i < html.length; i++) {
-        const char = html[i];
-        const prevChar = i > 0 ? html[i - 1] : '';
+        for (let i = startIndex; i < html.length; i++) {
+            const char = html[i];
+            const prevChar = i > 0 ? html[i - 1] : '';
 
-        if ((char === '"' || char === "'" || char === '`') && prevChar !== '\\') {
-            if (!inString) {
-                inString = true;
-                quoteChar = char;
-            } else if (char === quoteChar) {
-                inString = false;
+            if ((char === '"' || char === "'" || char === '`') && prevChar !== '\\') {
+                if (!inString) {
+                    inString = true;
+                    quoteChar = char;
+                } else if (char === quoteChar) {
+                    inString = false;
+                }
             }
-        }
 
-        if (!inString) {
-            if (char === '[') bracketCount++;
-            else if (char === ']') {
-                bracketCount--;
-                if (bracketCount === 0) {
-                    endIndex = i;
-                    break;
+            if (!inString) {
+                if (char === '[') bracketCount++;
+                else if (char === ']') {
+                    bracketCount--;
+                    if (bracketCount === 0) {
+                        endIndex = i;
+                        break;
+                    }
                 }
             }
         }
-    }
 
-    if (endIndex === -1) return null;
+        if (endIndex === -1) return null;
 
-    const jsonString = html.substring(startIndex, endIndex + 1);
-    const rawMatch = html.substring(varMatch.index, endIndex + 1) + ';';
+        const jsonString = html.substring(startIndex, endIndex + 1);
+        const rawMatch = html.substring(varMatch.index, endIndex + 1) + ';';
 
-    try {
-        // Thử parse JSON
-        const parsedData = JSON.parse(jsonString);
-        return { data: parsedData, rawMatch: rawMatch, varName: varName };
-    } catch (e) {
         try {
-            // Thử Eval an toàn nếu văn bản chứa ký tự xuống dòng thô (\n)
-            const evalData = Function('"use strict";return (' + jsonString + ')')();
-            return { data: evalData, rawMatch: rawMatch, varName: varName };
-        } catch (errEval) {
-            console.error("Lỗi parse mảng:", errEval);
+            const parsedData = JSON.parse(jsonString);
+            return { data: parsedData, rawMatch: rawMatch, varName: varName };
+        } catch (e) {
+            try {
+                const evalData = Function('"use strict";return (' + jsonString + ')')();
+                return { data: evalData, rawMatch: rawMatch, varName: varName };
+            } catch (errEval) {
+                console.error("Lỗi parse:", errEval);
+            }
         }
+        return null;
     }
-    return null;
-}
 
     async function handleAddChapter(e) {
         e.preventDefault();
         const statusMsg = document.getElementById('statusMsg');
         statusMsg.style.color = '#333';
-        statusMsg.textContent = 'Đang đọc dữ liệu truyện từ GitHub...';
+        statusMsg.textContent = 'Đang đọc dữ liệu từ GitHub...';
 
         const token = document.getElementById('githubToken').value.trim();
         const storyUrl = document.getElementById('storyUrl').value.trim();
@@ -310,14 +305,15 @@ function extractChaptersData(html) {
             const updatedStoryDataStr = `const storyData = ${JSON.stringify(chapters)};`;
             htmlContent = htmlContent.replace(extracted.rawMatch, updatedStoryDataStr);
 
-            // Thêm nút chương mới vào thanh chuyển chương
-            const newButtonHtml = `<button class="chapter-btn" data-chap-id="${newChapId}" onclick="switchChapter(this, '${newChapId}')">${escapeHtml(newTitle)}</button>`;
-            const navTagMatch = htmlContent.match(/<div class="chapter-nav" id="chapterNav">(.*?)<\/div>/s);
-            
-            if (navTagMatch) {
-                const updatedNavHtml = `<div class="chapter-nav" id="chapterNav">${navTagMatch[1].trim()}\n                ${newButtonHtml}\n        </div>`;
-                htmlContent = htmlContent.replace(/<div class="chapter-nav" id="chapterNav">.*?<\/div>/s, updatedNavHtml);
-            }
+            // Tự động dựng lại toàn bộ dàn nút bấm mục lục
+            const allChapBtnsHtml = chapters.map((ch, idx) => 
+                `<button class="chapter-btn ${idx === 0 ? 'active' : ''}" data-chap-id="${ch.id}" onclick="switchChapter(this, '${ch.id}')">${escapeHtml(ch.title)}</button>`
+            ).join('\n                ');
+
+            htmlContent = htmlContent.replace(
+                /<div class="chapter-nav" id="chapterNav">.*?<\/div>/s,
+                `<div class="chapter-nav" id="chapterNav">\n                ${allChapBtnsHtml}\n        </div>`
+            );
 
             statusMsg.textContent = 'Đang lưu chương mới lên GitHub...';
             const putRes = await fetch(apiUrl, {
