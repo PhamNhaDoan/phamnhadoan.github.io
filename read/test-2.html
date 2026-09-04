@@ -427,24 +427,18 @@ TEST 2
 
         <!-- Khung Bình Luận Facebook -->
         <!-- Khung Bình Luận Facebook đã tối ưu -->
+        <!-- Khung Bình Luận Facebook -->
         <div class="fb-comments-section">
             <h3 class="fb-comments-title">Bình Luận</h3>
-            
-            <!-- 1. Bộ nạp nền tảng Facebook chuẩn tiếng Việt -->
             <div id="fb-root"></div>
             <script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v18.0"></script>
-            
-            <!-- 2. Khung hiển thị bình luận tự động nhận URL -->
             <div class="fb-comments" id="fb-comment-box" data-width="100%" data-numposts="5"></div>
-            
-            <!-- 3. Script tự động lấy URL và yêu cầu Facebook render lại -->
             <script>
               (function() {
                 var currentUrl = window.location.protocol + '//' + window.location.host + window.location.pathname;
                 var commentBox = document.getElementById('fb-comment-box');
                 if (commentBox) {
                     commentBox.setAttribute('data-href', currentUrl);
-                    // Ép Facebook SDK tự động render lại khung bình luận nếu đã nạp xong SDK
                     if (typeof FB !== 'undefined' && FB.XFBML) {
                         FB.XFBML.parse();
                     }
