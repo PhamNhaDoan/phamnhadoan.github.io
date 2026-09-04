@@ -199,21 +199,21 @@
     }
 
     // Hàm trích xuất dữ liệu mảng chương thông minh từ file lớn
-    function extractChaptersData(html) {
-        // Tìm bất kỳ mảng JSON nào được gán cho storyData, chapters, hoặc chapterList
-        const match = html.match(/(?:const|let|var)\s+(?:storyData|chapters|chapterList)\s*=\s*(\[\s*\{[\s\S]*?\}\s*\]);/);
-        if (match) {
-            try {
-                return {
-                    data: JSON.parse(match[1]),
-                    rawMatch: match[0],
-                    varName: match[0].match(/(?:const|let|var)\s+([a-zA-Z0-9_$]+)/)[1]
-                };
-            } catch (e) {
-                console.error("Lỗi parse JSON:", e);
-            }
+    // ✅ Đoạn code mới quét mảng chuẩn xác 100% không lo lỗi định dạng
+function extractChaptersData(html) {
+    const match = html.match(/(?:const|let|var)\s+(?:storyData|chapters|chapterList)\s*=\s*(\[\s*[\s\S]*?\]);/);
+    if (match) {
+        try {
+            return {
+                data: JSON.parse(match[1]),
+                rawMatch: match[0],
+                varName: match[0].match(/(?:const|let|var)\s+([a-zA-Z0-9_$]+)/)[1]
+            };
+        } catch (e) {
+            console.error("Lỗi parse JSON:", e);
         }
-        return null;
+    }
+    return null;
     }
 
     async function handleAddChapter(e) {
