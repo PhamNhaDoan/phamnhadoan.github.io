@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AAA - Đọc Truyện</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dots: #c2b280;
+            --cream-bg: rgba(253, 251, 247, 0.94);
+            --border-dash: #a89f91;
+            --primary-color: #d76a03;
+            --accent-green: #4f6d7a;
+            --text-color: #2b2d42;
+            --card-shadow: rgba(0, 0, 0, 0.05);
+            --reader-bg: #f4f1ea;
+        }
+
+        body.theme-cream {
+            background-color: #f4f1ea;
+            background-image: radial-gradient(var(--bg-dots) 1.5px, transparent 1.5px);
+            background-size: 18px 18px;
+            color: #2b2d42;
+        }
+
+        body.theme-white {
+            background-color: #ffffff;
+            background-image: none;
+            color: #111111;
+        }
+
+        body.theme-dark {
+            background-color: #1a1a1a;
+            background-image: none;
+            color: #d1d5db;
+        }
+
+        * { box-sizing: border-box !important; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 40px 15px;
+            line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .container { max-width: 850px; margin: 0 auto; width: 100%; }
+
+        .story-container {
+            background-color: var(--cream-bg);
+            border: 2px dashed var(--border-dash);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 8px 24px var(--card-shadow);
+            transition: background 0.3s, border-color 0.3s;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        body.theme-white .story-container {
+            background-color: #ffffff;
+            border-color: #d0d0d0;
+        }
+
+        body.theme-dark .story-container {
+            background-color: #262626;
+            border-color: #444444;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+
+        .story-header {
+            border-bottom: 1px dashed var(--border-dash);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 600px) {
+            .story-header { grid-template-columns: 1fr; }
+        }
+
+        .cover-wrapper {
+            width: 100%;
+            height: 250px;
+            border: 1px dashed var(--border-dash);
+            padding: 5px;
+            border-radius: 10px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .cover-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .story-title-group { display: flex; flex-direction: column; gap: 8px; }
+
+        .story-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .story-author { font-size: 1.05rem; color: var(--accent-green); font-weight: 600; }
+        body.theme-dark .story-author { color: #8ab4f8; }
+
+        .story-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .tag-item {
+            background: #e2ddd5;
+            color: var(--text-color);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        body.theme-dark .tag-item {
+            background: #3a3a3a;
+            color: #ccc;
+        }
+
+        .story-summary {
+            background: rgba(255, 255, 255, 0.7);
+            border-left: 3px solid var(--primary-color);
+            padding: 10px 14px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            color: #555;
+            font-style: italic;
+            margin-top: 6px;
+            white-space: pre-wrap;
+            margin-bottom: 25px;
+            line-height: 1.65;
+        }
+        body.theme-dark .story-summary {
+            background: rgba(0, 0, 0, 0.3);
+            color: #aaa;
+        }
+
+        .bookmark-btn {
+            align-self: flex-start;
+            margin-top: 8px;
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 6px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bookmark-btn:hover, .bookmark-btn.bookmarked {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .reader-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--border-dash);
+            padding: 10px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        body.theme-dark .reader-toolbar {
+            background: #333333;
+            border-color: #555;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toolbar-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+        body.theme-dark .toolbar-label { color: #8ab4f8; }
+
+        .tool-btn {
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .tool-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        body.theme-dark .tool-btn { background: #444; color: #fff; border-color: #666; }
+
+        .font-select {
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-family: inherit;
+            font-size: 0.88rem;
+            outline: none;
+            background: #fff;
+        }
+        body.theme-dark .font-select { background: #444; color: #fff; border-color: #666; }
+
+        .theme-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s;
+        }
+        .theme-circle:hover { transform: scale(1.15); }
+        .theme-circle.active { border-color: var(--primary-color); }
+        .theme-circle.cream { background: #f4f1ea; border: 1px solid #ccc; }
+        .theme-circle.white { background: #ffffff; border: 1px solid #ccc; }
+        .theme-circle.dark { background: #1a1a1a; }
+
+        .chapter-nav { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .chapter-btn {
+            padding: 6px 16px;
+            border: 1px solid var(--border-dash);
+            background: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        body.theme-dark .chapter-btn { background: #333; color: #ddd; border-color: #555; }
+
+        .chapter-btn.active {
+            background: var(--accent-green);
+            color: #fff;
+            border-color: var(--accent-green);
+        }
+
+        .story-content {
+            font-size: 1.2rem;
+            line-height: 1.65;
+            text-align: justify;
+            white-space: pre-wrap;
+            margin-bottom: 25px;
+            min-height: 120px;
+        }
+
+        .story-content p, .story-content {
+            margin-bottom: 0.8rem;
+        }
+
+        .bottom-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding-top: 15px;
+            margin-bottom: 30px;
+            border-top: 1px dashed var(--border-dash);
+            flex-wrap: wrap;
+        }
+
+        .nav-action-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--primary-color);
+            background: #fff;
+            color: var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        body.theme-dark .nav-action-btn { background: #333; }
+
+        .nav-action-btn:hover:not(:disabled) {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .nav-action-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-color: var(--border-dash);
+            color: var(--border-dash);
+        }
+
+        .top-scroll-btn {
+            background: var(--accent-green);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .top-scroll-btn:hover { background: #3b535e; }
+
+        .utterances, 
+        .utterances-comments-section {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            margin-top: 30px;
+            border-top: 1px dashed var(--border-dash);
+            padding-top: 20px;
+        }
+
+        .cbox-chat-section {
+            border-top: 1px dashed var(--border-dash);
+            padding-top: 25px;
+            margin-top: 30px;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden;
+        }
+
+        .cbox-title {
+            font-size: 1.25rem;
+            color: var(--accent-green);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        body.theme-dark .cbox-title { color: #8ab4f8; }
+
+        .cbox-frame-wrapper {
+            background: #fff;
+            padding: 6px;
+            border-radius: 12px;
+            border: 1px dashed var(--border-dash);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            overflow: hidden;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .cbox-frame-wrapper iframe {
+            width: 100% !important;
+            max-width: 100% !important;
+            display: block;
+            box-sizing: border-box !important;
+        }
+    </style>
+</head>
+<body class="theme-cream">
+
+<div class="container">
+    <article class="story-container">
+        <div class="story-header">
+            <div class="cover-wrapper">
+                <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=400" alt="Bìa truyện" class="cover-img">
+            </div>
+            <div class="story-title-group">
+                <h1 class="story-title">AAA</h1>
+                <div class="story-author">Tác giả: AA</div>
+                
+                <div class="story-tags">
+                    <span class="tag-item">AAA</span>
+                </div>
+
+                <div class="story-summary">
+                    Giới thiệu: AAA
+                </div>
+
+                <button class="bookmark-btn" onclick="toggleBookmark()">
+                    <span class="bm-icon">★</span> <span class="bm-text">Bookmark</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="reader-toolbar">
+            <div class="toolbar-group">
+                <span class="toolbar-label">Cỡ chữ:</span>
+                <button class="tool-btn" onclick="changeFontSize(-0.1)">A-</button>
+                <button class="tool-btn" onclick="changeFontSize(0.1)">A+</button>
+            </div>
+
+            <div class="toolbar-group">
+                <span class="toolbar-label">Font:</span>
+                <select class="font-select" onchange="changeFontFamily(this.value)">
+                    <option value="'Nunito', sans-serif">Nunito (Trẻ trung)</option>
+                    <option value="'Merriweather', serif">Merriweather (Truyện giấy)</option>
+                    <option value="'Inter', sans-serif">Inter (Tối giản)</option>
+                </select>
+            </div>
+
+            <div class="toolbar-group">
+                <span class="toolbar-label">Giao diện:</span>
+                <div class="theme-circle cream active" onclick="setTheme('cream')" title="Vàng kem"></div>
+                <div class="theme-circle white" onclick="setTheme('white')" title="Trắng tinh"></div>
+                <div class="theme-circle dark" onclick="setTheme('dark')" title="Ban đêm"></div>
+            </div>
+        </div>
+
+        <div class="chapter-nav" id="chapterNav">
+            <button class="chapter-btn active" data-chap-id="ch1" onclick="switchChapter(this, 'ch1')">Chương 1</button>
+                <button class="chapter-btn " data-chap-id="ch2" onclick="switchChapter(this, 'ch2')">Chương 2</button>
+                <button class="chapter-btn " data-chap-id="ch3" onclick="switchChapter(this, 'ch3')">Chương 3</button>
+                <button class="chapter-btn " data-chap-id="ch4" onclick="switchChapter(this, 'ch4')">Chương 4</button>
+                <button class="chapter-btn " data-chap-id="ch5" onclick="switchChapter(this, 'ch5')">Chương 5</button>
+                <button class="chapter-btn " data-chap-id="ch6" onclick="switchChapter(this, 'ch6')">Chương 6</button>
+                <button class="chapter-btn " data-chap-id="ch7" onclick="switchChapter(this, 'ch7')">Chương 7</button>
+                <button class="chapter-btn " data-chap-id="ch8" onclick="switchChapter(this, 'ch8')">Chương 8</button>
+                <button class="chapter-btn " data-chap-id="ch9" onclick="switchChapter(this, 'ch9')">Chương 9</button>
+                <button class="chapter-btn " data-chap-id="ch10" onclick="switchChapter(this, 'ch10')">Chương 10</button>
+                <button class="chapter-btn " data-chap-id="ch11" onclick="switchChapter(this, 'ch11')">Chương 11</button>
+        </div>
+
+        <div class="story-content" id="story-content-body">
+            AAAAAA
+        </div>
+
+        <div class="bottom-nav">
+            <button class="nav-action-btn" id="prevChapBtn" onclick="navigateChapter(-1)">← Chương trước</button>
+            <button class="top-scroll-btn" onclick="scrollToNav()">↑ Lên đầu (Mục lục)</button>
+            <button class="nav-action-btn" id="nextChapBtn" onclick="navigateChapter(1)">Chương sau →</button>
+        </div>
+
+        <div class="utterances-comments-section">
+            <script src="https://utteranc.es/client.js"
+                    repo="PhamNhaDoan/phamnhadoan.github.io"
+                    issue-term="pathname"
+                    label="comment"
+                    theme="github-light"
+                    crossorigin="anonymous"
+                    async>
+            </script>
+        </div>
+
+        <div class="cbox-chat-section">
+            <h3 class="cbox-title">Trò Chuyện Công Khai</h3>
+            <div class="cbox-frame-wrapper">
+                <iframe src="https://www5.cbox.ws/box/?boxid=966044&boxtag=ScPKVa" 
+                        width="100%" 
+                        height="450" 
+                        allowtransparency="yes" 
+                        allow="autoplay" 
+                        frameborder="0" 
+                        marginheight="0" 
+                        marginwidth="0" 
+                        scrolling="auto" 
+                        style="border: none; border-radius: 8px;">
+                </iframe>
+            </div>
+        </div>
+    </article>
+</div>
+
+<script>
+    const storyId = 'aaa';
+    const storyData = [{"id":"ch1","title":"Chương 1","content":"AAAAAA"},{"id":"ch2","title":"Chương 2","content":"HFGHDHJ"},{"id":"ch3","title":"Chương 3","content":"MTFYHM"},{"id":"ch4","title":"Chương 4","content":"MTYMTMTYM"},{"id":"ch5","title":"Chương 5","content":"FGJNFMJTYM"},{"id":"ch6","title":"Chương 6","content":"DRMNHM"},{"id":"ch7","title":"Chương 7","content":"TMYTFYM"},{"id":"ch8","title":"Chương 8","content":"DTMTYM"},{"id":"ch9","title":"Chương 9","content":"SRMSYHMYH"},{"id":"ch10","title":"Chương 10","content":"SRDMRYMM"},{"id":"ch11","title":"Chương 11","content":"SRTMJYM"}];
+    let currentChapIndex = 0;
+    let currentFontSize = 1.2;
+
+    function changeFontSize(delta) {
+        currentFontSize = Math.max(0.9, Math.min(1.8, currentFontSize + delta));
+        const contentElem = document.getElementById('story-content-body');
+        if (contentElem) {
+            contentElem.style.fontSize = currentFontSize + 'rem';
+        }
+        localStorage.setItem('reader_font_size', currentFontSize);
+    }
+
+    function changeFontFamily(fontVal) {
+        const contentElem = document.getElementById('story-content-body');
+        if (contentElem) {
+            contentElem.style.fontFamily = fontVal;
+        }
+        localStorage.setItem('reader_font_family', fontVal);
+    }
+
+    function setTheme(themeName) {
+        document.body.className = 'theme-' + themeName;
+        document.querySelectorAll('.theme-circle').forEach(el => el.classList.remove('active'));
+        const activeCircle = document.querySelector('.theme-circle.' + themeName);
+        if (activeCircle) activeCircle.classList.add('active');
+        localStorage.setItem('reader_theme', themeName);
+    }
+
+    function loadReaderSettings() {
+        const savedSize = localStorage.getItem('reader_font_size');
+        const savedFont = localStorage.getItem('reader_font_family');
+        const savedTheme = localStorage.getItem('reader_theme');
+
+        if (savedSize) {
+            currentFontSize = parseFloat(savedSize);
+            const contentElem = document.getElementById('story-content-body');
+            if (contentElem) contentElem.style.fontSize = currentFontSize + 'rem';
+        }
+
+        if (savedFont) {
+            const contentElem = document.getElementById('story-content-body');
+            if (contentElem) contentElem.style.fontFamily = savedFont;
+            const fontSelect = document.querySelector('.font-select');
+            if (fontSelect) fontSelect.value = savedFont;
+        }
+
+        if (savedTheme) {
+            setTheme(savedTheme);
+        }
+    }
+
+    function updateNavButtons() {
+        const prevBtn = document.getElementById('prevChapBtn');
+        const nextBtn = document.getElementById('nextChapBtn');
+        if (prevBtn) prevBtn.disabled = (currentChapIndex <= 0);
+        if (nextBtn) nextBtn.disabled = (currentChapIndex >= storyData.length - 1);
+    }
+
+    function switchChapter(btn, cId) {
+        document.querySelectorAll('.chapter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const foundIndex = storyData.findIndex(item => item.id === cId);
+        if(foundIndex !== -1) {
+            currentChapIndex = foundIndex;
+            document.getElementById('story-content-body').textContent = storyData[foundIndex].content;
+            updateNavButtons();
+        }
+    }
+
+    function navigateChapter(direction) {
+        const newIndex = currentChapIndex + direction;
+        if (newIndex >= 0 && newIndex < storyData.length) {
+            const targetChap = storyData[newIndex];
+            const targetBtn = document.querySelector(`.chapter-btn[data-chap-id="${targetChap.id}"]`);
+            if (targetBtn) {
+                switchChapter(targetBtn, targetChap.id);
+                scrollToNav();
+            }
+        }
+    }
+
+    function scrollToNav() {
+        const navElem = document.getElementById('chapterNav');
+        if (navElem) {
+            navElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    function initBookmark() {
+        const bookmarks = JSON.parse(localStorage.getItem('story_bookmarks') || '[]');
+        const btn = document.querySelector('.bookmark-btn');
+        if (btn && bookmarks.includes(storyId)) {
+            btn.classList.add('bookmarked');
+            btn.querySelector('.bm-text').textContent = 'Đã Bookmark';
+        }
+    }
+
+    function toggleBookmark() {
+        let bookmarks = JSON.parse(localStorage.getItem('story_bookmarks') || '[]');
+        const btn = document.querySelector('.bookmark-btn');
+
+        if (bookmarks.includes(storyId)) {
+            bookmarks = bookmarks.filter(id => id !== storyId);
+            btn.classList.remove('bookmarked');
+            btn.querySelector('.bm-text').textContent = 'Bookmark';
+        } else {
+            bookmarks.push(storyId);
+            btn.classList.add('bookmarked');
+            btn.querySelector('.bm-text').textContent = 'Đã Bookmark';
+        }
+        localStorage.setItem('story_bookmarks', JSON.stringify(bookmarks));
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initBookmark();
+        updateNavButtons();
+        loadReaderSettings();
+    });
+</script>
+
+</body>
+</html>
