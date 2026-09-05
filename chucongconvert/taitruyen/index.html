@@ -15,6 +15,33 @@
             --text-muted: #747d8c;
             --border-color: #a4b0be; /* Màu xám viền */
         }
+        /* Đường line thẳng nét liền mỏng ở trên + đường đứt khúc màu nhạt ở dưới */
+.separator-divider {
+    margin-top: 30px;            /* Khoảng cách đẩy phía trên (cách nội dung) */
+    margin-bottom: 25px;         /* Khoảng cách đẩy phía dưới (cách nút đăng) */
+    border-top: 1px solid var(--border-dash, #a89f91); /* Đường line liền nét mỏng ở trên */
+    border-bottom: 1.5px dotted #e2d9cc;               /* Đường đứt khúc (dotted) màu nhạt ở dưới */
+    height: 6px;                 /* Khoảng cách giữa 2 đường line */
+}
+        .create-post-btn {
+    display: inline-block;
+    background-color: var(--primary-orange, #d76a03);
+    color: #ffffff !important;
+    text-decoration: none;
+    padding: 10px 22px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border: 1px solid var(--primary-orange, #d76a03);
+    transform: none !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease !important;
+}
+
+.create-post-btn:hover {
+    background-color: var(--accent-green, #4f6d7a);
+    border-color: var(--accent-green, #4f6d7a);
+    transform: none !important;
+}
 
         body {
             font-family: 'Nunito', sans-serif;
@@ -197,7 +224,8 @@
         <a href="https://phamnhadoan.github.io/chucongconvert/taitruyen/index2.html" target="_blank" class="create-post-btn">
             Đăng truyện mới
         </a>
-    
+    <!-- Khối đường line nét liền + đường đứt khúc nhạt cách nút đăng truyện -->
+<div class="separator-divider"></div>
     <div class="search-container">
         <input type="text" id="searchBar" class="search-input" placeholder="Tìm tên truyện, tác giả, thể loại...">
     </div>
