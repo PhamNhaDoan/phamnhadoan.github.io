@@ -26,7 +26,25 @@
             --text-muted: #747d8c;
             --border-color: #ced6e0;
         }
+.create-post-btn {
+    display: inline-block;
+    background-color: var(--primary-orange, #d76a03);
+    color: #ffffff !important;
+    text-decoration: none;
+    padding: 10px 22px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border: 1px solid var(--primary-orange, #d76a03);
+    transform: none !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease !important;
+}
 
+.create-post-btn:hover {
+    background-color: var(--accent-green, #4f6d7a);
+    border-color: var(--accent-green, #4f6d7a);
+    transform: none !important;
+}
         body {
             font-family: 'Nunito', sans-serif;
             background-image: url('img/pattern4.jpg'); 
