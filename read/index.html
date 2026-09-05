@@ -29,6 +29,14 @@
             --amber-bg: #fffdf0;
             --amber-border: #ffe8b5;
         }
+        /* Đường line thẳng nét liền mỏng ở trên + đường đứt khúc màu nhạt ở dưới */
+.separator-divider {
+    margin-top: 30px;            /* Khoảng cách đẩy phía trên (cách nội dung) */
+    margin-bottom: 25px;         /* Khoảng cách đẩy phía dưới (cách nút đăng) */
+    border-top: 1px solid var(--border-dash, #a89f91); /* Đường line liền nét mỏng ở trên */
+    border-bottom: 1.5px dotted #e2d9cc;               /* Đường đứt khúc (dotted) màu nhạt ở dưới */
+    height: 6px;                 /* Khoảng cách giữa 2 đường line */
+}
         .create-post-btn {
     display: inline-block;
     background-color: var(--primary-orange, #d76a03);
@@ -347,6 +355,8 @@
             Cập nhật truyện mới
         </a>
     </div>
+            <!-- Khối đường line nét liền + đường đứt khúc nhạt cách nút đăng truyện -->
+<div class="separator-divider"></div>
 
         <div id="story-list">
 
