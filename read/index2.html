@@ -7,6 +7,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Thư viện hỗ trợ đọc file DOCX và EPUB trực tiếp trên trình duyệt -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
+
     <style>
         :root {
             --bg-dots: #c2b280;
@@ -122,6 +128,15 @@
             font-weight: 700;
             word-break: break-all;
         }
+
+        /* Khung Tự Động Nhập File DOCX/EPUB */
+        .auto-file-box {
+            background: #eef4f7;
+            border: 1px dashed var(--accent-green);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -175,6 +190,13 @@
             <input type="text" id="coverUrl" placeholder="https://domain.com/anh-bia.jpg">
         </div>
 
+        <!-- KHU VỰC TỰ ĐỘNG CHIA CHƯƠNG TỪ FILE DOCX / EPUB -->
+        <div class="auto-file-box">
+            <label style="color: var(--primary-color);">📖 Tự Động Nhập Chương Từ File (.docx, .epub)</label>
+            <p style="margin: 4px 0 10px 0; font-size: 0.85rem; color: #555;">Hệ thống sẽ tự nhận diện tiêu đề thẻ &lt;h2&gt; để tự tách thành các chương bên dưới.</p>
+            <input type="file" id="docEpubFile" accept=".docx, .epub" onchange="processDocumentFile(this)">
+        </div>
+
         <hr style="border: 0; border-top: 1px dashed var(--border-dash); margin: 25px 0;">
 
         <div id="chaptersContainer">
@@ -207,22 +229,123 @@
         }
     });
 
-    function addChapterBox() {
-        chapterCount++;
+    function addChapterBox(titleVal = '', contentVal = '') {
         const container = document.getElementById('chaptersContainer');
+        const currentBoxes = container.querySelectorAll('.chapter-box');
+        
+        // Nếu hộp chương 1 đầu tiên đang trống thì điền trực tiếp vào đó
+        if (currentBoxes.length === 1 && titleVal) {
+            const firstTitle = currentBoxes[0].querySelector('.chap-title');
+            const firstContent = currentBoxes[0].querySelector('.chap-content');
+            if (firstTitle && firstContent && !firstContent.value.trim() && firstTitle.value === "Chương 1") {
+                firstTitle.value = titleVal;
+                firstContent.value = contentVal;
+                return;
+            }
+        }
+
+        chapterCount++;
         const box = document.createElement('div');
         box.className = 'chapter-box';
         box.innerHTML = `
             <div class="form-group" style="margin-bottom: 6px;">
                 <label>Tên / Số Chương (Phần ${chapterCount})</label>
-                <input type="text" class="chap-title" value="Chương ${chapterCount}" required>
+                <input type="text" class="chap-title" value="${escapeHtml(titleVal || 'Chương ' + chapterCount)}" required>
             </div>
             <div class="form-group" style="margin-bottom: 0;">
                 <label>Nội Dung</label>
-                <textarea class="chap-content" placeholder="Nhập nội dung chương ${chapterCount}..." required></textarea>
+                <textarea class="chap-content" placeholder="Nhập nội dung chương ${chapterCount}..." required>${escapeHtml(contentVal)}</textarea>
             </div>
         `;
         container.appendChild(box);
+    }
+
+    /* XỬ LÝ ĐỌC VÀ CHIA CHƯƠNG THEO H2 TỪ FILE DOCX / EPUB */
+    async function processDocumentFile(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const statusMsg = document.getElementById('statusMsg');
+        statusMsg.style.color = '#333';
+        statusMsg.textContent = 'Đang đọc và phân tích dữ liệu file...';
+
+        const ext = file.name.split('.').pop().toLowerCase();
+
+        try {
+            let htmlContent = '';
+
+            if (ext === 'docx') {
+                const arrayBuffer = await file.arrayBuffer();
+                const result = await mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
+                htmlContent = result.value;
+            } else if (ext === 'epub') {
+                const arrayBuffer = await file.arrayBuffer();
+                const book = ePub(arrayBuffer);
+                await book.ready;
+                
+                const loadedSections = await Promise.all(
+                    book.spine.spineItems.map(item => item.load(book.load.bind(book)).then(doc => doc.body ? doc.body.innerHTML : ''))
+                );
+                htmlContent = loadedSections.join('\n');
+            } else {
+                alert('Vui lòng chỉ chọn file định dạng .docx hoặc .epub');
+                return;
+            }
+
+            parseAndSplitChapters(htmlContent);
+            statusMsg.style.color = 'green';
+            statusMsg.textContent = 'Phân chia chương thành công từ file!';
+        } catch (err) {
+            console.error(err);
+            statusMsg.style.color = 'red';
+            statusMsg.textContent = 'Lỗi khi đọc file: ' + err.message;
+        }
+    }
+
+    function parseAndSplitChapters(htmlContent) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlContent, 'text/html');
+        const elements = Array.from(doc.body.childNodes);
+
+        const extractedChapters = [];
+        let currentTitle = '';
+        let currentContent = [];
+
+        elements.forEach(el => {
+            const tagName = el.nodeName ? el.nodeName.toLowerCase() : '';
+            if (tagName === 'h2') {
+                if (currentTitle || currentContent.length > 0) {
+                    extractedChapters.push({
+                        title: currentTitle || 'Chương ' + (extractedChapters.length + 1),
+                        content: currentContent.join('\n\n').trim()
+                    });
+                }
+                currentTitle = el.textContent.trim();
+                currentContent = [];
+            } else {
+                const text = el.textContent ? el.textContent.trim() : '';
+                if (text) {
+                    currentContent.push(text);
+                }
+            }
+        });
+
+        if (currentTitle || currentContent.length > 0) {
+            extractedChapters.push({
+                title: currentTitle || 'Chương ' + (extractedChapters.length + 1),
+                content: currentContent.join('\n\n').trim()
+            });
+        }
+
+        if (extractedChapters.length > 0) {
+            document.getElementById('chaptersContainer').innerHTML = '';
+            chapterCount = 0;
+            extractedChapters.forEach(chap => {
+                addChapterBox(chap.title, chap.content);
+            });
+        } else {
+            alert('Không tìm thấy thẻ <h2> nào để chia chương trong file này!');
+        }
     }
 
     function getCoverSrc() {
@@ -293,7 +416,7 @@
         const filePath = `read/${fileName}.html`;
 
         let chapBtnsHtml = chapters.map((ch, idx) => 
-            `<button class="chapter-btn ${idx === 0 ? 'active' : ''}" data-chap-id="${ch.id}" onclick="switchChapter(this, '${ch.id}')">${ch.title}</button>`
+            `<button class="chapter-btn ${idx === 0 ? 'active' : ''}" data-chap-id="${ch.id}" onclick="switchChapter(this, '${ch.id}')">${escapeHtml(ch.title)}</button>`
         ).join('\n                ');
 
         const fullNewPageHtml = `<!DOCTYPE html>
@@ -935,6 +1058,7 @@
     }
 
     function escapeHtml(str) {
+        if (!str) return '';
         return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
 </script>
