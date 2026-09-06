@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TESTTESSTTEST - Đọc Truyện</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dots: #c2b280;
+            --cream-bg: rgba(253, 251, 247, 0.94);
+            --border-dash: #a89f91;
+            --primary-color: #d76a03;
+            --accent-green: #4f6d7a;
+            --text-color: #2b2d42;
+            --card-shadow: rgba(0, 0, 0, 0.05);
+            --reader-bg: #f4f1ea;
+        }
+
+        body.theme-cream {
+            background-color: #f4f1ea;
+            background-image: radial-gradient(var(--bg-dots) 1.5px, transparent 1.5px);
+            background-size: 18px 18px;
+            color: #2b2d42;
+        }
+
+        body.theme-white {
+            background-color: #ffffff;
+            background-image: none;
+            color: #111111;
+        }
+
+        body.theme-dark {
+            background-color: #1a1a1a;
+            background-image: none;
+            color: #d1d5db;
+        }
+
+        * { box-sizing: border-box !important; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 40px 15px;
+            line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .container { max-width: 850px; margin: 0 auto; width: 100%; }
+
+        .story-container {
+            background-color: var(--cream-bg);
+            border: 2px dashed var(--border-dash);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 8px 24px var(--card-shadow);
+            transition: background 0.3s, border-color 0.3s;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        body.theme-white .story-container {
+            background-color: #ffffff;
+            border-color: #d0d0d0;
+        }
+
+        body.theme-dark .story-container {
+            background-color: #262626;
+            border-color: #444444;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+
+        .story-header {
+            border-bottom: 1px dashed var(--border-dash);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 600px) {
+            .story-header { grid-template-columns: 1fr; }
+        }
+
+        .cover-wrapper {
+            width: 100%;
+            height: 250px;
+            border: 1px dashed var(--border-dash);
+            padding: 5px;
+            border-radius: 10px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .cover-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .story-title-group { display: flex; flex-direction: column; gap: 8px; }
+
+        .story-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .story-author { font-size: 1.05rem; color: var(--accent-green); font-weight: 600; }
+        body.theme-dark .story-author { color: #8ab4f8; }
+
+        .story-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .tag-item {
+            background: #e2ddd5;
+            color: var(--text-color);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        body.theme-dark .tag-item {
+            background: #3a3a3a;
+            color: #ccc;
+        }
+
+        .story-summary {
+            background: rgba(255, 255, 255, 0.7);
+            border-left: 3px solid var(--primary-color);
+            padding: 10px 14px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            color: #555;
+            font-style: italic;
+            margin-top: 6px;
+            white-space: pre-wrap;
+            margin-bottom: 25px;
+            line-height: 1.65;
+        }
+        body.theme-dark .story-summary {
+            background: rgba(0, 0, 0, 0.3);
+            color: #aaa;
+        }
+
+        .bookmark-btn {
+            align-self: flex-start;
+            margin-top: 8px;
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 6px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bookmark-btn:hover, .bookmark-btn.bookmarked {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .reader-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--border-dash);
+            padding: 10px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        body.theme-dark .reader-toolbar {
+            background: #333333;
+            border-color: #555;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toolbar-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+        body.theme-dark .toolbar-label { color: #8ab4f8; }
+
+        .tool-btn {
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .tool-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        body.theme-dark .tool-btn { background: #444; color: #fff; border-color: #666; }
+
+        .font-select {
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-family: inherit;
+            font-size: 0.88rem;
+            outline: none;
+            background: #fff;
+        }
+        body.theme-dark .font-select { background: #444; color: #fff; border-color: #666; }
+
+        .theme-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s;
+        }
+        .theme-circle:hover { transform: scale(1.15); }
+        .theme-circle.active { border-color: var(--primary-color); }
+        .theme-circle.cream { background: #f4f1ea; border: 1px solid #ccc; }
+        .theme-circle.white { background: #ffffff; border: 1px solid #ccc; }
+        .theme-circle.dark { background: #1a1a1a; }
+
+        /* KHUNG MỤC LỤC THU GỌN - DÙNG CHO DANH SÁCH CHƯƠNG DÀI */
+        .chapter-nav-wrapper {
+            max-height: 180px;
+            overflow-y: auto;
+            border: 1px solid var(--border-dash);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.5);
+        }
+        body.theme-dark .chapter-nav-wrapper {
+            background: rgba(0, 0, 0, 0.2);
+            border-color: #444;
+        }
+
+        .chapter-nav { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        .chapter-btn {
+            padding: 6px 14px;
+            border: 1px solid var(--border-dash);
+            background: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        body.theme-dark .chapter-btn { background: #333; color: #ddd; border-color: #555; }
+
+        .chapter-btn.active {
+            background: var(--accent-green);
+            color: #fff;
+            border-color: var(--accent-green);
+        }
+
+        .story-content {
+            font-size: 1.2rem;
+            line-height: 1.65;
+            text-align: justify;
+            white-space: pre-wrap;
+            margin-bottom: 25px;
+            min-height: 120px;
+            scroll-margin-top: 20px;
+        }
+
+        .story-content p, .story-content {
+            margin-bottom: 0.8rem;
+        }
+
+        .bottom-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding-top: 15px;
+            margin-bottom: 30px;
+            border-top: 1px dashed var(--border-dash);
+            flex-wrap: wrap;
+        }
+
+        .nav-action-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--primary-color);
+            background: #fff;
+            color: var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        body.theme-dark .nav-action-btn { background: #333; }
+
+        .nav-action-btn:hover:not(:disabled) {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .nav-action-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-color: var(--border-dash);
+            color: var(--border-dash);
+        }
+
+        .top-scroll-btn {
+            background: var(--accent-green);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .top-scroll-btn:hover { background: #3b535e; }
+
+        .utterances, 
+        .utterances-comments-section {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            margin-top: 30px;
+            border-top: 1px dashed var(--border-dash);
+            padding-top: 20px;
+        }
+
+        .cbox-chat-section {
+            border-top: 1px dashed var(--border-dash);
+            padding-top: 25px;
+            margin-top: 30px;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden;
+        }
+
+        .cbox-title {
+            font-size: 1.25rem;
+            color: var(--accent-green);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        body.theme-dark .cbox-title { color: #8ab4f8; }
+
+        .cbox-frame-wrapper {
+            background: #fff;
+            padding: 6px;
+            border-radius: 12px;
+            border: 1px dashed var(--border-dash);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            overflow: hidden;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .cbox-frame-wrapper iframe {
+            width: 100% !important;
+            max-width: 100% !important;
+            display: block;
+            box-sizing: border-box !important;
+        }
+    </style>
+</head>
+<body class="theme-cream">
+
+<div class="container">
+    <article class="story-container">
+        <div class="story-header">
+            <div class="cover-wrapper">
+                <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=400" alt="Bìa truyện" class="cover-img">
+            </div>
+            <div class="story-title-group">
+                <h1 class="story-title">TESTTESSTTEST</h1>
+                <div class="story-author">Tác giả: TESTTESSTTEST</div>
+                
+                <div class="story-tags">
+                    <span class="tag-item">TESTTESSTTEST</span>
+                </div>
+
+                <div class="story-summary">
+                    Giới thiệu: TESTTESSTTEST
+                </div>
+
+                <button class="bookmark-btn" onclick="toggleBookmark()">
+                    <span class="bm-icon">★</span> <span class="bm-text">Bookmark</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="reader-toolbar">
+            <div class="toolbar-group">
+                <span class="toolbar-label">Cỡ chữ:</span>
+                <button class="tool-btn" onclick="changeFontSize(-0.1)">A-</button>
+                <button class="tool-btn" onclick="changeFontSize(0.1)">A+</button>
+            </div>
+
+            <div class="toolbar-group">
+                <span class="toolbar-label">Font:</span>
+                <select class="font-select" onchange="changeFontFamily(this.value)">
+                    <option value="'Nunito', sans-serif">Nunito (Trẻ trung)</option>
+                    <option value="'Merriweather', serif">Merriweather (Truyện giấy)</option>
+                    <option value="'Inter', sans-serif">Inter (Tối giản)</option>
+                </select>
+            </div>
+
+            <div class="toolbar-group">
+                <span class="toolbar-label">Giao diện:</span>
+                <div class="theme-circle cream active" onclick="setTheme('cream')" title="Vàng kem"></div>
+                <div class="theme-circle white" onclick="setTheme('white')" title="Trắng tinh"></div>
+                <div class="theme-circle dark" onclick="setTheme('dark')" title="Ban đêm"></div>
+            </div>
+        </div>
+
+        <div class="chapter-nav-wrapper" id="chapterNavWrapper">
+            <div class="chapter-nav" id="chapterNav">
+                <button class="chapter-btn active" data-chap-id="ch1" onclick="switchChapter(this, 'ch1', true)">Chương 1</button>
+                <button class="chapter-btn " data-chap-id="ch2" onclick="switchChapter(this, 'ch2', true)">Chương 2</button>
+                <button class="chapter-btn " data-chap-id="ch3" onclick="switchChapter(this, 'ch3', true)">Chương 3</button>
+            </div>
+        </div>
+
+        <div class="story-content" id="story-content-body">
+            Hồng trần mộng 01
+
+Thanh Minh sơn, Du Long tuyền, Lâm Sơn tự.
+
+Sơn vốn là toà núi hoang, tuyền cũng chỉ là một chút nhợt nhạt sơn tuyền, tự càng là một toà hầu như không người hiểu rõ lụi bại chùa miếu.
+
+Nhưng trên núi ở một con linh điệp, bơi trong suối một đuôi trắng bạc cá chép rực rỡ, trong miếu ở lại một vị một lòng thanh tu tiểu hòa thượng.
+
+Ngọn núi này linh khí mỏng manh, tiểu hồ điệp là trong núi rừng duy hai tu ra linh thức yêu, một người khác là ở tại sơn tuyền bên trong Cẩm Lý tỷ tỷ.
+
+Tiểu hồ điệp cánh là nhợt nhạt huỳnh màu xanh lam, cánh ranh giới nơi còn có một vòng tinh xảo viền bạc, sí trên mặt rơi một vòng màu vàng nhạt lấm tấm, giống như cùng ánh mặt trời xuyên thấu cành lá vương xuống đến mỹ lệ vết lốm đốm, nho nhỏ con bướm rơi vào trên đóa hoa thời điểm giống như là bầu trời một đóa Tiểu Vân sắc rơi xuống, sau khi bay lên hoặc như là ở lá cây dưới thổi qua đám mây.
+
+Cẩm Lý tỷ tỷ cho hắn nổi lên tên.
+
+Khi đó tiểu hồ điệp linh trí sơ khai, còn nơi ở một cái tỉnh tỉnh mê mê trạng thái, một ngày mơ mơ hồ hồ rơi vào sơn tuyền cái khác một đóa hoa trên, liền nghe gặp trong nước suối truyền đến cùng nhau bọt nước phù phù thanh âm, sau đó chính là cùng nhau ôn ôn nhu nhu âm thanh truyền đến: &quot;Ngươi mạnh khỏe a, tiểu hồ điệp. Ta tên là Du Cẩm, trước đây chưa từng thấy ngươi, thật là gần chút thời gian mới vừa mở linh trí?&quot;
+
+&quot;Ngươi mạnh khỏe, &quot; tiểu hồ điệp nhìn về phía cái kia từ trong nước suối thò đầu ra màu bạc cá chép, có chút thẹn thùng nhào nhào cánh, &quot;Cẩm Lý tỷ tỷ, ngươi thật là đẹp a, thật là ta vẫn không có tên, xin lỗi...&quot;
+
+&quot;Không liên quan, trong núi này thanh lãnh, hiếm thấy gặp ngươi, ta cũng thật là hài lòng. Ta coi ngươi làm như trên người chịu một tia hồ yêu khí tức, phải làm là gặp may đúng dịp từng đụng phải hồ yêu nội đan linh lực, chịu điểm hóa. &quot; cá chép vẩy vẩy đuôi, ở trên mặt nước đánh ra một mảnh nước trong và gợn sóng bọt nước, &quot;Ngươi nếu không phải ghét bỏ, liền để ta vì ngươi làm cái tên, khỏe?&quot;
+
+&quot;Tốt tốt!&quot; Tiểu hồ điệp vội vội vã vã đồng ý, tha thiết mong chờ mà nhìn trong nước kia xem ra tinh xảo mà lại mỹ lệ cá chép rực rỡ, &quot;Cảm tạ Cẩm Lý tỷ tỷ. &quot;
+
+Du Cẩm bị hắn chọc cho nở nụ cười một tiếng, ôn nhu trả lời: &quot;Không cần khách khí như vậy. Điệp yêu bộ tộc từ trước đến giờ yêu thích múa lên với hoa dưới, đang như mọi người cái gọi là 'Hoa hạ phong chảy'. Ta coi nhưng ngươi là có được linh động thanh uyển như lá hạ lưu vân, không bằng lợi dụng lá vì là họ, vân làm tên, mà bây giờ chính là giữa hè thời tiết, liền gọi Diệp Hạ Vân làm sao? Đọc lấy tới là lá hạ lưu vân, rơi vào giấy bút trên lại có ngày mùa hè thanh vân tâm ý. &quot;
+
+Từ đây, tiểu hồ điệp liền có tên, cũng có người bạn thứ nhất.
+
+Cẩm Lý tỷ tỷ đều là đối với tiểu hồ điệp rất tốt, sẽ ôn nhu mà lại nghiêm túc hướng về hắn căn dặn: &quot;Ta không cầu ngươi cả đời này xông ra lý lẽ gì, cũng không cầu xin ngươi đi tế thế cứu nhân kết làm thiện quả, chỉ cầu ngươi muốn an ổn không lo, đem mình coi chừng hảo. &quot;
+
+Hai cái linh lực hơi yếu tiểu yêu lẫn nhau bồi bạn ở trên núi vượt qua rất nhiều năm tháng, mãi đến tận một ngày nào đó, một người mặc áo cà sa, nhưng giữ lại một con tóc đen tiểu hòa thượng đi tới Thanh Minh sơn, ở trong núi toà kia trống trơn nhiều năm trong miếu an trí hạ xuống.
+
+Lúc này Diệp Hạ Vân đã không còn là lúc trước cái kia hồ đồ tiểu hồ điệp, hắn thường thường biết bay đến bên dưới ngọn núi, đi đến nhân loại địa giới chơi đùa, nhìn những kia sự vật mới mẻ, sau đó sẽ trở về nói cho hắn Cẩm Lý tỷ tỷ nghe mình ở bên dưới ngọn núi thấy chuyện thú vị.
+
+Hắn trước đây cũng ở dưới chân núi từng thấy tu hành hòa thượng, thật là hắn trước đây thấy những hòa thượng kia đều là không có tóc, hơn nữa lớn lên cũng phần lớn không dễ nhìn, không giống như là cái kia vừa tới đến Thanh Minh sơn tiểu hòa thượng, chẳng những có một con tóc đen, còn có được đẹp trai phi phàm, cho dù ăn mặc một thân âm u tăng bào cũng khó bưng huy, nhìn liền hợp mắt cực kỳ.
+
+Du Cẩm đều sẽ dặn hắn không muốn cùng nhân loại lui tới, thế nhưng Diệp Hạ Vân tổng cũng không nhịn được tò mò bay đi nhìn lén cái kia tiểu hòa thượng, có lúc rơi vào tiêu tốn nghe tiểu hòa thượng kia lẩm bẩm hắn nghe không hiểu kinh văn, ngất ngất ngây ngây đã vượt qua một buổi sáng.
+
+Buổi chiều, hắn bay trở về sơn tuyền bên, một cái vảy tỉ mỉ chỉnh tề màu bạc cá chép rực rỡ từ trong nước thò đầu ra, hắn liền biết nghe lời phải rơi vào cá chép trên đầu, dùng chính mình tiểu tua vòi thân mật đụng một cái cá chép lạnh lẽo vảy: &quot;Cẩm Lý tỷ tỷ, ta vẫn cảm thấy buồn bực, ngươi nói những kia hòa thượng cả ngày ghi nhớ những kinh văn đó, từ sớm đến tối cũng không có trò gian, làm sao liền không cảm thấy phiền đây?&quot;
+
+&quot;Ngươi cảm thấy phiền muộn chuyện tình, bọn họ nhưng không sẽ như vậy cảm thấy. &quot; Du Cẩm nâng nhẹ tiểu hồ điệp ở trên mặt nước chậm rãi bơi vài vòng, trước sau như một ngữ khí mềm mại cùng hắn nói chuyện, &quot;Lại như ta sẽ không chán ghét cùng ngươi ở chung giống như vậy, thờ phụng phật pháp người cũng sẽ không cảm thấy niệm tụng kinh văn là kiện khổ sai chuyện. Đột nhiên nói tới cái này, tiểu Vân Nhi, ngươi thật là lại đi tìm cái kia tăng nhân?&quot;
+
+Bị Du Cẩm nói một cách thẳng thừng tâm sự, Diệp Hạ Vân cũng không cảm giác đến thật không tiện, ngược lại hắn Cẩm Lý tỷ tỷ luôn luôn cũng sẽ không cùng hắn tức giận, liền để hắn có thể tận tình làm nũng tùy hứng: &quot;Chẳng phải là sao, núi này trên ngoại trừ ngoài ta ngươi thật vất vả có thêm người thứ ba có linh trí gia hỏa, lớn lên lại đẹp đẽ như vậy, một mực tính cách như vậy vô vị, rất đáng tiếc. &quot;
+
+&quot;Ngươi a, liền yêu thích hồ đồ. &quot; Du Cẩm quát khẽ hắn một câu, &quot;Kia tăng nhân tới lấy nước thời điểm ta từng nhìn qua, người kia diện có phật cùng, từ nhỏ cùng phật pháp hữu duyên, tự mang theo một thân chính khí, số mệnh cùng thiên đạo kết hợp lại, cùng chúng ta những này tinh quái khó có thể tương dung, ngươi cách xa nhìn thì thôi, không nên đi trêu chọc hắn. &quot;
+
+&quot;Đừng lo lắng a, Cẩm Lý tỷ tỷ, ta từ trước đến giờ nhất nghe lời ngươi. &quot;
+
+Du Cẩm vừa nghe liền biết hắn lại đang qua loa chính mình, vung quẫy đuôi ở trên mặt nước đánh ra một bọt nước, bắn lên giọt nước có mấy viên thấm ướt tiểu hồ điệp cánh, nàng hơi có chút ghen nói: &quot;Kia tăng nhân bất quá là sinh một bộ hảo hời hợt, là có thể lừa như ngươi vậy để ý? Xem dáng dấp như vậy, nếu là nhiều hơn nữa đến mấy mỹ nhân, ngươi liền muốn liền ta là ai đều đã quên đi?&quot;
+
+&quot;Này nói rất đúng nói cái gì, trên thế giới bất luận là người, là yêu vẫn là tiên, cũng sẽ không lại có thêm so với Cẩm Lý tỷ tỷ càng đẹp mắt. &quot; Diệp Hạ Vân gặp Du Cẩm coi là thật có phần không vui, liền ngay cả vội vàng dùng tiểu tua vòi lại sượt sượt cá chép rực rỡ gò má, vội vội vã vã xin tha, &quot;Cẩm Lý tỷ tỷ ngươi bây giờ chưa hoá hình, cũng đã là vô cùng xinh đẹp, coi như là vào kia Tiên cung dao trì cũng chắc chắn sẽ không thua kém. &quot;
+
+Lời này nhưng là thật tâm, ở Diệp Hạ Vân xem ra, hắn Cẩm Lý tỷ tỷ quả nhiên là vô cùng xinh đẹp. Lại không nói kia màu sắc hào hoa phú quý tỉ mỉ vảy, chính là kia dài như tơ lụa, mỏng như lụa mỏng rộng lớn vây đuôi liền đã là đầy đủ mê quan người con mắt, tại đây trong suốt sơn trong nước suối bơi động, quả thực có thể nói như rồng như phượng, cao quý mà nhã trí, vừa khiến lòng người sinh ngóng trông, lại không dám dễ dàng tới gần, để tránh khỏi thất lễ.
+
+Bất quá đẹp mắt như vậy Cẩm Lý tỷ tỷ tính cách lại rất ôn nhu, đối với hắn cũng là vô cùng tốt, hơn nữa lại thông tuệ, như là cái gì đều hiểu.
+
+&quot;Miệng lưỡi trơn tru. &quot; Du Cẩm nhẹ rên một tiếng, nhưng vẫn là bị hống đến hài lòng, cá chép dáng dấp nhìn không ra biểu hiện, nhưng là từ nói chuyện ngữ điệu bên trong vẫn có thể nghe ra nàng ngượng ngùng, &quot;Lại quá chút thời gian, ta là có thể hoá hình, chờ đến lúc đó, ta liền theo ngươi đến xem khắp thiên hạ phong quang. &quot;
+
+&quot;Vậy ta cần phải cái thứ nhất nhìn thấy Cẩm Lý tỷ tỷ hình người!&quot;
+
+&quot;Được, đều tùy theo ngươi. &quot;
+
+***
+
+Điệp yêu trời sinh liền có ra vào mộng cảnh khả năng, có đồn đại nói cái thứ nhất tu ra linh thức điệp yêu, chính là ở trong mơ chịu trang chu điểm hóa, lúc này mới được rồi cơ duyên.
+
+Diệp Hạ Vân cũng là có thể, trong ngày thường hắn thỉnh thoảng sẽ chạy vào mọi người trong mộng chơi đùa, cũng thường thường muốn trộm đi tiến vào Cẩm Lý tỷ tỷ trong mộng nhìn một cái giấc mơ của nàng sẽ là dạng gì, nhưng mỗi lần đều sẽ bị phát hiện, sau đó bị Cẩm Lý tỷ tỷ vừa thẹn vừa giận trách cứ trên một trận.
+
+Cẩm Lý tỷ tỷ không cho phép hắn cùng kia tăng nhân vãng lai, nhưng lén lút chạy vào trong mộng chơi một chút tổng không quan trọng lắm đi?
+
+Tiểu hòa thượng trong mộng là một mảnh trống không mang, mơ hồ có Phạn âm vang vọng, Diệp Hạ Vân cơ hồ là mới vừa vào đến liền lạc đường, đấu đá lung tung lung tung bay tới bay lui, nhưng đập vào mắt đi tới nhưng thủy chung là trắng xóa một mảnh.
+
+Mãi đến tận hắn cảm thấy giận, muốn rời khỏi này không hề hứng thú có thể nói mộng cảnh lúc, mới nghe thấy cùng nhau bình tĩnh mà đạm bạc thanh âm nói rằng: &quot;Thí chủ đêm khuya đến thăm, thật là có chuyện gì quan trọng?&quot;
+
+Trộm đi tiến vào trong mộng của người khác còn bị tại chỗ bắt bao, này cũng không tránh khỏi có chút lúng túng, may mà Diệp Hạ Vân luôn luôn là bị Du Cẩm cho chiều hư, coi như bị người tóm gọm cũng không cảm giác đến thật không tiện, trái lại còn có thể quang minh chánh đại cùng nhân gia bắt chuyện lên: &quot;Ta đến trong mộng của ngươi chơi a, ngươi mộng tại sao là một mảnh trống không, một chút ý tứ đều không có. &quot;
+
+&quot;Phật nói vạn vật đều hư, mà hư vô cũng là vạn vật. &quot;
+
+Lần này thanh âm đang từ phía sau hắn truyền đến, Diệp Hạ Vân trên không trung xoay chuyển nửa cái vòng nhỏ, rốt cục thấy được kia đứng phía sau mình tiểu hòa thượng, trên người đối phương vẫn như cũ ăn mặc vậy có điểm cũ tăng bào, thế nhưng không chịu được có được một bộ tướng mạo thật được, nhìn cũng không cảm thấy có cái gì không tốt.
+
+&quot;Đừng nói với ta những kia phật pháp, ta một tinh quái lại nghe không hiểu. &quot; Diệp Hạ Vân bất mãn mà quạt quạt cánh, loạng choà loạng choạng mà bay đến tiểu hòa thượng vai, nhẹ rơi xuống, &quot;Cái gì vạn vật đều hư, ta chỉ biết là nhìn thấy mò mới phải tốt. &quot;
+
+Tiểu hòa thượng không nói gì, liền Diệp Hạ Vân nói tiếp: &quot;Ta gọi Diệp Hạ Vân, ngươi tên là gì a?&quot;
+
+&quot;Ta tên Thương Ngô. &quot;
+
+Diệp Hạ Vân phẩy phẩy cánh, tiếp tục tò mò hỏi: &quot;Ta ở dưới chân núi thấy hòa thượng đều là không có tóc, ngươi tại sao cùng bọn họ không giống nhau?&quot;
+
+&quot;Gia sư từng nói ta cùng với hồng trần vẫn còn tồn tại liên lụy, chờ trần duyên đều đoạn, mới có thể cắt tóc. &quot;
+
+&quot;Làm gì muốn cạo, đẹp mắt như vậy tóc, cạo chẳng phải là đáng tiếc?&quot; Diệp Hạ Vân rất bất mãn ở giữa không trung lắc ra một đường vòng cung, cảm thấy hòa thượng này quả thực là không thể nói lý, dĩ nhiên đáng sợ như thế ý nghĩ, &quot;Ngươi bây giờ giữ lại tóc cũng là mỗi ngày đọc kinh tụng phật, cạo tóc cũng giống vậy như vậy, nếu chút nào không ảnh hưởng, làm gì nhất định phải cùng chính mình không qua được?&quot;
+
+&quot;Duy cắt tóc thụ giới người, mới có thể vào Phật môn, gọi tỷ khưu. Huống dung mạo mỹ xấu, đều dưới da bạch cốt. &quot;
+
+Nửa câu đầu Diệp Hạ Vân nghe không hiểu, nhưng nửa câu sau hắn tốt xấu vẫn là nghe đã hiểu: &quot;Coi như bạch cốt, cũng phân là mỹ xấu!&quot;
+
+Bọn họ ai cũng không thuyết phục được ai, tại ý thức đến điểm này sau khi, Thương Ngô liền chỉ là thấp giọng niệm một câu phật hiệu, lập tức liền sẽ không tiếp tục cùng hắn tranh chấp.
+
+May mà Diệp Hạ Vân cũng không phải yêu thích bám vào một chuyện không tha, hắn rất nhanh sẽ lại tìm được rồi mới nguyên cớ, hưng phấn cùng núi này trên hiếm thấy có thể cùng hắn giao lưu đối tượng nói cái liên tu bất tận.
+
+Thương Ngô thuở nhỏ liền tính tình thanh lãnh quen rồi, ở đi tới Thanh Minh sơn trước, tuỳ tùng sư phụ tu hành lúc, cũng hầu như từ không có người giống như vậy quấn quít lấy hắn nói chuyện. Bây giờ gặp phải như vậy một tu vi nông cạn lại khá là gan lớn tiểu yêu, hắn trong lòng cũng là cảm thấy có phần mới mẻ.
+
+Tiểu hồ điệp trời sanh là yêu thích náo nhiệt tính cách, trong ngày thường cũng không có việc gì cũng sẽ tìm đến tiểu hòa thượng trò chuyện, chia sẻ một ít chính mình bay xuống sơn lúc thấy thú vị đồ vật.
+
+Liền, tiểu hòa thượng thành điệp yêu ở trên ngọn núi này thứ hai bằng hữu, mà điệp yêu thành tiểu hòa thượng người bạn thứ nhất.
+
+[ tác gia lời muốn nói: ]
+
+Tân niên vui sướng, thừa dịp khóa niên như thế vui mừng thời điểm đem tiểu hồ điệp thả ra linh lợi
+
+Dùng ăn nhắc nhở: Tồn tại nơi hỏa táng, Tu La tràng yếu tố, tiểu hồ điệp là tội ác trêu người tinh
+
+Hoàng bạo máu chó ngũ độc đầy đủ
+
+Hồng trần mộng ( 02)
+
+Bất kể là Diệp Hạ Vân vẫn là Du Cẩm, đều không có dự liệu được Diệp Hạ Vân dĩ nhiên sẽ trước tiên hoá hình thành công, thậm chí ở hoá hình lúc chính hắn cũng còn là một mặt mờ mịt, tựa hồ không hiểu mình tại sao liền không hiểu ra sao đã biến thành hình người.
+
+Lúc đó Du Cẩm từ trong nước suối thò đầu ra, nhìn đầy mặt vô tội ngồi bên bờ thanh niên, lại cười nói: &quot;Chớ ngu lo lắng, đi tìm bộ quần áo mặc, như vậy giống kiểu gì?&quot;
+
+Bị Du Cẩm vừa nói như thế, Diệp Hạ Vân mới ý thức tới chính mình dĩ nhiên cứ như vậy thân thể trần truồng ngồi Cẩm Lý tỷ tỷ trước mặt, mặt đỏ lên, ngay lập tức sẽ lại biến trở về con bướm dáng vẻ, lần này nhưng là phiền phiền nhiễu nhiễu rơi vào bên bờ một đóa hoa trên, thật không tiện giống như kiểu trước đây rơi xuống cá chép đỉnh đầu: &quot;Ta làm sao sẽ đột nhiên hoá hình?&quot;
+
+&quot;Ngươi hấp thu qua yêu hồ linh lực, những này qua hạ xuống phải làm là triệt để luyện hóa, thêm nữa ngươi vốn là thiên tư trác việt, có thể hoá hình cũng không phải cái gì quái sự. &quot; so với hắn eo hẹp, Du Cẩm đúng là muốn thản nhiên nhiều lắm, hoàn toàn không vì nhìn một khác phái thân thể mà cảm thấy ngượng ngùng, còn bơi tới bên bờ quay lên một đóa nước tiểu hoa đùa xấu hổ tiểu hồ điệp, &quot;Không nên thẹn thùng, tiểu Vân Nhi hóa thành hình người dáng dấp cũng có được rất là tuấn tú. &quot;
+
+&quot;Có thật không?&quot;
+
+Nhấc lên cái này Diệp Hạ Vân lập tức đến rồi hứng thú, vừa nãy vội vàng bên dưới liền chính hắn cũng không có thể nhìn một chút chính mình hóa thành hình người sau khi dáng vẻ, hiện tại bị Du Cẩm vừa nói như thế, ngược lại là có mấy phần mong đợi.
+
+&quot;Tự nhiên, &quot; Du Cẩm lại cười nói, &quot;Ta chưa từng đã lừa gạt ngươi?&quot;
+
+Muốn trêu chính mình tiểu hồ điệp hài lòng lúc, Du Cẩm từ trước đến giờ phải không lận với ca ngợi chi từ, nhưng lần này cho dù không vì khôi hài hài lòng, nàng cũng vẫn như cũ xuất phát từ nội tâm cảm thấy Diệp Hạ Vân hình người quả thực là đẹp đẽ cực kỳ.
+
+Có lời nói cùng từ lòng sinh, mà Diệp Hạ Vân sinh một bộ lãng tử giống như phong lưu hình ảnh, một cái nhíu mày một nụ cười đều là phong tình, gắn bó giữa lông mày làm như tự mang một phen tình ý, chợt nhìn lại cũng làm người ta cảm thấy này phải làm là vị du hí nhân gian căng quý công tử, sợ là không thiếu được si tình khoản nợ. Nhưng mà nhỏ nhìn thật kỹ, nhưng lại cảm thấy người này tướng mạo nhu hòa mà không sắc bén, phong lưu nhưng không tùy tiện, cho là tâm tính người lương thiện.
+
+Liền đáp lại nên như vậy -- Du Cẩm trong lòng suy nghĩ -- chính mình tiểu Vân Nhi từ trước đến giờ là tâm tính vô cùng tốt, thiên hạ không người so với hắn càng xứng đáng lên như vậy tướng mạo.
+
+Đáng tiếc Diệp Hạ Vân cũng không có phát hiện Du Cẩm giờ khắc này lòng tràn đầy niềm vui, hắn vội vã nghĩ nhìn một cái dáng dấp của chính mình, lại tạm thời không quá sẽ tự mình biến ảo y vật, liền cùng tuyền bên trong cá chép rực rỡ lên tiếng chào hỏi, chớp cánh hướng về Lâm Sơn tự bay đi.
+
+&quot;Tiểu hòa thượng tiểu hòa thượng, cho ta mượn một cái xiêm y của ngươi có được hay không?&quot;
+
+Cách thật xa Thương Ngô liền nghe thấy được kia ồn ào lại hưng phấn tiếng kêu gào, mãi cho đến vậy có điểm ồn ào con bướm rơi xuống trên bả vai hắn, hắn mới dừng lại rảnh tay bên trong gõ Mộc Ngư động tác, chậm rãi mở mắt ra: &quot;Ngươi ăn mặc, nơi này chỉ có hải thanh. &quot;
+
+Diệp Hạ Vân nghe không hiểu Thương Ngô nói cái gì, dưới cái nhìn của hắn niệm phật y phục trên người cũng gọi tăng bào, nhưng cũng cố không lên hỏi những kia việc nhỏ không đáng kể, chỉ gật đầu liên tục: &quot;Không có chuyện gì không có chuyện gì, mượn trước ta xuyên một hồi, còn có gương, ta muốn nhìn một chút hình người của chính mình hình dạng ra sao!&quot;
+
+Không nói gì, Thương Ngô đứng dậy mang theo trên bả vai con bướm trở về phòng ngủ của mình, từ trong quầy lấy một cái tăng bào cùng một bộ áo sơ mi đi ra, sau đó nói một câu &quot;Ta đi lấy gương&quot; liền rời khỏi phòng.
+
+Trong chùa là có gương đồng, nhưng trong ngày thường hắn dùng đến không nhiều, vẫn đặt ở một gian khác dùng để chứa đựng tạp vật trống không trong phòng.
+
+Nhưng mà cầm gương đồng lần thứ hai bước vào chính mình trong phòng lúc, trong phòng cảnh tượng lại làm cho hắn không tự chủ nghỉ chân, thậm chí ngay cả hô hấp đều chẳng biết lúc nào dừng lại.
+
+Có được cực kỳ đẹp trai thiếu niên đang ngồi ở trên giường của hắn, một con tóc đen xõa ra, không có mặc áo sơ mi, một cái sâu tông tay áo lớn hải thanh bị hắn lung ta lung tung khoác lên người, cổ áo đại mở hầu như không giấu được cái gì, thấy hắn lúc đi vào liếc tới được cái nhìn kia càng là phảng phất mang theo phong tình vạn chủng, dáng dấp kia có thể nói phải vô cùng không đoan trang, thậm chí nói là thả. Đãng cũng không quá đáng, thế nhưng hay là chính như kia điệp yêu nói -- mặc dù dưới da bạch cốt, cũng phân là mỹ xấu.
+
+Sư phụ từng nói hắn trời sinh phật cùng, là hiếm thấy linh đài trong sạch người, mà tâm tư cứng cỏi, thế gian ít có có thể làm hắn dao động đồ vật.
+
+Thật là bây giờ bất quá là nhìn thấy một con điệp yêu hình người hóa thân thôi, vì sao tâm luật sẽ bỗng nhiên rối loạn? Chẳng lẽ là gần nhất tu hành có điều lười biếng?
+
+Diệp Hạ Vân vẫn ở tại trong núi, đối với phàm trần tục thế tuy tốt kỳ nhưng thực tại hiểu rõ rất ít, tính tình cũng còn ngây thơ, không hề cảm thấy chính mình dáng dấp như vậy có cái gì không đúng, nhìn thấy Thương Ngô đứng cửa, vẫn vui vẻ hướng về phía hắn vẫy tay: &quot;Ngươi trở về? Ngươi nhanh nhìn một cái, hình người của ta có phải rất đẹp mắt hay không? Cẩm Lý tỷ tỷ nói rất ưa nhìn, nàng sẽ không gạt người. &quot;
+
+Thương Ngô còn nghi hoặc dùng tay chống đỡ trong lòng chính mình, không hiểu chính mình mới vừa dị dạng là bởi vì gì mà lên, bây giờ nghe gặp Diệp Hạ Vân giục, liền cũng chỉ được đem tạm thời thả xuống, đi vào trong nhà đem gương đồng đặt lên bàn, sau đó lại đi tới bên giường, đem Diệp Hạ Vân mặc trên người đến không ra ngô ra khoai tăng bào cởi ra: &quot;Muốn trước tiên xuyên áo sơ mi. &quot;
+
+Mỗi một lần ngón tay không cẩn thận sát qua kia ấm áp da thịt lúc, hắn cũng có thể cảm giác được mạch đập của chính mình sẽ lên biến hóa, như là này điệp yêu tự thân mang theo yêu thuật gì giống như vậy, dễ như ăn cháo là có thể loạn tâm thần người.
+        </div>
+
+        <div class="bottom-nav">
+            <button class="nav-action-btn" id="prevChapBtn" onclick="navigateChapter(-1)">← Chương trước</button>
+            <button class="top-scroll-btn" onclick="scrollToNav()">↑ Lên mục lục</button>
+            <button class="nav-action-btn" id="nextChapBtn" onclick="navigateChapter(1)">Chương sau →</button>
+        </div>
+
+        <div class="utterances-comments-section">
+            <script src="https://utteranc.es/client.js"
+                    repo="PhamNhaDoan/phamnhadoan.github.io"
+                    issue-term="pathname"
+                    label="comment"
+                    theme="github-light"
+                    crossorigin="anonymous"
+                    async>
+            </script>
+        </div>
+
+        <div class="cbox-chat-section">
+            <h3 class="cbox-title">Trò Chuyện Công Khai</h3>
+            <div class="cbox-frame-wrapper">
+                <iframe src="https://www5.cbox.ws/box/?boxid=966044&boxtag=ScPKVa" 
+                        width="100%" 
+                        height="450" 
+                        allowtransparency="yes" 
+                        allow="autoplay" 
+                        frameborder="0" 
+                        marginheight="0" 
+                        marginwidth="0" 
+                        scrolling="auto" 
+                        style="border: none; border-radius: 8px;">
+                </iframe>
+            </div>
+        </div>
+    </article>
+</div>
+
+<script>
+    const storyId = 'testtessttest';
+    const storyData = [{"id":"ch1","title":"Chương 1","content":"Hồng trần mộng 01\n\nThanh Minh sơn, Du Long tuyền, Lâm Sơn tự.\n\nSơn vốn là toà núi hoang, tuyền cũng chỉ là một chút nhợt nhạt sơn tuyền, tự càng là một toà hầu như không người hiểu rõ lụi bại chùa miếu.\n\nNhưng trên núi ở một con linh điệp, bơi trong suối một đuôi trắng bạc cá chép rực rỡ, trong miếu ở lại một vị một lòng thanh tu tiểu hòa thượng.\n\nNgọn núi này linh khí mỏng manh, tiểu hồ điệp là trong núi rừng duy hai tu ra linh thức yêu, một người khác là ở tại sơn tuyền bên trong Cẩm Lý tỷ tỷ.\n\nTiểu hồ điệp cánh là nhợt nhạt huỳnh màu xanh lam, cánh ranh giới nơi còn có một vòng tinh xảo viền bạc, sí trên mặt rơi một vòng màu vàng nhạt lấm tấm, giống như cùng ánh mặt trời xuyên thấu cành lá vương xuống đến mỹ lệ vết lốm đốm, nho nhỏ con bướm rơi vào trên đóa hoa thời điểm giống như là bầu trời một đóa Tiểu Vân sắc rơi xuống, sau khi bay lên hoặc như là ở lá cây dưới thổi qua đám mây.\n\nCẩm Lý tỷ tỷ cho hắn nổi lên tên.\n\nKhi đó tiểu hồ điệp linh trí sơ khai, còn nơi ở một cái tỉnh tỉnh mê mê trạng thái, một ngày mơ mơ hồ hồ rơi vào sơn tuyền cái khác một đóa hoa trên, liền nghe gặp trong nước suối truyền đến cùng nhau bọt nước phù phù thanh âm, sau đó chính là cùng nhau ôn ôn nhu nhu âm thanh truyền đến: \"Ngươi mạnh khỏe a, tiểu hồ điệp. Ta tên là Du Cẩm, trước đây chưa từng thấy ngươi, thật là gần chút thời gian mới vừa mở linh trí?\"\n\n\"Ngươi mạnh khỏe, \" tiểu hồ điệp nhìn về phía cái kia từ trong nước suối thò đầu ra màu bạc cá chép, có chút thẹn thùng nhào nhào cánh, \"Cẩm Lý tỷ tỷ, ngươi thật là đẹp a, thật là ta vẫn không có tên, xin lỗi...\"\n\n\"Không liên quan, trong núi này thanh lãnh, hiếm thấy gặp ngươi, ta cũng thật là hài lòng. Ta coi ngươi làm như trên người chịu một tia hồ yêu khí tức, phải làm là gặp may đúng dịp từng đụng phải hồ yêu nội đan linh lực, chịu điểm hóa. \" cá chép vẩy vẩy đuôi, ở trên mặt nước đánh ra một mảnh nước trong và gợn sóng bọt nước, \"Ngươi nếu không phải ghét bỏ, liền để ta vì ngươi làm cái tên, khỏe?\"\n\n\"Tốt tốt!\" Tiểu hồ điệp vội vội vã vã đồng ý, tha thiết mong chờ mà nhìn trong nước kia xem ra tinh xảo mà lại mỹ lệ cá chép rực rỡ, \"Cảm tạ Cẩm Lý tỷ tỷ. \"\n\nDu Cẩm bị hắn chọc cho nở nụ cười một tiếng, ôn nhu trả lời: \"Không cần khách khí như vậy. Điệp yêu bộ tộc từ trước đến giờ yêu thích múa lên với hoa dưới, đang như mọi người cái gọi là 'Hoa hạ phong chảy'. Ta coi nhưng ngươi là có được linh động thanh uyển như lá hạ lưu vân, không bằng lợi dụng lá vì là họ, vân làm tên, mà bây giờ chính là giữa hè thời tiết, liền gọi Diệp Hạ Vân làm sao? Đọc lấy tới là lá hạ lưu vân, rơi vào giấy bút trên lại có ngày mùa hè thanh vân tâm ý. \"\n\nTừ đây, tiểu hồ điệp liền có tên, cũng có người bạn thứ nhất.\n\nCẩm Lý tỷ tỷ đều là đối với tiểu hồ điệp rất tốt, sẽ ôn nhu mà lại nghiêm túc hướng về hắn căn dặn: \"Ta không cầu ngươi cả đời này xông ra lý lẽ gì, cũng không cầu xin ngươi đi tế thế cứu nhân kết làm thiện quả, chỉ cầu ngươi muốn an ổn không lo, đem mình coi chừng hảo. \"\n\nHai cái linh lực hơi yếu tiểu yêu lẫn nhau bồi bạn ở trên núi vượt qua rất nhiều năm tháng, mãi đến tận một ngày nào đó, một người mặc áo cà sa, nhưng giữ lại một con tóc đen tiểu hòa thượng đi tới Thanh Minh sơn, ở trong núi toà kia trống trơn nhiều năm trong miếu an trí hạ xuống.\n\nLúc này Diệp Hạ Vân đã không còn là lúc trước cái kia hồ đồ tiểu hồ điệp, hắn thường thường biết bay đến bên dưới ngọn núi, đi đến nhân loại địa giới chơi đùa, nhìn những kia sự vật mới mẻ, sau đó sẽ trở về nói cho hắn Cẩm Lý tỷ tỷ nghe mình ở bên dưới ngọn núi thấy chuyện thú vị.\n\nHắn trước đây cũng ở dưới chân núi từng thấy tu hành hòa thượng, thật là hắn trước đây thấy những hòa thượng kia đều là không có tóc, hơn nữa lớn lên cũng phần lớn không dễ nhìn, không giống như là cái kia vừa tới đến Thanh Minh sơn tiểu hòa thượng, chẳng những có một con tóc đen, còn có được đẹp trai phi phàm, cho dù ăn mặc một thân âm u tăng bào cũng khó bưng huy, nhìn liền hợp mắt cực kỳ.\n\nDu Cẩm đều sẽ dặn hắn không muốn cùng nhân loại lui tới, thế nhưng Diệp Hạ Vân tổng cũng không nhịn được tò mò bay đi nhìn lén cái kia tiểu hòa thượng, có lúc rơi vào tiêu tốn nghe tiểu hòa thượng kia lẩm bẩm hắn nghe không hiểu kinh văn, ngất ngất ngây ngây đã vượt qua một buổi sáng.\n\nBuổi chiều, hắn bay trở về sơn tuyền bên, một cái vảy tỉ mỉ chỉnh tề màu bạc cá chép rực rỡ từ trong nước thò đầu ra, hắn liền biết nghe lời phải rơi vào cá chép trên đầu, dùng chính mình tiểu tua vòi thân mật đụng một cái cá chép lạnh lẽo vảy: \"Cẩm Lý tỷ tỷ, ta vẫn cảm thấy buồn bực, ngươi nói những kia hòa thượng cả ngày ghi nhớ những kinh văn đó, từ sớm đến tối cũng không có trò gian, làm sao liền không cảm thấy phiền đây?\"\n\n\"Ngươi cảm thấy phiền muộn chuyện tình, bọn họ nhưng không sẽ như vậy cảm thấy. \" Du Cẩm nâng nhẹ tiểu hồ điệp ở trên mặt nước chậm rãi bơi vài vòng, trước sau như một ngữ khí mềm mại cùng hắn nói chuyện, \"Lại như ta sẽ không chán ghét cùng ngươi ở chung giống như vậy, thờ phụng phật pháp người cũng sẽ không cảm thấy niệm tụng kinh văn là kiện khổ sai chuyện. Đột nhiên nói tới cái này, tiểu Vân Nhi, ngươi thật là lại đi tìm cái kia tăng nhân?\"\n\nBị Du Cẩm nói một cách thẳng thừng tâm sự, Diệp Hạ Vân cũng không cảm giác đến thật không tiện, ngược lại hắn Cẩm Lý tỷ tỷ luôn luôn cũng sẽ không cùng hắn tức giận, liền để hắn có thể tận tình làm nũng tùy hứng: \"Chẳng phải là sao, núi này trên ngoại trừ ngoài ta ngươi thật vất vả có thêm người thứ ba có linh trí gia hỏa, lớn lên lại đẹp đẽ như vậy, một mực tính cách như vậy vô vị, rất đáng tiếc. \"\n\n\"Ngươi a, liền yêu thích hồ đồ. \" Du Cẩm quát khẽ hắn một câu, \"Kia tăng nhân tới lấy nước thời điểm ta từng nhìn qua, người kia diện có phật cùng, từ nhỏ cùng phật pháp hữu duyên, tự mang theo một thân chính khí, số mệnh cùng thiên đạo kết hợp lại, cùng chúng ta những này tinh quái khó có thể tương dung, ngươi cách xa nhìn thì thôi, không nên đi trêu chọc hắn. \"\n\n\"Đừng lo lắng a, Cẩm Lý tỷ tỷ, ta từ trước đến giờ nhất nghe lời ngươi. \"\n\nDu Cẩm vừa nghe liền biết hắn lại đang qua loa chính mình, vung quẫy đuôi ở trên mặt nước đánh ra một bọt nước, bắn lên giọt nước có mấy viên thấm ướt tiểu hồ điệp cánh, nàng hơi có chút ghen nói: \"Kia tăng nhân bất quá là sinh một bộ hảo hời hợt, là có thể lừa như ngươi vậy để ý? Xem dáng dấp như vậy, nếu là nhiều hơn nữa đến mấy mỹ nhân, ngươi liền muốn liền ta là ai đều đã quên đi?\"\n\n\"Này nói rất đúng nói cái gì, trên thế giới bất luận là người, là yêu vẫn là tiên, cũng sẽ không lại có thêm so với Cẩm Lý tỷ tỷ càng đẹp mắt. \" Diệp Hạ Vân gặp Du Cẩm coi là thật có phần không vui, liền ngay cả vội vàng dùng tiểu tua vòi lại sượt sượt cá chép rực rỡ gò má, vội vội vã vã xin tha, \"Cẩm Lý tỷ tỷ ngươi bây giờ chưa hoá hình, cũng đã là vô cùng xinh đẹp, coi như là vào kia Tiên cung dao trì cũng chắc chắn sẽ không thua kém. \"\n\nLời này nhưng là thật tâm, ở Diệp Hạ Vân xem ra, hắn Cẩm Lý tỷ tỷ quả nhiên là vô cùng xinh đẹp. Lại không nói kia màu sắc hào hoa phú quý tỉ mỉ vảy, chính là kia dài như tơ lụa, mỏng như lụa mỏng rộng lớn vây đuôi liền đã là đầy đủ mê quan người con mắt, tại đây trong suốt sơn trong nước suối bơi động, quả thực có thể nói như rồng như phượng, cao quý mà nhã trí, vừa khiến lòng người sinh ngóng trông, lại không dám dễ dàng tới gần, để tránh khỏi thất lễ.\n\nBất quá đẹp mắt như vậy Cẩm Lý tỷ tỷ tính cách lại rất ôn nhu, đối với hắn cũng là vô cùng tốt, hơn nữa lại thông tuệ, như là cái gì đều hiểu.\n\n\"Miệng lưỡi trơn tru. \" Du Cẩm nhẹ rên một tiếng, nhưng vẫn là bị hống đến hài lòng, cá chép dáng dấp nhìn không ra biểu hiện, nhưng là từ nói chuyện ngữ điệu bên trong vẫn có thể nghe ra nàng ngượng ngùng, \"Lại quá chút thời gian, ta là có thể hoá hình, chờ đến lúc đó, ta liền theo ngươi đến xem khắp thiên hạ phong quang. \"\n\n\"Vậy ta cần phải cái thứ nhất nhìn thấy Cẩm Lý tỷ tỷ hình người!\"\n\n\"Được, đều tùy theo ngươi. \"\n\n***\n\nĐiệp yêu trời sinh liền có ra vào mộng cảnh khả năng, có đồn đại nói cái thứ nhất tu ra linh thức điệp yêu, chính là ở trong mơ chịu trang chu điểm hóa, lúc này mới được rồi cơ duyên.\n\nDiệp Hạ Vân cũng là có thể, trong ngày thường hắn thỉnh thoảng sẽ chạy vào mọi người trong mộng chơi đùa, cũng thường thường muốn trộm đi tiến vào Cẩm Lý tỷ tỷ trong mộng nhìn một cái giấc mơ của nàng sẽ là dạng gì, nhưng mỗi lần đều sẽ bị phát hiện, sau đó bị Cẩm Lý tỷ tỷ vừa thẹn vừa giận trách cứ trên một trận.\n\nCẩm Lý tỷ tỷ không cho phép hắn cùng kia tăng nhân vãng lai, nhưng lén lút chạy vào trong mộng chơi một chút tổng không quan trọng lắm đi?\n\nTiểu hòa thượng trong mộng là một mảnh trống không mang, mơ hồ có Phạn âm vang vọng, Diệp Hạ Vân cơ hồ là mới vừa vào đến liền lạc đường, đấu đá lung tung lung tung bay tới bay lui, nhưng đập vào mắt đi tới nhưng thủy chung là trắng xóa một mảnh.\n\nMãi đến tận hắn cảm thấy giận, muốn rời khỏi này không hề hứng thú có thể nói mộng cảnh lúc, mới nghe thấy cùng nhau bình tĩnh mà đạm bạc thanh âm nói rằng: \"Thí chủ đêm khuya đến thăm, thật là có chuyện gì quan trọng?\"\n\nTrộm đi tiến vào trong mộng của người khác còn bị tại chỗ bắt bao, này cũng không tránh khỏi có chút lúng túng, may mà Diệp Hạ Vân luôn luôn là bị Du Cẩm cho chiều hư, coi như bị người tóm gọm cũng không cảm giác đến thật không tiện, trái lại còn có thể quang minh chánh đại cùng nhân gia bắt chuyện lên: \"Ta đến trong mộng của ngươi chơi a, ngươi mộng tại sao là một mảnh trống không, một chút ý tứ đều không có. \"\n\n\"Phật nói vạn vật đều hư, mà hư vô cũng là vạn vật. \"\n\nLần này thanh âm đang từ phía sau hắn truyền đến, Diệp Hạ Vân trên không trung xoay chuyển nửa cái vòng nhỏ, rốt cục thấy được kia đứng phía sau mình tiểu hòa thượng, trên người đối phương vẫn như cũ ăn mặc vậy có điểm cũ tăng bào, thế nhưng không chịu được có được một bộ tướng mạo thật được, nhìn cũng không cảm thấy có cái gì không tốt.\n\n\"Đừng nói với ta những kia phật pháp, ta một tinh quái lại nghe không hiểu. \" Diệp Hạ Vân bất mãn mà quạt quạt cánh, loạng choà loạng choạng mà bay đến tiểu hòa thượng vai, nhẹ rơi xuống, \"Cái gì vạn vật đều hư, ta chỉ biết là nhìn thấy mò mới phải tốt. \"\n\nTiểu hòa thượng không nói gì, liền Diệp Hạ Vân nói tiếp: \"Ta gọi Diệp Hạ Vân, ngươi tên là gì a?\"\n\n\"Ta tên Thương Ngô. \"\n\nDiệp Hạ Vân phẩy phẩy cánh, tiếp tục tò mò hỏi: \"Ta ở dưới chân núi thấy hòa thượng đều là không có tóc, ngươi tại sao cùng bọn họ không giống nhau?\"\n\n\"Gia sư từng nói ta cùng với hồng trần vẫn còn tồn tại liên lụy, chờ trần duyên đều đoạn, mới có thể cắt tóc. \"\n\n\"Làm gì muốn cạo, đẹp mắt như vậy tóc, cạo chẳng phải là đáng tiếc?\" Diệp Hạ Vân rất bất mãn ở giữa không trung lắc ra một đường vòng cung, cảm thấy hòa thượng này quả thực là không thể nói lý, dĩ nhiên đáng sợ như thế ý nghĩ, \"Ngươi bây giờ giữ lại tóc cũng là mỗi ngày đọc kinh tụng phật, cạo tóc cũng giống vậy như vậy, nếu chút nào không ảnh hưởng, làm gì nhất định phải cùng chính mình không qua được?\"\n\n\"Duy cắt tóc thụ giới người, mới có thể vào Phật môn, gọi tỷ khưu. Huống dung mạo mỹ xấu, đều dưới da bạch cốt. \"\n\nNửa câu đầu Diệp Hạ Vân nghe không hiểu, nhưng nửa câu sau hắn tốt xấu vẫn là nghe đã hiểu: \"Coi như bạch cốt, cũng phân là mỹ xấu!\"\n\nBọn họ ai cũng không thuyết phục được ai, tại ý thức đến điểm này sau khi, Thương Ngô liền chỉ là thấp giọng niệm một câu phật hiệu, lập tức liền sẽ không tiếp tục cùng hắn tranh chấp.\n\nMay mà Diệp Hạ Vân cũng không phải yêu thích bám vào một chuyện không tha, hắn rất nhanh sẽ lại tìm được rồi mới nguyên cớ, hưng phấn cùng núi này trên hiếm thấy có thể cùng hắn giao lưu đối tượng nói cái liên tu bất tận.\n\nThương Ngô thuở nhỏ liền tính tình thanh lãnh quen rồi, ở đi tới Thanh Minh sơn trước, tuỳ tùng sư phụ tu hành lúc, cũng hầu như từ không có người giống như vậy quấn quít lấy hắn nói chuyện. Bây giờ gặp phải như vậy một tu vi nông cạn lại khá là gan lớn tiểu yêu, hắn trong lòng cũng là cảm thấy có phần mới mẻ.\n\nTiểu hồ điệp trời sanh là yêu thích náo nhiệt tính cách, trong ngày thường cũng không có việc gì cũng sẽ tìm đến tiểu hòa thượng trò chuyện, chia sẻ một ít chính mình bay xuống sơn lúc thấy thú vị đồ vật.\n\nLiền, tiểu hòa thượng thành điệp yêu ở trên ngọn núi này thứ hai bằng hữu, mà điệp yêu thành tiểu hòa thượng người bạn thứ nhất.\n\n[ tác gia lời muốn nói: ]\n\nTân niên vui sướng, thừa dịp khóa niên như thế vui mừng thời điểm đem tiểu hồ điệp thả ra linh lợi\n\nDùng ăn nhắc nhở: Tồn tại nơi hỏa táng, Tu La tràng yếu tố, tiểu hồ điệp là tội ác trêu người tinh\n\nHoàng bạo máu chó ngũ độc đầy đủ\n\nHồng trần mộng ( 02)\n\nBất kể là Diệp Hạ Vân vẫn là Du Cẩm, đều không có dự liệu được Diệp Hạ Vân dĩ nhiên sẽ trước tiên hoá hình thành công, thậm chí ở hoá hình lúc chính hắn cũng còn là một mặt mờ mịt, tựa hồ không hiểu mình tại sao liền không hiểu ra sao đã biến thành hình người.\n\nLúc đó Du Cẩm từ trong nước suối thò đầu ra, nhìn đầy mặt vô tội ngồi bên bờ thanh niên, lại cười nói: \"Chớ ngu lo lắng, đi tìm bộ quần áo mặc, như vậy giống kiểu gì?\"\n\nBị Du Cẩm vừa nói như thế, Diệp Hạ Vân mới ý thức tới chính mình dĩ nhiên cứ như vậy thân thể trần truồng ngồi Cẩm Lý tỷ tỷ trước mặt, mặt đỏ lên, ngay lập tức sẽ lại biến trở về con bướm dáng vẻ, lần này nhưng là phiền phiền nhiễu nhiễu rơi vào bên bờ một đóa hoa trên, thật không tiện giống như kiểu trước đây rơi xuống cá chép đỉnh đầu: \"Ta làm sao sẽ đột nhiên hoá hình?\"\n\n\"Ngươi hấp thu qua yêu hồ linh lực, những này qua hạ xuống phải làm là triệt để luyện hóa, thêm nữa ngươi vốn là thiên tư trác việt, có thể hoá hình cũng không phải cái gì quái sự. \" so với hắn eo hẹp, Du Cẩm đúng là muốn thản nhiên nhiều lắm, hoàn toàn không vì nhìn một khác phái thân thể mà cảm thấy ngượng ngùng, còn bơi tới bên bờ quay lên một đóa nước tiểu hoa đùa xấu hổ tiểu hồ điệp, \"Không nên thẹn thùng, tiểu Vân Nhi hóa thành hình người dáng dấp cũng có được rất là tuấn tú. \"\n\n\"Có thật không?\"\n\nNhấc lên cái này Diệp Hạ Vân lập tức đến rồi hứng thú, vừa nãy vội vàng bên dưới liền chính hắn cũng không có thể nhìn một chút chính mình hóa thành hình người sau khi dáng vẻ, hiện tại bị Du Cẩm vừa nói như thế, ngược lại là có mấy phần mong đợi.\n\n\"Tự nhiên, \" Du Cẩm lại cười nói, \"Ta chưa từng đã lừa gạt ngươi?\"\n\nMuốn trêu chính mình tiểu hồ điệp hài lòng lúc, Du Cẩm từ trước đến giờ phải không lận với ca ngợi chi từ, nhưng lần này cho dù không vì khôi hài hài lòng, nàng cũng vẫn như cũ xuất phát từ nội tâm cảm thấy Diệp Hạ Vân hình người quả thực là đẹp đẽ cực kỳ.\n\nCó lời nói cùng từ lòng sinh, mà Diệp Hạ Vân sinh một bộ lãng tử giống như phong lưu hình ảnh, một cái nhíu mày một nụ cười đều là phong tình, gắn bó giữa lông mày làm như tự mang một phen tình ý, chợt nhìn lại cũng làm người ta cảm thấy này phải làm là vị du hí nhân gian căng quý công tử, sợ là không thiếu được si tình khoản nợ. Nhưng mà nhỏ nhìn thật kỹ, nhưng lại cảm thấy người này tướng mạo nhu hòa mà không sắc bén, phong lưu nhưng không tùy tiện, cho là tâm tính người lương thiện.\n\nLiền đáp lại nên như vậy -- Du Cẩm trong lòng suy nghĩ -- chính mình tiểu Vân Nhi từ trước đến giờ là tâm tính vô cùng tốt, thiên hạ không người so với hắn càng xứng đáng lên như vậy tướng mạo.\n\nĐáng tiếc Diệp Hạ Vân cũng không có phát hiện Du Cẩm giờ khắc này lòng tràn đầy niềm vui, hắn vội vã nghĩ nhìn một cái dáng dấp của chính mình, lại tạm thời không quá sẽ tự mình biến ảo y vật, liền cùng tuyền bên trong cá chép rực rỡ lên tiếng chào hỏi, chớp cánh hướng về Lâm Sơn tự bay đi.\n\n\"Tiểu hòa thượng tiểu hòa thượng, cho ta mượn một cái xiêm y của ngươi có được hay không?\"\n\nCách thật xa Thương Ngô liền nghe thấy được kia ồn ào lại hưng phấn tiếng kêu gào, mãi cho đến vậy có điểm ồn ào con bướm rơi xuống trên bả vai hắn, hắn mới dừng lại rảnh tay bên trong gõ Mộc Ngư động tác, chậm rãi mở mắt ra: \"Ngươi ăn mặc, nơi này chỉ có hải thanh. \"\n\nDiệp Hạ Vân nghe không hiểu Thương Ngô nói cái gì, dưới cái nhìn của hắn niệm phật y phục trên người cũng gọi tăng bào, nhưng cũng cố không lên hỏi những kia việc nhỏ không đáng kể, chỉ gật đầu liên tục: \"Không có chuyện gì không có chuyện gì, mượn trước ta xuyên một hồi, còn có gương, ta muốn nhìn một chút hình người của chính mình hình dạng ra sao!\"\n\nKhông nói gì, Thương Ngô đứng dậy mang theo trên bả vai con bướm trở về phòng ngủ của mình, từ trong quầy lấy một cái tăng bào cùng một bộ áo sơ mi đi ra, sau đó nói một câu \"Ta đi lấy gương\" liền rời khỏi phòng.\n\nTrong chùa là có gương đồng, nhưng trong ngày thường hắn dùng đến không nhiều, vẫn đặt ở một gian khác dùng để chứa đựng tạp vật trống không trong phòng.\n\nNhưng mà cầm gương đồng lần thứ hai bước vào chính mình trong phòng lúc, trong phòng cảnh tượng lại làm cho hắn không tự chủ nghỉ chân, thậm chí ngay cả hô hấp đều chẳng biết lúc nào dừng lại.\n\nCó được cực kỳ đẹp trai thiếu niên đang ngồi ở trên giường của hắn, một con tóc đen xõa ra, không có mặc áo sơ mi, một cái sâu tông tay áo lớn hải thanh bị hắn lung ta lung tung khoác lên người, cổ áo đại mở hầu như không giấu được cái gì, thấy hắn lúc đi vào liếc tới được cái nhìn kia càng là phảng phất mang theo phong tình vạn chủng, dáng dấp kia có thể nói phải vô cùng không đoan trang, thậm chí nói là thả. Đãng cũng không quá đáng, thế nhưng hay là chính như kia điệp yêu nói -- mặc dù dưới da bạch cốt, cũng phân là mỹ xấu.\n\nSư phụ từng nói hắn trời sinh phật cùng, là hiếm thấy linh đài trong sạch người, mà tâm tư cứng cỏi, thế gian ít có có thể làm hắn dao động đồ vật.\n\nThật là bây giờ bất quá là nhìn thấy một con điệp yêu hình người hóa thân thôi, vì sao tâm luật sẽ bỗng nhiên rối loạn? Chẳng lẽ là gần nhất tu hành có điều lười biếng?\n\nDiệp Hạ Vân vẫn ở tại trong núi, đối với phàm trần tục thế tuy tốt kỳ nhưng thực tại hiểu rõ rất ít, tính tình cũng còn ngây thơ, không hề cảm thấy chính mình dáng dấp như vậy có cái gì không đúng, nhìn thấy Thương Ngô đứng cửa, vẫn vui vẻ hướng về phía hắn vẫy tay: \"Ngươi trở về? Ngươi nhanh nhìn một cái, hình người của ta có phải rất đẹp mắt hay không? Cẩm Lý tỷ tỷ nói rất ưa nhìn, nàng sẽ không gạt người. \"\n\nThương Ngô còn nghi hoặc dùng tay chống đỡ trong lòng chính mình, không hiểu chính mình mới vừa dị dạng là bởi vì gì mà lên, bây giờ nghe gặp Diệp Hạ Vân giục, liền cũng chỉ được đem tạm thời thả xuống, đi vào trong nhà đem gương đồng đặt lên bàn, sau đó lại đi tới bên giường, đem Diệp Hạ Vân mặc trên người đến không ra ngô ra khoai tăng bào cởi ra: \"Muốn trước tiên xuyên áo sơ mi. \"\n\nMỗi một lần ngón tay không cẩn thận sát qua kia ấm áp da thịt lúc, hắn cũng có thể cảm giác được mạch đập của chính mình sẽ lên biến hóa, như là này điệp yêu tự thân mang theo yêu thuật gì giống như vậy, dễ như ăn cháo là có thể loạn tâm thần người."},{"id":"ch2","title":"Chương 2","content":"Hồng trần mộng 01\n\nThanh Minh sơn, Du Long tuyền, Lâm Sơn tự.\n\nSơn vốn là toà núi hoang, tuyền cũng chỉ là một chút nhợt nhạt sơn tuyền, tự càng là một toà hầu như không người hiểu rõ lụi bại chùa miếu.\n\nNhưng trên núi ở một con linh điệp, bơi trong suối một đuôi trắng bạc cá chép rực rỡ, trong miếu ở lại một vị một lòng thanh tu tiểu hòa thượng.\n\nNgọn núi này linh khí mỏng manh, tiểu hồ điệp là trong núi rừng duy hai tu ra linh thức yêu, một người khác là ở tại sơn tuyền bên trong Cẩm Lý tỷ tỷ.\n\nTiểu hồ điệp cánh là nhợt nhạt huỳnh màu xanh lam, cánh ranh giới nơi còn có một vòng tinh xảo viền bạc, sí trên mặt rơi một vòng màu vàng nhạt lấm tấm, giống như cùng ánh mặt trời xuyên thấu cành lá vương xuống đến mỹ lệ vết lốm đốm, nho nhỏ con bướm rơi vào trên đóa hoa thời điểm giống như là bầu trời một đóa Tiểu Vân sắc rơi xuống, sau khi bay lên hoặc như là ở lá cây dưới thổi qua đám mây.\n\nCẩm Lý tỷ tỷ cho hắn nổi lên tên.\n\nKhi đó tiểu hồ điệp linh trí sơ khai, còn nơi ở một cái tỉnh tỉnh mê mê trạng thái, một ngày mơ mơ hồ hồ rơi vào sơn tuyền cái khác một đóa hoa trên, liền nghe gặp trong nước suối truyền đến cùng nhau bọt nước phù phù thanh âm, sau đó chính là cùng nhau ôn ôn nhu nhu âm thanh truyền đến: \"Ngươi mạnh khỏe a, tiểu hồ điệp. Ta tên là Du Cẩm, trước đây chưa từng thấy ngươi, thật là gần chút thời gian mới vừa mở linh trí?\"\n\n\"Ngươi mạnh khỏe, \" tiểu hồ điệp nhìn về phía cái kia từ trong nước suối thò đầu ra màu bạc cá chép, có chút thẹn thùng nhào nhào cánh, \"Cẩm Lý tỷ tỷ, ngươi thật là đẹp a, thật là ta vẫn không có tên, xin lỗi...\"\n\n\"Không liên quan, trong núi này thanh lãnh, hiếm thấy gặp ngươi, ta cũng thật là hài lòng. Ta coi ngươi làm như trên người chịu một tia hồ yêu khí tức, phải làm là gặp may đúng dịp từng đụng phải hồ yêu nội đan linh lực, chịu điểm hóa. \" cá chép vẩy vẩy đuôi, ở trên mặt nước đánh ra một mảnh nước trong và gợn sóng bọt nước, \"Ngươi nếu không phải ghét bỏ, liền để ta vì ngươi làm cái tên, khỏe?\"\n\n\"Tốt tốt!\" Tiểu hồ điệp vội vội vã vã đồng ý, tha thiết mong chờ mà nhìn trong nước kia xem ra tinh xảo mà lại mỹ lệ cá chép rực rỡ, \"Cảm tạ Cẩm Lý tỷ tỷ. \"\n\nDu Cẩm bị hắn chọc cho nở nụ cười một tiếng, ôn nhu trả lời: \"Không cần khách khí như vậy. Điệp yêu bộ tộc từ trước đến giờ yêu thích múa lên với hoa dưới, đang như mọi người cái gọi là 'Hoa hạ phong chảy'. Ta coi nhưng ngươi là có được linh động thanh uyển như lá hạ lưu vân, không bằng lợi dụng lá vì là họ, vân làm tên, mà bây giờ chính là giữa hè thời tiết, liền gọi Diệp Hạ Vân làm sao? Đọc lấy tới là lá hạ lưu vân, rơi vào giấy bút trên lại có ngày mùa hè thanh vân tâm ý. \"\n\nTừ đây, tiểu hồ điệp liền có tên, cũng có người bạn thứ nhất.\n\nCẩm Lý tỷ tỷ đều là đối với tiểu hồ điệp rất tốt, sẽ ôn nhu mà lại nghiêm túc hướng về hắn căn dặn: \"Ta không cầu ngươi cả đời này xông ra lý lẽ gì, cũng không cầu xin ngươi đi tế thế cứu nhân kết làm thiện quả, chỉ cầu ngươi muốn an ổn không lo, đem mình coi chừng hảo. \"\n\nHai cái linh lực hơi yếu tiểu yêu lẫn nhau bồi bạn ở trên núi vượt qua rất nhiều năm tháng, mãi đến tận một ngày nào đó, một người mặc áo cà sa, nhưng giữ lại một con tóc đen tiểu hòa thượng đi tới Thanh Minh sơn, ở trong núi toà kia trống trơn nhiều năm trong miếu an trí hạ xuống.\n\nLúc này Diệp Hạ Vân đã không còn là lúc trước cái kia hồ đồ tiểu hồ điệp, hắn thường thường biết bay đến bên dưới ngọn núi, đi đến nhân loại địa giới chơi đùa, nhìn những kia sự vật mới mẻ, sau đó sẽ trở về nói cho hắn Cẩm Lý tỷ tỷ nghe mình ở bên dưới ngọn núi thấy chuyện thú vị.\n\nHắn trước đây cũng ở dưới chân núi từng thấy tu hành hòa thượng, thật là hắn trước đây thấy những hòa thượng kia đều là không có tóc, hơn nữa lớn lên cũng phần lớn không dễ nhìn, không giống như là cái kia vừa tới đến Thanh Minh sơn tiểu hòa thượng, chẳng những có một con tóc đen, còn có được đẹp trai phi phàm, cho dù ăn mặc một thân âm u tăng bào cũng khó bưng huy, nhìn liền hợp mắt cực kỳ.\n\nDu Cẩm đều sẽ dặn hắn không muốn cùng nhân loại lui tới, thế nhưng Diệp Hạ Vân tổng cũng không nhịn được tò mò bay đi nhìn lén cái kia tiểu hòa thượng, có lúc rơi vào tiêu tốn nghe tiểu hòa thượng kia lẩm bẩm hắn nghe không hiểu kinh văn, ngất ngất ngây ngây đã vượt qua một buổi sáng.\n\nBuổi chiều, hắn bay trở về sơn tuyền bên, một cái vảy tỉ mỉ chỉnh tề màu bạc cá chép rực rỡ từ trong nước thò đầu ra, hắn liền biết nghe lời phải rơi vào cá chép trên đầu, dùng chính mình tiểu tua vòi thân mật đụng một cái cá chép lạnh lẽo vảy: \"Cẩm Lý tỷ tỷ, ta vẫn cảm thấy buồn bực, ngươi nói những kia hòa thượng cả ngày ghi nhớ những kinh văn đó, từ sớm đến tối cũng không có trò gian, làm sao liền không cảm thấy phiền đây?\"\n\n\"Ngươi cảm thấy phiền muộn chuyện tình, bọn họ nhưng không sẽ như vậy cảm thấy. \" Du Cẩm nâng nhẹ tiểu hồ điệp ở trên mặt nước chậm rãi bơi vài vòng, trước sau như một ngữ khí mềm mại cùng hắn nói chuyện, \"Lại như ta sẽ không chán ghét cùng ngươi ở chung giống như vậy, thờ phụng phật pháp người cũng sẽ không cảm thấy niệm tụng kinh văn là kiện khổ sai chuyện. Đột nhiên nói tới cái này, tiểu Vân Nhi, ngươi thật là lại đi tìm cái kia tăng nhân?\"\n\nBị Du Cẩm nói một cách thẳng thừng tâm sự, Diệp Hạ Vân cũng không cảm giác đến thật không tiện, ngược lại hắn Cẩm Lý tỷ tỷ luôn luôn cũng sẽ không cùng hắn tức giận, liền để hắn có thể tận tình làm nũng tùy hứng: \"Chẳng phải là sao, núi này trên ngoại trừ ngoài ta ngươi thật vất vả có thêm người thứ ba có linh trí gia hỏa, lớn lên lại đẹp đẽ như vậy, một mực tính cách như vậy vô vị, rất đáng tiếc. \"\n\n\"Ngươi a, liền yêu thích hồ đồ. \" Du Cẩm quát khẽ hắn một câu, \"Kia tăng nhân tới lấy nước thời điểm ta từng nhìn qua, người kia diện có phật cùng, từ nhỏ cùng phật pháp hữu duyên, tự mang theo một thân chính khí, số mệnh cùng thiên đạo kết hợp lại, cùng chúng ta những này tinh quái khó có thể tương dung, ngươi cách xa nhìn thì thôi, không nên đi trêu chọc hắn. \"\n\n\"Đừng lo lắng a, Cẩm Lý tỷ tỷ, ta từ trước đến giờ nhất nghe lời ngươi. \"\n\nDu Cẩm vừa nghe liền biết hắn lại đang qua loa chính mình, vung quẫy đuôi ở trên mặt nước đánh ra một bọt nước, bắn lên giọt nước có mấy viên thấm ướt tiểu hồ điệp cánh, nàng hơi có chút ghen nói: \"Kia tăng nhân bất quá là sinh một bộ hảo hời hợt, là có thể lừa như ngươi vậy để ý? Xem dáng dấp như vậy, nếu là nhiều hơn nữa đến mấy mỹ nhân, ngươi liền muốn liền ta là ai đều đã quên đi?\"\n\n\"Này nói rất đúng nói cái gì, trên thế giới bất luận là người, là yêu vẫn là tiên, cũng sẽ không lại có thêm so với Cẩm Lý tỷ tỷ càng đẹp mắt. \" Diệp Hạ Vân gặp Du Cẩm coi là thật có phần không vui, liền ngay cả vội vàng dùng tiểu tua vòi lại sượt sượt cá chép rực rỡ gò má, vội vội vã vã xin tha, \"Cẩm Lý tỷ tỷ ngươi bây giờ chưa hoá hình, cũng đã là vô cùng xinh đẹp, coi như là vào kia Tiên cung dao trì cũng chắc chắn sẽ không thua kém. \"\n\nLời này nhưng là thật tâm, ở Diệp Hạ Vân xem ra, hắn Cẩm Lý tỷ tỷ quả nhiên là vô cùng xinh đẹp. Lại không nói kia màu sắc hào hoa phú quý tỉ mỉ vảy, chính là kia dài như tơ lụa, mỏng như lụa mỏng rộng lớn vây đuôi liền đã là đầy đủ mê quan người con mắt, tại đây trong suốt sơn trong nước suối bơi động, quả thực có thể nói như rồng như phượng, cao quý mà nhã trí, vừa khiến lòng người sinh ngóng trông, lại không dám dễ dàng tới gần, để tránh khỏi thất lễ.\n\nBất quá đẹp mắt như vậy Cẩm Lý tỷ tỷ tính cách lại rất ôn nhu, đối với hắn cũng là vô cùng tốt, hơn nữa lại thông tuệ, như là cái gì đều hiểu.\n\n\"Miệng lưỡi trơn tru. \" Du Cẩm nhẹ rên một tiếng, nhưng vẫn là bị hống đến hài lòng, cá chép dáng dấp nhìn không ra biểu hiện, nhưng là từ nói chuyện ngữ điệu bên trong vẫn có thể nghe ra nàng ngượng ngùng, \"Lại quá chút thời gian, ta là có thể hoá hình, chờ đến lúc đó, ta liền theo ngươi đến xem khắp thiên hạ phong quang. \"\n\n\"Vậy ta cần phải cái thứ nhất nhìn thấy Cẩm Lý tỷ tỷ hình người!\"\n\n\"Được, đều tùy theo ngươi. \"\n\n***\n\nĐiệp yêu trời sinh liền có ra vào mộng cảnh khả năng, có đồn đại nói cái thứ nhất tu ra linh thức điệp yêu, chính là ở trong mơ chịu trang chu điểm hóa, lúc này mới được rồi cơ duyên.\n\nDiệp Hạ Vân cũng là có thể, trong ngày thường hắn thỉnh thoảng sẽ chạy vào mọi người trong mộng chơi đùa, cũng thường thường muốn trộm đi tiến vào Cẩm Lý tỷ tỷ trong mộng nhìn một cái giấc mơ của nàng sẽ là dạng gì, nhưng mỗi lần đều sẽ bị phát hiện, sau đó bị Cẩm Lý tỷ tỷ vừa thẹn vừa giận trách cứ trên một trận.\n\nCẩm Lý tỷ tỷ không cho phép hắn cùng kia tăng nhân vãng lai, nhưng lén lút chạy vào trong mộng chơi một chút tổng không quan trọng lắm đi?\n\nTiểu hòa thượng trong mộng là một mảnh trống không mang, mơ hồ có Phạn âm vang vọng, Diệp Hạ Vân cơ hồ là mới vừa vào đến liền lạc đường, đấu đá lung tung lung tung bay tới bay lui, nhưng đập vào mắt đi tới nhưng thủy chung là trắng xóa một mảnh.\n\nMãi đến tận hắn cảm thấy giận, muốn rời khỏi này không hề hứng thú có thể nói mộng cảnh lúc, mới nghe thấy cùng nhau bình tĩnh mà đạm bạc thanh âm nói rằng: \"Thí chủ đêm khuya đến thăm, thật là có chuyện gì quan trọng?\"\n\nTrộm đi tiến vào trong mộng của người khác còn bị tại chỗ bắt bao, này cũng không tránh khỏi có chút lúng túng, may mà Diệp Hạ Vân luôn luôn là bị Du Cẩm cho chiều hư, coi như bị người tóm gọm cũng không cảm giác đến thật không tiện, trái lại còn có thể quang minh chánh đại cùng nhân gia bắt chuyện lên: \"Ta đến trong mộng của ngươi chơi a, ngươi mộng tại sao là một mảnh trống không, một chút ý tứ đều không có. \"\n\n\"Phật nói vạn vật đều hư, mà hư vô cũng là vạn vật. \"\n\nLần này thanh âm đang từ phía sau hắn truyền đến, Diệp Hạ Vân trên không trung xoay chuyển nửa cái vòng nhỏ, rốt cục thấy được kia đứng phía sau mình tiểu hòa thượng, trên người đối phương vẫn như cũ ăn mặc vậy có điểm cũ tăng bào, thế nhưng không chịu được có được một bộ tướng mạo thật được, nhìn cũng không cảm thấy có cái gì không tốt.\n\n\"Đừng nói với ta những kia phật pháp, ta một tinh quái lại nghe không hiểu. \" Diệp Hạ Vân bất mãn mà quạt quạt cánh, loạng choà loạng choạng mà bay đến tiểu hòa thượng vai, nhẹ rơi xuống, \"Cái gì vạn vật đều hư, ta chỉ biết là nhìn thấy mò mới phải tốt. \"\n\nTiểu hòa thượng không nói gì, liền Diệp Hạ Vân nói tiếp: \"Ta gọi Diệp Hạ Vân, ngươi tên là gì a?\"\n\n\"Ta tên Thương Ngô. \"\n\nDiệp Hạ Vân phẩy phẩy cánh, tiếp tục tò mò hỏi: \"Ta ở dưới chân núi thấy hòa thượng đều là không có tóc, ngươi tại sao cùng bọn họ không giống nhau?\"\n\n\"Gia sư từng nói ta cùng với hồng trần vẫn còn tồn tại liên lụy, chờ trần duyên đều đoạn, mới có thể cắt tóc. \"\n\n\"Làm gì muốn cạo, đẹp mắt như vậy tóc, cạo chẳng phải là đáng tiếc?\" Diệp Hạ Vân rất bất mãn ở giữa không trung lắc ra một đường vòng cung, cảm thấy hòa thượng này quả thực là không thể nói lý, dĩ nhiên đáng sợ như thế ý nghĩ, \"Ngươi bây giờ giữ lại tóc cũng là mỗi ngày đọc kinh tụng phật, cạo tóc cũng giống vậy như vậy, nếu chút nào không ảnh hưởng, làm gì nhất định phải cùng chính mình không qua được?\"\n\n\"Duy cắt tóc thụ giới người, mới có thể vào Phật môn, gọi tỷ khưu. Huống dung mạo mỹ xấu, đều dưới da bạch cốt. \"\n\nNửa câu đầu Diệp Hạ Vân nghe không hiểu, nhưng nửa câu sau hắn tốt xấu vẫn là nghe đã hiểu: \"Coi như bạch cốt, cũng phân là mỹ xấu!\"\n\nBọn họ ai cũng không thuyết phục được ai, tại ý thức đến điểm này sau khi, Thương Ngô liền chỉ là thấp giọng niệm một câu phật hiệu, lập tức liền sẽ không tiếp tục cùng hắn tranh chấp.\n\nMay mà Diệp Hạ Vân cũng không phải yêu thích bám vào một chuyện không tha, hắn rất nhanh sẽ lại tìm được rồi mới nguyên cớ, hưng phấn cùng núi này trên hiếm thấy có thể cùng hắn giao lưu đối tượng nói cái liên tu bất tận.\n\nThương Ngô thuở nhỏ liền tính tình thanh lãnh quen rồi, ở đi tới Thanh Minh sơn trước, tuỳ tùng sư phụ tu hành lúc, cũng hầu như từ không có người giống như vậy quấn quít lấy hắn nói chuyện. Bây giờ gặp phải như vậy một tu vi nông cạn lại khá là gan lớn tiểu yêu, hắn trong lòng cũng là cảm thấy có phần mới mẻ.\n\nTiểu hồ điệp trời sanh là yêu thích náo nhiệt tính cách, trong ngày thường cũng không có việc gì cũng sẽ tìm đến tiểu hòa thượng trò chuyện, chia sẻ một ít chính mình bay xuống sơn lúc thấy thú vị đồ vật.\n\nLiền, tiểu hòa thượng thành điệp yêu ở trên ngọn núi này thứ hai bằng hữu, mà điệp yêu thành tiểu hòa thượng người bạn thứ nhất.\n\n[ tác gia lời muốn nói: ]\n\nTân niên vui sướng, thừa dịp khóa niên như thế vui mừng thời điểm đem tiểu hồ điệp thả ra linh lợi\n\nDùng ăn nhắc nhở: Tồn tại nơi hỏa táng, Tu La tràng yếu tố, tiểu hồ điệp là tội ác trêu người tinh\n\nHoàng bạo máu chó ngũ độc đầy đủ\n\nHồng trần mộng ( 02)\n\nBất kể là Diệp Hạ Vân vẫn là Du Cẩm, đều không có dự liệu được Diệp Hạ Vân dĩ nhiên sẽ trước tiên hoá hình thành công, thậm chí ở hoá hình lúc chính hắn cũng còn là một mặt mờ mịt, tựa hồ không hiểu mình tại sao liền không hiểu ra sao đã biến thành hình người.\n\nLúc đó Du Cẩm từ trong nước suối thò đầu ra, nhìn đầy mặt vô tội ngồi bên bờ thanh niên, lại cười nói: \"Chớ ngu lo lắng, đi tìm bộ quần áo mặc, như vậy giống kiểu gì?\"\n\nBị Du Cẩm vừa nói như thế, Diệp Hạ Vân mới ý thức tới chính mình dĩ nhiên cứ như vậy thân thể trần truồng ngồi Cẩm Lý tỷ tỷ trước mặt, mặt đỏ lên, ngay lập tức sẽ lại biến trở về con bướm dáng vẻ, lần này nhưng là phiền phiền nhiễu nhiễu rơi vào bên bờ một đóa hoa trên, thật không tiện giống như kiểu trước đây rơi xuống cá chép đỉnh đầu: \"Ta làm sao sẽ đột nhiên hoá hình?\"\n\n\"Ngươi hấp thu qua yêu hồ linh lực, những này qua hạ xuống phải làm là triệt để luyện hóa, thêm nữa ngươi vốn là thiên tư trác việt, có thể hoá hình cũng không phải cái gì quái sự. \" so với hắn eo hẹp, Du Cẩm đúng là muốn thản nhiên nhiều lắm, hoàn toàn không vì nhìn một khác phái thân thể mà cảm thấy ngượng ngùng, còn bơi tới bên bờ quay lên một đóa nước tiểu hoa đùa xấu hổ tiểu hồ điệp, \"Không nên thẹn thùng, tiểu Vân Nhi hóa thành hình người dáng dấp cũng có được rất là tuấn tú. \"\n\n\"Có thật không?\"\n\nNhấc lên cái này Diệp Hạ Vân lập tức đến rồi hứng thú, vừa nãy vội vàng bên dưới liền chính hắn cũng không có thể nhìn một chút chính mình hóa thành hình người sau khi dáng vẻ, hiện tại bị Du Cẩm vừa nói như thế, ngược lại là có mấy phần mong đợi.\n\n\"Tự nhiên, \" Du Cẩm lại cười nói, \"Ta chưa từng đã lừa gạt ngươi?\"\n\nMuốn trêu chính mình tiểu hồ điệp hài lòng lúc, Du Cẩm từ trước đến giờ phải không lận với ca ngợi chi từ, nhưng lần này cho dù không vì khôi hài hài lòng, nàng cũng vẫn như cũ xuất phát từ nội tâm cảm thấy Diệp Hạ Vân hình người quả thực là đẹp đẽ cực kỳ.\n\nCó lời nói cùng từ lòng sinh, mà Diệp Hạ Vân sinh một bộ lãng tử giống như phong lưu hình ảnh, một cái nhíu mày một nụ cười đều là phong tình, gắn bó giữa lông mày làm như tự mang một phen tình ý, chợt nhìn lại cũng làm người ta cảm thấy này phải làm là vị du hí nhân gian căng quý công tử, sợ là không thiếu được si tình khoản nợ. Nhưng mà nhỏ nhìn thật kỹ, nhưng lại cảm thấy người này tướng mạo nhu hòa mà không sắc bén, phong lưu nhưng không tùy tiện, cho là tâm tính người lương thiện.\n\nLiền đáp lại nên như vậy -- Du Cẩm trong lòng suy nghĩ -- chính mình tiểu Vân Nhi từ trước đến giờ là tâm tính vô cùng tốt, thiên hạ không người so với hắn càng xứng đáng lên như vậy tướng mạo.\n\nĐáng tiếc Diệp Hạ Vân cũng không có phát hiện Du Cẩm giờ khắc này lòng tràn đầy niềm vui, hắn vội vã nghĩ nhìn một cái dáng dấp của chính mình, lại tạm thời không quá sẽ tự mình biến ảo y vật, liền cùng tuyền bên trong cá chép rực rỡ lên tiếng chào hỏi, chớp cánh hướng về Lâm Sơn tự bay đi.\n\n\"Tiểu hòa thượng tiểu hòa thượng, cho ta mượn một cái xiêm y của ngươi có được hay không?\"\n\nCách thật xa Thương Ngô liền nghe thấy được kia ồn ào lại hưng phấn tiếng kêu gào, mãi cho đến vậy có điểm ồn ào con bướm rơi xuống trên bả vai hắn, hắn mới dừng lại rảnh tay bên trong gõ Mộc Ngư động tác, chậm rãi mở mắt ra: \"Ngươi ăn mặc, nơi này chỉ có hải thanh. \"\n\nDiệp Hạ Vân nghe không hiểu Thương Ngô nói cái gì, dưới cái nhìn của hắn niệm phật y phục trên người cũng gọi tăng bào, nhưng cũng cố không lên hỏi những kia việc nhỏ không đáng kể, chỉ gật đầu liên tục: \"Không có chuyện gì không có chuyện gì, mượn trước ta xuyên một hồi, còn có gương, ta muốn nhìn một chút hình người của chính mình hình dạng ra sao!\"\n\nKhông nói gì, Thương Ngô đứng dậy mang theo trên bả vai con bướm trở về phòng ngủ của mình, từ trong quầy lấy một cái tăng bào cùng một bộ áo sơ mi đi ra, sau đó nói một câu \"Ta đi lấy gương\" liền rời khỏi phòng.\n\nTrong chùa là có gương đồng, nhưng trong ngày thường hắn dùng đến không nhiều, vẫn đặt ở một gian khác dùng để chứa đựng tạp vật trống không trong phòng.\n\nNhưng mà cầm gương đồng lần thứ hai bước vào chính mình trong phòng lúc, trong phòng cảnh tượng lại làm cho hắn không tự chủ nghỉ chân, thậm chí ngay cả hô hấp đều chẳng biết lúc nào dừng lại.\n\nCó được cực kỳ đẹp trai thiếu niên đang ngồi ở trên giường của hắn, một con tóc đen xõa ra, không có mặc áo sơ mi, một cái sâu tông tay áo lớn hải thanh bị hắn lung ta lung tung khoác lên người, cổ áo đại mở hầu như không giấu được cái gì, thấy hắn lúc đi vào liếc tới được cái nhìn kia càng là phảng phất mang theo phong tình vạn chủng, dáng dấp kia có thể nói phải vô cùng không đoan trang, thậm chí nói là thả. Đãng cũng không quá đáng, thế nhưng hay là chính như kia điệp yêu nói -- mặc dù dưới da bạch cốt, cũng phân là mỹ xấu.\n\nSư phụ từng nói hắn trời sinh phật cùng, là hiếm thấy linh đài trong sạch người, mà tâm tư cứng cỏi, thế gian ít có có thể làm hắn dao động đồ vật.\n\nThật là bây giờ bất quá là nhìn thấy một con điệp yêu hình người hóa thân thôi, vì sao tâm luật sẽ bỗng nhiên rối loạn? Chẳng lẽ là gần nhất tu hành có điều lười biếng?\n\nDiệp Hạ Vân vẫn ở tại trong núi, đối với phàm trần tục thế tuy tốt kỳ nhưng thực tại hiểu rõ rất ít, tính tình cũng còn ngây thơ, không hề cảm thấy chính mình dáng dấp như vậy có cái gì không đúng, nhìn thấy Thương Ngô đứng cửa, vẫn vui vẻ hướng về phía hắn vẫy tay: \"Ngươi trở về? Ngươi nhanh nhìn một cái, hình người của ta có phải rất đẹp mắt hay không? Cẩm Lý tỷ tỷ nói rất ưa nhìn, nàng sẽ không gạt người. \"\n\nThương Ngô còn nghi hoặc dùng tay chống đỡ trong lòng chính mình, không hiểu chính mình mới vừa dị dạng là bởi vì gì mà lên, bây giờ nghe gặp Diệp Hạ Vân giục, liền cũng chỉ được đem tạm thời thả xuống, đi vào trong nhà đem gương đồng đặt lên bàn, sau đó lại đi tới bên giường, đem Diệp Hạ Vân mặc trên người đến không ra ngô ra khoai tăng bào cởi ra: \"Muốn trước tiên xuyên áo sơ mi. \"\n\nMỗi một lần ngón tay không cẩn thận sát qua kia ấm áp da thịt lúc, hắn cũng có thể cảm giác được mạch đập của chính mình sẽ lên biến hóa, như là này điệp yêu tự thân mang theo yêu thuật gì giống như vậy, dễ như ăn cháo là có thể loạn tâm thần người."},{"id":"ch3","title":"Chương 3","content":"Hồng trần mộng 01\n\nThanh Minh sơn, Du Long tuyền, Lâm Sơn tự.\n\nSơn vốn là toà núi hoang, tuyền cũng chỉ là một chút nhợt nhạt sơn tuyền, tự càng là một toà hầu như không người hiểu rõ lụi bại chùa miếu.\n\nNhưng trên núi ở một con linh điệp, bơi trong suối một đuôi trắng bạc cá chép rực rỡ, trong miếu ở lại một vị một lòng thanh tu tiểu hòa thượng.\n\nNgọn núi này linh khí mỏng manh, tiểu hồ điệp là trong núi rừng duy hai tu ra linh thức yêu, một người khác là ở tại sơn tuyền bên trong Cẩm Lý tỷ tỷ.\n\nTiểu hồ điệp cánh là nhợt nhạt huỳnh màu xanh lam, cánh ranh giới nơi còn có một vòng tinh xảo viền bạc, sí trên mặt rơi một vòng màu vàng nhạt lấm tấm, giống như cùng ánh mặt trời xuyên thấu cành lá vương xuống đến mỹ lệ vết lốm đốm, nho nhỏ con bướm rơi vào trên đóa hoa thời điểm giống như là bầu trời một đóa Tiểu Vân sắc rơi xuống, sau khi bay lên hoặc như là ở lá cây dưới thổi qua đám mây.\n\nCẩm Lý tỷ tỷ cho hắn nổi lên tên.\n\nKhi đó tiểu hồ điệp linh trí sơ khai, còn nơi ở một cái tỉnh tỉnh mê mê trạng thái, một ngày mơ mơ hồ hồ rơi vào sơn tuyền cái khác một đóa hoa trên, liền nghe gặp trong nước suối truyền đến cùng nhau bọt nước phù phù thanh âm, sau đó chính là cùng nhau ôn ôn nhu nhu âm thanh truyền đến: \"Ngươi mạnh khỏe a, tiểu hồ điệp. Ta tên là Du Cẩm, trước đây chưa từng thấy ngươi, thật là gần chút thời gian mới vừa mở linh trí?\"\n\n\"Ngươi mạnh khỏe, \" tiểu hồ điệp nhìn về phía cái kia từ trong nước suối thò đầu ra màu bạc cá chép, có chút thẹn thùng nhào nhào cánh, \"Cẩm Lý tỷ tỷ, ngươi thật là đẹp a, thật là ta vẫn không có tên, xin lỗi...\"\n\n\"Không liên quan, trong núi này thanh lãnh, hiếm thấy gặp ngươi, ta cũng thật là hài lòng. Ta coi ngươi làm như trên người chịu một tia hồ yêu khí tức, phải làm là gặp may đúng dịp từng đụng phải hồ yêu nội đan linh lực, chịu điểm hóa. \" cá chép vẩy vẩy đuôi, ở trên mặt nước đánh ra một mảnh nước trong và gợn sóng bọt nước, \"Ngươi nếu không phải ghét bỏ, liền để ta vì ngươi làm cái tên, khỏe?\"\n\n\"Tốt tốt!\" Tiểu hồ điệp vội vội vã vã đồng ý, tha thiết mong chờ mà nhìn trong nước kia xem ra tinh xảo mà lại mỹ lệ cá chép rực rỡ, \"Cảm tạ Cẩm Lý tỷ tỷ. \"\n\nDu Cẩm bị hắn chọc cho nở nụ cười một tiếng, ôn nhu trả lời: \"Không cần khách khí như vậy. Điệp yêu bộ tộc từ trước đến giờ yêu thích múa lên với hoa dưới, đang như mọi người cái gọi là 'Hoa hạ phong chảy'. Ta coi nhưng ngươi là có được linh động thanh uyển như lá hạ lưu vân, không bằng lợi dụng lá vì là họ, vân làm tên, mà bây giờ chính là giữa hè thời tiết, liền gọi Diệp Hạ Vân làm sao? Đọc lấy tới là lá hạ lưu vân, rơi vào giấy bút trên lại có ngày mùa hè thanh vân tâm ý. \"\n\nTừ đây, tiểu hồ điệp liền có tên, cũng có người bạn thứ nhất.\n\nCẩm Lý tỷ tỷ đều là đối với tiểu hồ điệp rất tốt, sẽ ôn nhu mà lại nghiêm túc hướng về hắn căn dặn: \"Ta không cầu ngươi cả đời này xông ra lý lẽ gì, cũng không cầu xin ngươi đi tế thế cứu nhân kết làm thiện quả, chỉ cầu ngươi muốn an ổn không lo, đem mình coi chừng hảo. \"\n\nHai cái linh lực hơi yếu tiểu yêu lẫn nhau bồi bạn ở trên núi vượt qua rất nhiều năm tháng, mãi đến tận một ngày nào đó, một người mặc áo cà sa, nhưng giữ lại một con tóc đen tiểu hòa thượng đi tới Thanh Minh sơn, ở trong núi toà kia trống trơn nhiều năm trong miếu an trí hạ xuống.\n\nLúc này Diệp Hạ Vân đã không còn là lúc trước cái kia hồ đồ tiểu hồ điệp, hắn thường thường biết bay đến bên dưới ngọn núi, đi đến nhân loại địa giới chơi đùa, nhìn những kia sự vật mới mẻ, sau đó sẽ trở về nói cho hắn Cẩm Lý tỷ tỷ nghe mình ở bên dưới ngọn núi thấy chuyện thú vị.\n\nHắn trước đây cũng ở dưới chân núi từng thấy tu hành hòa thượng, thật là hắn trước đây thấy những hòa thượng kia đều là không có tóc, hơn nữa lớn lên cũng phần lớn không dễ nhìn, không giống như là cái kia vừa tới đến Thanh Minh sơn tiểu hòa thượng, chẳng những có một con tóc đen, còn có được đẹp trai phi phàm, cho dù ăn mặc một thân âm u tăng bào cũng khó bưng huy, nhìn liền hợp mắt cực kỳ.\n\nDu Cẩm đều sẽ dặn hắn không muốn cùng nhân loại lui tới, thế nhưng Diệp Hạ Vân tổng cũng không nhịn được tò mò bay đi nhìn lén cái kia tiểu hòa thượng, có lúc rơi vào tiêu tốn nghe tiểu hòa thượng kia lẩm bẩm hắn nghe không hiểu kinh văn, ngất ngất ngây ngây đã vượt qua một buổi sáng.\n\nBuổi chiều, hắn bay trở về sơn tuyền bên, một cái vảy tỉ mỉ chỉnh tề màu bạc cá chép rực rỡ từ trong nước thò đầu ra, hắn liền biết nghe lời phải rơi vào cá chép trên đầu, dùng chính mình tiểu tua vòi thân mật đụng một cái cá chép lạnh lẽo vảy: \"Cẩm Lý tỷ tỷ, ta vẫn cảm thấy buồn bực, ngươi nói những kia hòa thượng cả ngày ghi nhớ những kinh văn đó, từ sớm đến tối cũng không có trò gian, làm sao liền không cảm thấy phiền đây?\"\n\n\"Ngươi cảm thấy phiền muộn chuyện tình, bọn họ nhưng không sẽ như vậy cảm thấy. \" Du Cẩm nâng nhẹ tiểu hồ điệp ở trên mặt nước chậm rãi bơi vài vòng, trước sau như một ngữ khí mềm mại cùng hắn nói chuyện, \"Lại như ta sẽ không chán ghét cùng ngươi ở chung giống như vậy, thờ phụng phật pháp người cũng sẽ không cảm thấy niệm tụng kinh văn là kiện khổ sai chuyện. Đột nhiên nói tới cái này, tiểu Vân Nhi, ngươi thật là lại đi tìm cái kia tăng nhân?\"\n\nBị Du Cẩm nói một cách thẳng thừng tâm sự, Diệp Hạ Vân cũng không cảm giác đến thật không tiện, ngược lại hắn Cẩm Lý tỷ tỷ luôn luôn cũng sẽ không cùng hắn tức giận, liền để hắn có thể tận tình làm nũng tùy hứng: \"Chẳng phải là sao, núi này trên ngoại trừ ngoài ta ngươi thật vất vả có thêm người thứ ba có linh trí gia hỏa, lớn lên lại đẹp đẽ như vậy, một mực tính cách như vậy vô vị, rất đáng tiếc. \"\n\n\"Ngươi a, liền yêu thích hồ đồ. \" Du Cẩm quát khẽ hắn một câu, \"Kia tăng nhân tới lấy nước thời điểm ta từng nhìn qua, người kia diện có phật cùng, từ nhỏ cùng phật pháp hữu duyên, tự mang theo một thân chính khí, số mệnh cùng thiên đạo kết hợp lại, cùng chúng ta những này tinh quái khó có thể tương dung, ngươi cách xa nhìn thì thôi, không nên đi trêu chọc hắn. \"\n\n\"Đừng lo lắng a, Cẩm Lý tỷ tỷ, ta từ trước đến giờ nhất nghe lời ngươi. \"\n\nDu Cẩm vừa nghe liền biết hắn lại đang qua loa chính mình, vung quẫy đuôi ở trên mặt nước đánh ra một bọt nước, bắn lên giọt nước có mấy viên thấm ướt tiểu hồ điệp cánh, nàng hơi có chút ghen nói: \"Kia tăng nhân bất quá là sinh một bộ hảo hời hợt, là có thể lừa như ngươi vậy để ý? Xem dáng dấp như vậy, nếu là nhiều hơn nữa đến mấy mỹ nhân, ngươi liền muốn liền ta là ai đều đã quên đi?\"\n\n\"Này nói rất đúng nói cái gì, trên thế giới bất luận là người, là yêu vẫn là tiên, cũng sẽ không lại có thêm so với Cẩm Lý tỷ tỷ càng đẹp mắt. \" Diệp Hạ Vân gặp Du Cẩm coi là thật có phần không vui, liền ngay cả vội vàng dùng tiểu tua vòi lại sượt sượt cá chép rực rỡ gò má, vội vội vã vã xin tha, \"Cẩm Lý tỷ tỷ ngươi bây giờ chưa hoá hình, cũng đã là vô cùng xinh đẹp, coi như là vào kia Tiên cung dao trì cũng chắc chắn sẽ không thua kém. \"\n\nLời này nhưng là thật tâm, ở Diệp Hạ Vân xem ra, hắn Cẩm Lý tỷ tỷ quả nhiên là vô cùng xinh đẹp. Lại không nói kia màu sắc hào hoa phú quý tỉ mỉ vảy, chính là kia dài như tơ lụa, mỏng như lụa mỏng rộng lớn vây đuôi liền đã là đầy đủ mê quan người con mắt, tại đây trong suốt sơn trong nước suối bơi động, quả thực có thể nói như rồng như phượng, cao quý mà nhã trí, vừa khiến lòng người sinh ngóng trông, lại không dám dễ dàng tới gần, để tránh khỏi thất lễ.\n\nBất quá đẹp mắt như vậy Cẩm Lý tỷ tỷ tính cách lại rất ôn nhu, đối với hắn cũng là vô cùng tốt, hơn nữa lại thông tuệ, như là cái gì đều hiểu.\n\n\"Miệng lưỡi trơn tru. \" Du Cẩm nhẹ rên một tiếng, nhưng vẫn là bị hống đến hài lòng, cá chép dáng dấp nhìn không ra biểu hiện, nhưng là từ nói chuyện ngữ điệu bên trong vẫn có thể nghe ra nàng ngượng ngùng, \"Lại quá chút thời gian, ta là có thể hoá hình, chờ đến lúc đó, ta liền theo ngươi đến xem khắp thiên hạ phong quang. \"\n\n\"Vậy ta cần phải cái thứ nhất nhìn thấy Cẩm Lý tỷ tỷ hình người!\"\n\n\"Được, đều tùy theo ngươi. \"\n\n***\n\nĐiệp yêu trời sinh liền có ra vào mộng cảnh khả năng, có đồn đại nói cái thứ nhất tu ra linh thức điệp yêu, chính là ở trong mơ chịu trang chu điểm hóa, lúc này mới được rồi cơ duyên.\n\nDiệp Hạ Vân cũng là có thể, trong ngày thường hắn thỉnh thoảng sẽ chạy vào mọi người trong mộng chơi đùa, cũng thường thường muốn trộm đi tiến vào Cẩm Lý tỷ tỷ trong mộng nhìn một cái giấc mơ của nàng sẽ là dạng gì, nhưng mỗi lần đều sẽ bị phát hiện, sau đó bị Cẩm Lý tỷ tỷ vừa thẹn vừa giận trách cứ trên một trận.\n\nCẩm Lý tỷ tỷ không cho phép hắn cùng kia tăng nhân vãng lai, nhưng lén lút chạy vào trong mộng chơi một chút tổng không quan trọng lắm đi?\n\nTiểu hòa thượng trong mộng là một mảnh trống không mang, mơ hồ có Phạn âm vang vọng, Diệp Hạ Vân cơ hồ là mới vừa vào đến liền lạc đường, đấu đá lung tung lung tung bay tới bay lui, nhưng đập vào mắt đi tới nhưng thủy chung là trắng xóa một mảnh.\n\nMãi đến tận hắn cảm thấy giận, muốn rời khỏi này không hề hứng thú có thể nói mộng cảnh lúc, mới nghe thấy cùng nhau bình tĩnh mà đạm bạc thanh âm nói rằng: \"Thí chủ đêm khuya đến thăm, thật là có chuyện gì quan trọng?\"\n\nTrộm đi tiến vào trong mộng của người khác còn bị tại chỗ bắt bao, này cũng không tránh khỏi có chút lúng túng, may mà Diệp Hạ Vân luôn luôn là bị Du Cẩm cho chiều hư, coi như bị người tóm gọm cũng không cảm giác đến thật không tiện, trái lại còn có thể quang minh chánh đại cùng nhân gia bắt chuyện lên: \"Ta đến trong mộng của ngươi chơi a, ngươi mộng tại sao là một mảnh trống không, một chút ý tứ đều không có. \"\n\n\"Phật nói vạn vật đều hư, mà hư vô cũng là vạn vật. \"\n\nLần này thanh âm đang từ phía sau hắn truyền đến, Diệp Hạ Vân trên không trung xoay chuyển nửa cái vòng nhỏ, rốt cục thấy được kia đứng phía sau mình tiểu hòa thượng, trên người đối phương vẫn như cũ ăn mặc vậy có điểm cũ tăng bào, thế nhưng không chịu được có được một bộ tướng mạo thật được, nhìn cũng không cảm thấy có cái gì không tốt.\n\n\"Đừng nói với ta những kia phật pháp, ta một tinh quái lại nghe không hiểu. \" Diệp Hạ Vân bất mãn mà quạt quạt cánh, loạng choà loạng choạng mà bay đến tiểu hòa thượng vai, nhẹ rơi xuống, \"Cái gì vạn vật đều hư, ta chỉ biết là nhìn thấy mò mới phải tốt. \"\n\nTiểu hòa thượng không nói gì, liền Diệp Hạ Vân nói tiếp: \"Ta gọi Diệp Hạ Vân, ngươi tên là gì a?\"\n\n\"Ta tên Thương Ngô. \"\n\nDiệp Hạ Vân phẩy phẩy cánh, tiếp tục tò mò hỏi: \"Ta ở dưới chân núi thấy hòa thượng đều là không có tóc, ngươi tại sao cùng bọn họ không giống nhau?\"\n\n\"Gia sư từng nói ta cùng với hồng trần vẫn còn tồn tại liên lụy, chờ trần duyên đều đoạn, mới có thể cắt tóc. \"\n\n\"Làm gì muốn cạo, đẹp mắt như vậy tóc, cạo chẳng phải là đáng tiếc?\" Diệp Hạ Vân rất bất mãn ở giữa không trung lắc ra một đường vòng cung, cảm thấy hòa thượng này quả thực là không thể nói lý, dĩ nhiên đáng sợ như thế ý nghĩ, \"Ngươi bây giờ giữ lại tóc cũng là mỗi ngày đọc kinh tụng phật, cạo tóc cũng giống vậy như vậy, nếu chút nào không ảnh hưởng, làm gì nhất định phải cùng chính mình không qua được?\"\n\n\"Duy cắt tóc thụ giới người, mới có thể vào Phật môn, gọi tỷ khưu. Huống dung mạo mỹ xấu, đều dưới da bạch cốt. \"\n\nNửa câu đầu Diệp Hạ Vân nghe không hiểu, nhưng nửa câu sau hắn tốt xấu vẫn là nghe đã hiểu: \"Coi như bạch cốt, cũng phân là mỹ xấu!\"\n\nBọn họ ai cũng không thuyết phục được ai, tại ý thức đến điểm này sau khi, Thương Ngô liền chỉ là thấp giọng niệm một câu phật hiệu, lập tức liền sẽ không tiếp tục cùng hắn tranh chấp.\n\nMay mà Diệp Hạ Vân cũng không phải yêu thích bám vào một chuyện không tha, hắn rất nhanh sẽ lại tìm được rồi mới nguyên cớ, hưng phấn cùng núi này trên hiếm thấy có thể cùng hắn giao lưu đối tượng nói cái liên tu bất tận.\n\nThương Ngô thuở nhỏ liền tính tình thanh lãnh quen rồi, ở đi tới Thanh Minh sơn trước, tuỳ tùng sư phụ tu hành lúc, cũng hầu như từ không có người giống như vậy quấn quít lấy hắn nói chuyện. Bây giờ gặp phải như vậy một tu vi nông cạn lại khá là gan lớn tiểu yêu, hắn trong lòng cũng là cảm thấy có phần mới mẻ.\n\nTiểu hồ điệp trời sanh là yêu thích náo nhiệt tính cách, trong ngày thường cũng không có việc gì cũng sẽ tìm đến tiểu hòa thượng trò chuyện, chia sẻ một ít chính mình bay xuống sơn lúc thấy thú vị đồ vật.\n\nLiền, tiểu hòa thượng thành điệp yêu ở trên ngọn núi này thứ hai bằng hữu, mà điệp yêu thành tiểu hòa thượng người bạn thứ nhất.\n\n[ tác gia lời muốn nói: ]\n\nTân niên vui sướng, thừa dịp khóa niên như thế vui mừng thời điểm đem tiểu hồ điệp thả ra linh lợi\n\nDùng ăn nhắc nhở: Tồn tại nơi hỏa táng, Tu La tràng yếu tố, tiểu hồ điệp là tội ác trêu người tinh\n\nHoàng bạo máu chó ngũ độc đầy đủ\n\nHồng trần mộng ( 02)\n\nBất kể là Diệp Hạ Vân vẫn là Du Cẩm, đều không có dự liệu được Diệp Hạ Vân dĩ nhiên sẽ trước tiên hoá hình thành công, thậm chí ở hoá hình lúc chính hắn cũng còn là một mặt mờ mịt, tựa hồ không hiểu mình tại sao liền không hiểu ra sao đã biến thành hình người.\n\nLúc đó Du Cẩm từ trong nước suối thò đầu ra, nhìn đầy mặt vô tội ngồi bên bờ thanh niên, lại cười nói: \"Chớ ngu lo lắng, đi tìm bộ quần áo mặc, như vậy giống kiểu gì?\"\n\nBị Du Cẩm vừa nói như thế, Diệp Hạ Vân mới ý thức tới chính mình dĩ nhiên cứ như vậy thân thể trần truồng ngồi Cẩm Lý tỷ tỷ trước mặt, mặt đỏ lên, ngay lập tức sẽ lại biến trở về con bướm dáng vẻ, lần này nhưng là phiền phiền nhiễu nhiễu rơi vào bên bờ một đóa hoa trên, thật không tiện giống như kiểu trước đây rơi xuống cá chép đỉnh đầu: \"Ta làm sao sẽ đột nhiên hoá hình?\"\n\n\"Ngươi hấp thu qua yêu hồ linh lực, những này qua hạ xuống phải làm là triệt để luyện hóa, thêm nữa ngươi vốn là thiên tư trác việt, có thể hoá hình cũng không phải cái gì quái sự. \" so với hắn eo hẹp, Du Cẩm đúng là muốn thản nhiên nhiều lắm, hoàn toàn không vì nhìn một khác phái thân thể mà cảm thấy ngượng ngùng, còn bơi tới bên bờ quay lên một đóa nước tiểu hoa đùa xấu hổ tiểu hồ điệp, \"Không nên thẹn thùng, tiểu Vân Nhi hóa thành hình người dáng dấp cũng có được rất là tuấn tú. \"\n\n\"Có thật không?\"\n\nNhấc lên cái này Diệp Hạ Vân lập tức đến rồi hứng thú, vừa nãy vội vàng bên dưới liền chính hắn cũng không có thể nhìn một chút chính mình hóa thành hình người sau khi dáng vẻ, hiện tại bị Du Cẩm vừa nói như thế, ngược lại là có mấy phần mong đợi.\n\n\"Tự nhiên, \" Du Cẩm lại cười nói, \"Ta chưa từng đã lừa gạt ngươi?\"\n\nMuốn trêu chính mình tiểu hồ điệp hài lòng lúc, Du Cẩm từ trước đến giờ phải không lận với ca ngợi chi từ, nhưng lần này cho dù không vì khôi hài hài lòng, nàng cũng vẫn như cũ xuất phát từ nội tâm cảm thấy Diệp Hạ Vân hình người quả thực là đẹp đẽ cực kỳ.\n\nCó lời nói cùng từ lòng sinh, mà Diệp Hạ Vân sinh một bộ lãng tử giống như phong lưu hình ảnh, một cái nhíu mày một nụ cười đều là phong tình, gắn bó giữa lông mày làm như tự mang một phen tình ý, chợt nhìn lại cũng làm người ta cảm thấy này phải làm là vị du hí nhân gian căng quý công tử, sợ là không thiếu được si tình khoản nợ. Nhưng mà nhỏ nhìn thật kỹ, nhưng lại cảm thấy người này tướng mạo nhu hòa mà không sắc bén, phong lưu nhưng không tùy tiện, cho là tâm tính người lương thiện.\n\nLiền đáp lại nên như vậy -- Du Cẩm trong lòng suy nghĩ -- chính mình tiểu Vân Nhi từ trước đến giờ là tâm tính vô cùng tốt, thiên hạ không người so với hắn càng xứng đáng lên như vậy tướng mạo.\n\nĐáng tiếc Diệp Hạ Vân cũng không có phát hiện Du Cẩm giờ khắc này lòng tràn đầy niềm vui, hắn vội vã nghĩ nhìn một cái dáng dấp của chính mình, lại tạm thời không quá sẽ tự mình biến ảo y vật, liền cùng tuyền bên trong cá chép rực rỡ lên tiếng chào hỏi, chớp cánh hướng về Lâm Sơn tự bay đi.\n\n\"Tiểu hòa thượng tiểu hòa thượng, cho ta mượn một cái xiêm y của ngươi có được hay không?\"\n\nCách thật xa Thương Ngô liền nghe thấy được kia ồn ào lại hưng phấn tiếng kêu gào, mãi cho đến vậy có điểm ồn ào con bướm rơi xuống trên bả vai hắn, hắn mới dừng lại rảnh tay bên trong gõ Mộc Ngư động tác, chậm rãi mở mắt ra: \"Ngươi ăn mặc, nơi này chỉ có hải thanh. \"\n\nDiệp Hạ Vân nghe không hiểu Thương Ngô nói cái gì, dưới cái nhìn của hắn niệm phật y phục trên người cũng gọi tăng bào, nhưng cũng cố không lên hỏi những kia việc nhỏ không đáng kể, chỉ gật đầu liên tục: \"Không có chuyện gì không có chuyện gì, mượn trước ta xuyên một hồi, còn có gương, ta muốn nhìn một chút hình người của chính mình hình dạng ra sao!\"\n\nKhông nói gì, Thương Ngô đứng dậy mang theo trên bả vai con bướm trở về phòng ngủ của mình, từ trong quầy lấy một cái tăng bào cùng một bộ áo sơ mi đi ra, sau đó nói một câu \"Ta đi lấy gương\" liền rời khỏi phòng.\n\nTrong chùa là có gương đồng, nhưng trong ngày thường hắn dùng đến không nhiều, vẫn đặt ở một gian khác dùng để chứa đựng tạp vật trống không trong phòng.\n\nNhưng mà cầm gương đồng lần thứ hai bước vào chính mình trong phòng lúc, trong phòng cảnh tượng lại làm cho hắn không tự chủ nghỉ chân, thậm chí ngay cả hô hấp đều chẳng biết lúc nào dừng lại.\n\nCó được cực kỳ đẹp trai thiếu niên đang ngồi ở trên giường của hắn, một con tóc đen xõa ra, không có mặc áo sơ mi, một cái sâu tông tay áo lớn hải thanh bị hắn lung ta lung tung khoác lên người, cổ áo đại mở hầu như không giấu được cái gì, thấy hắn lúc đi vào liếc tới được cái nhìn kia càng là phảng phất mang theo phong tình vạn chủng, dáng dấp kia có thể nói phải vô cùng không đoan trang, thậm chí nói là thả. Đãng cũng không quá đáng, thế nhưng hay là chính như kia điệp yêu nói -- mặc dù dưới da bạch cốt, cũng phân là mỹ xấu.\n\nSư phụ từng nói hắn trời sinh phật cùng, là hiếm thấy linh đài trong sạch người, mà tâm tư cứng cỏi, thế gian ít có có thể làm hắn dao động đồ vật.\n\nThật là bây giờ bất quá là nhìn thấy một con điệp yêu hình người hóa thân thôi, vì sao tâm luật sẽ bỗng nhiên rối loạn? Chẳng lẽ là gần nhất tu hành có điều lười biếng?\n\nDiệp Hạ Vân vẫn ở tại trong núi, đối với phàm trần tục thế tuy tốt kỳ nhưng thực tại hiểu rõ rất ít, tính tình cũng còn ngây thơ, không hề cảm thấy chính mình dáng dấp như vậy có cái gì không đúng, nhìn thấy Thương Ngô đứng cửa, vẫn vui vẻ hướng về phía hắn vẫy tay: \"Ngươi trở về? Ngươi nhanh nhìn một cái, hình người của ta có phải rất đẹp mắt hay không? Cẩm Lý tỷ tỷ nói rất ưa nhìn, nàng sẽ không gạt người. \"\n\nThương Ngô còn nghi hoặc dùng tay chống đỡ trong lòng chính mình, không hiểu chính mình mới vừa dị dạng là bởi vì gì mà lên, bây giờ nghe gặp Diệp Hạ Vân giục, liền cũng chỉ được đem tạm thời thả xuống, đi vào trong nhà đem gương đồng đặt lên bàn, sau đó lại đi tới bên giường, đem Diệp Hạ Vân mặc trên người đến không ra ngô ra khoai tăng bào cởi ra: \"Muốn trước tiên xuyên áo sơ mi. \"\n\nMỗi một lần ngón tay không cẩn thận sát qua kia ấm áp da thịt lúc, hắn cũng có thể cảm giác được mạch đập của chính mình sẽ lên biến hóa, như là này điệp yêu tự thân mang theo yêu thuật gì giống như vậy, dễ như ăn cháo là có thể loạn tâm thần người."}];
+    let currentChapIndex = 0;
+    let currentFontSize = 1.2;
+
+    function changeFontSize(delta) {
+        currentFontSize = Math.max(0.9, Math.min(1.8, currentFontSize + delta));
+        const contentElem = document.getElementById('story-content-body');
+        if (contentElem) {
+            contentElem.style.fontSize = currentFontSize + 'rem';
+        }
+        localStorage.setItem('reader_font_size', currentFontSize);
+    }
+
+    function changeFontFamily(fontVal) {
+        const contentElem = document.getElementById('story-content-body');
+        if (contentElem) {
+            contentElem.style.fontFamily = fontVal;
+        }
+        localStorage.setItem('reader_font_family', fontVal);
+    }
+
+    function setTheme(themeName) {
+        document.body.className = 'theme-' + themeName;
+        document.querySelectorAll('.theme-circle').forEach(el => el.classList.remove('active'));
+        const activeCircle = document.querySelector('.theme-circle.' + themeName);
+        if (activeCircle) activeCircle.classList.add('active');
+        localStorage.setItem('reader_theme', themeName);
+    }
+
+    function loadReaderSettings() {
+        const savedSize = localStorage.getItem('reader_font_size');
+        const savedFont = localStorage.getItem('reader_font_family');
+        const savedTheme = localStorage.getItem('reader_theme');
+
+        if (savedSize) {
+            currentFontSize = parseFloat(savedSize);
+            const contentElem = document.getElementById('story-content-body');
+            if (contentElem) contentElem.style.fontSize = currentFontSize + 'rem';
+        }
+
+        if (savedFont) {
+            const contentElem = document.getElementById('story-content-body');
+            if (contentElem) contentElem.style.fontFamily = savedFont;
+            const fontSelect = document.querySelector('.font-select');
+            if (fontSelect) fontSelect.value = savedFont;
+        }
+
+        if (savedTheme) {
+            setTheme(savedTheme);
+        }
+    }
+
+    function updateNavButtons() {
+        const prevBtn = document.getElementById('prevChapBtn');
+        const nextBtn = document.getElementById('nextChapBtn');
+        if (prevBtn) prevBtn.disabled = (currentChapIndex <= 0);
+        if (nextBtn) nextBtn.disabled = (currentChapIndex >= storyData.length - 1);
+    }
+
+    function switchChapter(btn, cId, shouldScroll = true) {
+        document.querySelectorAll('.chapter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const foundIndex = storyData.findIndex(item => item.id === cId);
+        if(foundIndex !== -1) {
+            currentChapIndex = foundIndex;
+            document.getElementById('story-content-body').textContent = storyData[foundIndex].content;
+            updateNavButtons();
+
+            if (shouldScroll) {
+                scrollToContent();
+            }
+        }
+    }
+
+    function navigateChapter(direction) {
+        const newIndex = currentChapIndex + direction;
+        if (newIndex >= 0 && newIndex < storyData.length) {
+            const targetChap = storyData[newIndex];
+            const targetBtn = document.querySelector(`.chapter-btn[data-chap-id="${targetChap.id}"]`);
+            if (targetBtn) {
+                switchChapter(targetBtn, targetChap.id, true);
+            }
+        }
+    }
+
+    function scrollToContent() {
+        const contentElem = document.getElementById('story-content-body');
+        if (contentElem) {
+            contentElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    function scrollToNav() {
+        const navElem = document.getElementById('chapterNavWrapper');
+        if (navElem) {
+            navElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    function initBookmark() {
+        const bookmarks = JSON.parse(localStorage.getItem('story_bookmarks') || '[]');
+        const btn = document.querySelector('.bookmark-btn');
+        if (btn && bookmarks.includes(storyId)) {
+            btn.classList.add('bookmarked');
+            btn.querySelector('.bm-text').textContent = 'Đã Bookmark';
+        }
+    }
+
+    function toggleBookmark() {
+        let bookmarks = JSON.parse(localStorage.getItem('story_bookmarks') || '[]');
+        const btn = document.querySelector('.bookmark-btn');
+
+        if (bookmarks.includes(storyId)) {
+            bookmarks = bookmarks.filter(id => id !== storyId);
+            btn.classList.remove('bookmarked');
+            btn.querySelector('.bm-text').textContent = 'Bookmark';
+        } else {
+            bookmarks.push(storyId);
+            btn.classList.add('bookmarked');
+            btn.querySelector('.bm-text').textContent = 'Đã Bookmark';
+        }
+        localStorage.setItem('story_bookmarks', JSON.stringify(bookmarks));
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initBookmark();
+        updateNavButtons();
+        loadReaderSettings();
+    });
+</script>
+
+</body>
+</html>
