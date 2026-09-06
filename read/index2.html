@@ -416,7 +416,7 @@
         const filePath = `read/${fileName}.html`;
 
         let chapBtnsHtml = chapters.map((ch, idx) => 
-            `<button class="chapter-btn ${idx === 0 ? 'active' : ''}" data-chap-id="${ch.id}" onclick="switchChapter(this, '${ch.id}')">${escapeHtml(ch.title)}</button>`
+            `<button class="chapter-btn ${idx === 0 ? 'active' : ''}" data-chap-id="${ch.id}" onclick="switchChapter(this, '${ch.id}', true)">${escapeHtml(ch.title)}</button>`
         ).join('\n                ');
 
         const fullNewPageHtml = `<!DOCTYPE html>
@@ -669,16 +669,31 @@
         .theme-circle.white { background: #ffffff; border: 1px solid #ccc; }
         .theme-circle.dark { background: #1a1a1a; }
 
-        .chapter-nav { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+        /* KHUNG MỤC LỤC THU GỌN - DÙNG CHO DANH SÁCH CHƯƠNG DÀI */
+        .chapter-nav-wrapper {
+            max-height: 180px;
+            overflow-y: auto;
+            border: 1px solid var(--border-dash);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.5);
+        }
+        body.theme-dark .chapter-nav-wrapper {
+            background: rgba(0, 0, 0, 0.2);
+            border-color: #444;
+        }
+
+        .chapter-nav { display: flex; gap: 8px; flex-wrap: wrap; }
 
         .chapter-btn {
-            padding: 6px 16px;
+            padding: 6px 14px;
             border: 1px solid var(--border-dash);
             background: #fff;
             border-radius: 8px;
             cursor: pointer;
             font-family: inherit;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 600;
             transition: all 0.2s;
         }
@@ -697,6 +712,7 @@
             white-space: pre-wrap;
             margin-bottom: 25px;
             min-height: 120px;
+            scroll-margin-top: 20px;
         }
 
         .story-content p, .story-content {
@@ -853,8 +869,10 @@
             </div>
         </div>
 
-        <div class="chapter-nav" id="chapterNav">
-            ${chapBtnsHtml}
+        <div class="chapter-nav-wrapper" id="chapterNavWrapper">
+            <div class="chapter-nav" id="chapterNav">
+                ${chapBtnsHtml}
+            </div>
         </div>
 
         <div class="story-content" id="story-content-body">
@@ -863,7 +881,7 @@
 
         <div class="bottom-nav">
             <button class="nav-action-btn" id="prevChapBtn" onclick="navigateChapter(-1)">← Chương trước</button>
-            <button class="top-scroll-btn" onclick="scrollToNav()">↑ Lên đầu (Mục lục)</button>
+            <button class="top-scroll-btn" onclick="scrollToNav()">↑ Lên mục lục</button>
             <button class="nav-action-btn" id="nextChapBtn" onclick="navigateChapter(1)">Chương sau →</button>
         </div>
 
@@ -958,7 +976,7 @@
         if (nextBtn) nextBtn.disabled = (currentChapIndex >= storyData.length - 1);
     }
 
-    function switchChapter(btn, cId) {
+    function switchChapter(btn, cId, shouldScroll = true) {
         document.querySelectorAll('.chapter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         
@@ -967,6 +985,10 @@
             currentChapIndex = foundIndex;
             document.getElementById('story-content-body').textContent = storyData[foundIndex].content;
             updateNavButtons();
+
+            if (shouldScroll) {
+                scrollToContent();
+            }
         }
     }
 
@@ -976,14 +998,20 @@
             const targetChap = storyData[newIndex];
             const targetBtn = document.querySelector(\`.chapter-btn[data-chap-id="\${targetChap.id}"]\`);
             if (targetBtn) {
-                switchChapter(targetBtn, targetChap.id);
-                scrollToNav();
+                switchChapter(targetBtn, targetChap.id, true);
             }
         }
     }
 
+    function scrollToContent() {
+        const contentElem = document.getElementById('story-content-body');
+        if (contentElem) {
+            contentElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
     function scrollToNav() {
-        const navElem = document.getElementById('chapterNav');
+        const navElem = document.getElementById('chapterNavWrapper');
         if (navElem) {
             navElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
