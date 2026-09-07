@@ -990,9 +990,10 @@
             document.getElementById('story-content-body').textContent = storyData[foundIndex].content;
             updateNavButtons();
 
-            if (shouldScroll) {
-                scrollToContent();
-            }
+// CUỘN TRANG ĐẾN ĐÚNG TỰA CHƯƠNG ĐANG CHỌN TRONG MỤC LỤC
+    if (shouldScroll) {
+        scrollToActiveChapBtn();
+    }
         }
     }
 
@@ -1007,12 +1008,12 @@
         }
     }
 
-    function scrollToContent() {
-        const contentElem = document.getElementById('story-content-body');
-        if (contentElem) {
-            contentElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+   function scrollToActiveChapBtn() {
+    const activeBtn = document.querySelector('.chapter-btn.active');
+    if (activeBtn) {
+        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
+}
 
     function scrollToNav() {
         const navElem = document.getElementById('chapterNavWrapper');
