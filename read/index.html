@@ -33,18 +33,18 @@
         /* --- KHU VỰC CÁC NÚT DÀN HÀNG NGANG --- */
         .action-buttons-group {
             display: flex;
-            align-items: center;
+            align-items: center; /* Sửa lỗi lệch hàng tại đây */
             justify-content: center;
             gap: 12px;
-            flex-wrap: wrap; /* Tự nhảy dòng gọn gàng nếu màn hình điện thoại quá nhỏ */
+            flex-wrap: wrap;
             margin-top: 15px;
         }
 
         /* --- STYLES NÚT TẠO TRUYỆN MỚI DROPDOWN --- */
         .dropdown-create {
             position: relative;
-            display: inline-block;
-            padding-bottom: 10px; /* Bổ sung đệm dưới để con trỏ chuột không bị tuột */
+            display: inline-flex;
+            align-items: center;
         }
 
         /* Bổ sung cầu nối ẩn giữ hover không bị biến mất */
@@ -73,6 +73,7 @@
             font-family: 'Comfortaa', cursive;
             cursor: pointer;
             text-decoration: none;
+            box-sizing: border-box;
             
             /* Viền đôi: nét liền bên ngoài + outline dotted bên trong */
             border: 2px solid var(--coral-border);
@@ -110,9 +111,9 @@
         .dropdown-menu {
             display: none; /* Mặc định ẩn */
             position: absolute;
-            top: calc(100% - 2px); /* Đẩy menu sát nút để tránh khoảng hở */
+            top: calc(100% + 2px);
             left: 50%;
-            transform: translateX(-50%) !important; /* Căn giữa nút */
+            transform: translateX(-50%) !important;
             width: 220px;
             background-color: #ffffff;
             border-radius: 18px;
@@ -165,11 +166,11 @@
 
         /* Đường line thẳng nét liền mỏng ở trên + đường đứt khúc màu nhạt ở dưới */
         .separator-divider {
-            margin-top: 30px;            /* Khoảng cách đẩy phía trên (cách nội dung) */
-            margin-bottom: 25px;         /* Khoảng cách đẩy phía dưới (cách nút đăng) */
-            border-top: 1px solid var(--border-dash, #a89f91); /* Đường line liền nét mỏng ở trên */
-            border-bottom: 1.5px dotted #e2d9cc;                /* Đường đứt khúc (dotted) màu nhạt ở dưới */
-            height: 6px;                  /* Khoảng cách giữa 2 đường line */
+            margin-top: 30px;
+            margin-bottom: 25px;
+            border-top: 1px solid var(--border-dash, #a89f91);
+            border-bottom: 1.5px dotted #e2d9cc;
+            height: 6px;
         }
 
         * {
@@ -350,7 +351,7 @@
             
             /* 2. Viền nét chấm đứt (dotted) ở trong nằm cách viền ngoài một khoảng */
             outline: 2px dotted #f0e2d8;
-            outline-offset: -8px; /* Đẩy viền dotted thụt vào bên trong */
+            outline-offset: -8px;
 
             display: grid;
             grid-template-columns: 120px 1fr;
@@ -489,7 +490,7 @@
                 </div>
             </div>
 
-            <!-- Nút 2: Cập nhật link truyện mới (Trang trí xinh yêu y hệt Nút 1) -->
+            <!-- Nút 2: Cập nhật link truyện mới -->
             <a href="https://phamnhadoan.github.io/read/index5.html" target="_blank" class="create-post-btn">
                 <span class="heart-icon">♥</span>
                 <span>Cập nhật link truyện mới</span>
