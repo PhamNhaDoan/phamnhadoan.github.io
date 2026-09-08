@@ -30,11 +30,20 @@
             --amber-border: #ffe8b5;
         }
 
+        /* --- KHU VỰC CÁC NÚT DÀN HÀNG NGANG --- */
+        .action-buttons-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap; /* Tự nhảy dòng gọn gàng nếu màn hình điện thoại quá nhỏ */
+            margin-top: 15px;
+        }
+
         /* --- STYLES NÚT TẠO TRUYỆN MỚI DROPDOWN --- */
         .dropdown-create {
             position: relative;
             display: inline-block;
-            margin: 15px 0;
             padding-bottom: 10px; /* Bổ sung đệm dưới để con trỏ chuột không bị tuột */
         }
 
@@ -48,19 +57,22 @@
             height: 12px;
         }
 
-        /* Nút chính xinh yêu */
-        .btn-create-main {
+        /* Nút chính 1 & Nút chính 2: Trang trí xinh yêu đồng bộ */
+        .btn-create-main, 
+        .create-post-btn {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             background-color: var(--coral-bg);
-            color: var(--coral-text);
-            padding: 10px 22px;
+            color: var(--coral-text) !important;
+            padding: 10px 20px;
             border-radius: 20px;
             font-weight: 700;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             font-family: 'Comfortaa', cursive;
             cursor: pointer;
+            text-decoration: none;
             
             /* Viền đôi: nét liền bên ngoài + outline dotted bên trong */
             border: 2px solid var(--coral-border);
@@ -72,13 +84,15 @@
             
             /* Không bay bay, không chuyển động vị trí */
             transform: none !important;
-            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
         }
 
-        .btn-create-main:hover {
+        .btn-create-main:hover, 
+        .create-post-btn:hover {
             background-color: #ff9b85;
-            color: #ffffff;
+            color: #ffffff !important;
             border-color: #e06d53;
+            transform: none !important;
         }
 
         /* Icon trái tim 2 bên */
@@ -99,7 +113,7 @@
             top: calc(100% - 2px); /* Đẩy menu sát nút để tránh khoảng hở */
             left: 50%;
             transform: translateX(-50%) !important; /* Căn giữa nút */
-            width: 240px;
+            width: 220px;
             background-color: #ffffff;
             border-radius: 18px;
             padding: 10px;
@@ -156,26 +170,6 @@
             border-top: 1px solid var(--border-dash, #a89f91); /* Đường line liền nét mỏng ở trên */
             border-bottom: 1.5px dotted #e2d9cc;                /* Đường đứt khúc (dotted) màu nhạt ở dưới */
             height: 6px;                  /* Khoảng cách giữa 2 đường line */
-        }
-
-        .create-post-btn {
-            display: inline-block;
-            background-color: var(--primary-orange, #d76a03);
-            color: #ffffff !important;
-            text-decoration: none;
-            padding: 10px 22px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            border: 1px solid var(--primary-orange, #d76a03);
-            transform: none !important;
-            transition: background-color 0.2s ease, border-color 0.2s ease !important;
-        }
-
-        .create-post-btn:hover {
-            background-color: var(--accent-green, #4f6d7a);
-            border-color: var(--accent-green, #4f6d7a);
-            transform: none !important;
         }
 
         * {
@@ -468,8 +462,9 @@
     <section class="updates-container">
         <h2 class="updates-title"><span>♥</span> Những Truyện Mới Cập Nhật (đọc online) <span>♥</span></h2>
         
-        <div style="text-align: center; margin-top: 10px;">
-            <!-- Menu Dropdown Tạo truyện mới -->
+        <!-- Khối chứa 2 nút dàn hàng ngang -->
+        <div class="action-buttons-group">
+            <!-- Nút 1: Menu Dropdown Tạo truyện mới -->
             <div class="dropdown-create" id="createDropdown">
                 <button type="button" class="btn-create-main" onclick="toggleDropdown(event)">
                     <span class="heart-icon">♥</span>
@@ -491,16 +486,15 @@
                         <span>Host Byethost</span>
                         <span class="item-heart">♥</span>
                     </a>
-                    <!-- Sau này có thêm host mới bà chỉ cần copy thêm 1 dòng <a class="dropdown-item"> vào đây nhé -->
                 </div>
             </div>
 
-            <!-- Nút Cập nhật link truyện mới -->
-            <div style="margin-top: 10px;">
-                <a href="https://phamnhadoan.github.io/read/index5.html" target="_blank" class="create-post-btn">
-                    Cập nhật link truyện mới
-                </a>
-            </div>
+            <!-- Nút 2: Cập nhật link truyện mới (Trang trí xinh yêu y hệt Nút 1) -->
+            <a href="https://phamnhadoan.github.io/read/index5.html" target="_blank" class="create-post-btn">
+                <span class="heart-icon">♥</span>
+                <span>Cập nhật link truyện mới</span>
+                <span class="heart-icon">♥</span>
+            </a>
         </div>
 
         <!-- Khối đường line nét liền + đường đứt khúc nhạt cách nút đăng truyện -->
