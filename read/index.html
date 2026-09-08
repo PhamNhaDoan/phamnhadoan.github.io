@@ -29,6 +29,113 @@
             --amber-bg: #fffdf0;
             --amber-border: #ffe8b5;
         }
+        /* --- STYLES NÚT TẠO TRUYỆN MỚI DROPDOWN --- */
+.dropdown-create {
+    position: relative;
+    display: inline-block;
+    margin: 15px 0;
+}
+
+/* Nút chính xinh yêu */
+.btn-create-main {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--coral-bg);
+    color: var(--coral-text);
+    padding: 10px 22px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    font-family: 'Comfortaa', cursive;
+    cursor: pointer;
+    
+    /* Viền đôi: nét liền bên ngoài + outline dotted bên trong */
+    border: 2px solid var(--coral-border);
+    outline: 2px dotted #ffb3a0;
+    outline-offset: -5px;
+    
+    /* Shadow đặc (Solid Shadow / Neo-brutalism) không mờ */
+    box-shadow: 3px 3px 0px var(--coral-border);
+    
+    /* Không bay bay, không chuyển động vị trí */
+    transform: none !important;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-create-main:hover {
+    background-color: #ff9b85;
+    color: #ffffff;
+    border-color: #e06d53;
+}
+
+/* Icon trái tim 2 bên */
+.heart-icon {
+    font-size: 0.9rem;
+    line-height: 1;
+}
+
+.arrow-down {
+    font-size: 0.75rem;
+    margin-left: 2px;
+}
+
+/* Menu xổ xuống */
+.dropdown-menu {
+    display: none; /* Mặc định ẩn */
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) !important; /* Căn giữa nút */
+    width: 240px;
+    background-color: #ffffff;
+    border-radius: 18px;
+    padding: 10px;
+    z-index: 100;
+
+    /* Viền mỏng ngoài + viền dashed trong */
+    border: 2px solid var(--border-line);
+    outline: 2px dashed #f0e2d8;
+    outline-offset: -6px;
+
+    /* Shadow đặc không mờ */
+    box-shadow: 4px 4px 0px var(--border-line);
+}
+
+/* Hiển thị khi hover hoặc click */
+.dropdown-create:hover .dropdown-menu,
+.dropdown-create.active .dropdown-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Các lựa chọn liên kết bên trong */
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-decoration: none;
+    padding: 9px 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--warm-brown);
+    background-color: var(--bg-page);
+    border: 1.5px solid var(--border-line);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: var(--coral-bg);
+    color: var(--coral-text);
+    border-color: var(--coral-border);
+}
+
+.dropdown-item .item-heart {
+    font-size: 0.8rem;
+    color: var(--coral-text);
+}
         /* Đường line thẳng nét liền mỏng ở trên + đường đứt khúc màu nhạt ở dưới */
 .separator-divider {
     margin-top: 30px;            /* Khoảng cách đẩy phía trên (cách nội dung) */
@@ -346,19 +453,40 @@
     <!-- KHO TRUYỆN MỚI CẬP NHẬT -->
     <section class="updates-container">
         <h2 class="updates-title"><span>♥</span> Những Truyện Mới Cập Nhật (đọc online) <span>♥</span></h2>
-        <div style="text-align: center; margin-top: 15px;">
-        <a href="https://phamnhadoan.github.io/read/index2.html" target="_blank" class="create-post-btn">
-            Tạo truyện mới
-        </a>
-             <a href="https://chucongconvert.gt.tc/read/index2.html" target="_blank" class="create-post-btn">
-            Tạo truyện mới trên host chucongconvert.gt.tc
-        </a>
-             <div style="text-align: center; margin-top: 15px;">
+      <div style="text-align: center; margin-top: 10px;">
+    <!-- Menu Dropdown Tạo truyện mới -->
+    <div class="dropdown-create" id="createDropdown">
+        <button type="button" class="btn-create-main" onclick="toggleDropdown(event)">
+            <span class="heart-icon">♥</span>
+            <span>Tạo truyện mới</span>
+            <span class="heart-icon">♥</span>
+            <span class="arrow-down">▼</span>
+        </button>
+
+        <div class="dropdown-menu">
+            <a href="https://phamnhadoan.github.io/read/index2.html" target="_blank" class="dropdown-item">
+                <span>Host Github</span>
+                <span class="item-heart">♥</span>
+            </a>
+            <a href="https://chucongconvert.gt.tc/read/index2.html" target="_blank" class="dropdown-item">
+                <span>Host Infinity</span>
+                <span class="item-heart">♥</span>
+            </a>
+            <a href="http://chucongconvert.byethost10.com/read/index2.html" target="_blank" class="dropdown-item">
+                <span>Host Byethost</span>
+                <span class="item-heart">♥</span>
+            </a>
+            <!-- Sau này có thêm host mới bà chỉ cần copy thêm 1 dòng <a class="dropdown-item"> vào đây nhé -->
+        </div>
+    </div>
+
+    <!-- Nút Cập nhật link truyện mới -->
+    <div style="margin-top: 10px;">
         <a href="https://phamnhadoan.github.io/read/index5.html" target="_blank" class="create-post-btn">
             Cập nhật link truyện mới
         </a>
-              </div>
     </div>
+</div>
             <!-- Khối đường line nét liền + đường đứt khúc nhạt cách nút đăng truyện -->
 <div class="separator-divider"></div>
 
@@ -528,6 +656,19 @@ một câu nói giới thiệu tóm tắt: ** kiều thê công X sủng thê th
             <!-- CÁC BÀI ĐĂNG TỪ INDEX4 SẼ TỰ ĐỘNG CHÈN LÊN TRÊN ĐÂY -->
         </div>
     </section>
+<script>
+    function toggleDropdown(e) {
+        e.stopPropagation();
+        document.getElementById('createDropdown').classList.toggle('active');
+    }
 
+    // Tự đóng menu khi bấm ra ngoài màn hình
+    document.addEventListener('click', function(e) {
+        const dropdown = document.getElementById('createDropdown');
+        if (dropdown && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('active');
+        }
+    });
+</script>
 </body>
 </html>
