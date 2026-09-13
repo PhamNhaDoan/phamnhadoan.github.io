@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Đăng Sách Đã Dịch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dots: #c2b280;
+            --cream-bg: rgba(253, 251, 247, 0.95);
+            --border-dash: #a89f91;
+            --primary-orange: #d76a03;
+            --accent-green: #4f6d7a;
+            --text-color: #2b2d42;
+            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 40px 15px;
+            color: var(--text-color);
+            background-color: #f4f1ea;
+            background-image: radial-gradient(var(--bg-dots) 1.5px, transparent 1.5px);
+            background-size: 18px 18px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--cream-bg);
+            border: 2px dashed var(--border-dash);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary-orange);
+            margin-bottom: 25px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--accent-green);
+        }
+
+        input[type="text"], input[type="password"], textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            background: #fff;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--accent-green);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: var(--primary-orange);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background: #b55802;
+        }
+
+        .status-msg {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 700;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Thêm Sách Đã Dịch Mới</h2>
+
+    <form id="bookForm" onsubmit="handlePostBook(event)">
+        <div class="form-group">
+            <label>GitHub Key Token</label>
+            <input type="password" id="githubToken" placeholder="Nhập Personal Access Token..." required>
+        </div>
+        <div class="form-group">
+            <label>Tên Sách</label>
+            <input type="text" id="bookTitle" placeholder="Nhập tên sách..." required>
+        </div>
+        <div class="form-group">
+            <label>Tác Giả</label>
+            <input type="text" id="bookAuthor" placeholder="Nhập tên tác giả..." required>
+        </div>
+        <div class="form-group">
+            <label>Thể Loại</label>
+            <input type="text" id="bookGenre" placeholder="Ví dụ: Tiểu thuyết, Trinh thám..." required>
+        </div>
+        <div class="form-group">
+            <label>Link URL Ảnh Bìa Sách</label>
+            <input type="text" id="bookCover" placeholder="https://domain.com/anh-bia.jpg">
+        </div>
+        <div class="form-group">
+            <label>Giới Thiệu Ngắn</label>
+            <textarea id="bookSummary" placeholder="Nhập tóm tắt giới thiệu ngắn..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Link Đọc Bản Tiếng Việt</label>
+            <input type="text" id="bookReadUrl" placeholder="Link trang đọc..." required>
+        </div>
+
+        <button type="submit" class="submit-btn" id="btnSubmit">Cập Nhật Lên Index8.html</button>
+    </form>
+
+    <div id="statusMsg" class="status-msg"></div>
+</div>
+
+<script>
+    const githubAcc = "PhamNhaDoan";
+    const repo = "phamnhadoan.github.io";
+    const targetFilePath = "read/index8.html";
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedToken = localStorage.getItem('gh_token_reviewconvert');
+        if (savedToken) {
+            document.getElementById('githubToken').value = savedToken;
+        }
+    });
+
+    async function handlePostBook(e) {
+        e.preventDefault();
+
+        const token = document.getElementById('githubToken').value.trim();
+        const title = document.getElementById('bookTitle').value.trim();
+        const author = document.getElementById('bookAuthor').value.trim();
+        const genre = document.getElementById('bookGenre').value.trim();
+        let cover = document.getElementById('bookCover').value.trim();
+        const summary = document.getElementById('bookSummary').value.trim();
+        const readUrl = document.getElementById('bookReadUrl').value.trim();
+
+        const statusMsg = document.getElementById('statusMsg');
+        const btnSubmit = document.getElementById('btnSubmit');
+
+        if (!token || !title || !author || !readUrl) {
+            statusMsg.style.color = 'red';
+            statusMsg.textContent = 'Vui lòng điền đầy đủ các thông tin bắt buộc!';
+            return;
+        }
+
+        if (!cover) {
+            cover = "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=400";
+        }
+
+        localStorage.setItem('gh_token_reviewconvert', token);
+        btnSubmit.disabled = true;
+        btnSubmit.textContent = 'Đang đăng dữ liệu...';
+        statusMsg.style.color = '#333';
+        statusMsg.textContent = 'Đang đọc file index8.html từ GitHub...';
+
+        try {
+            const apiUrl = `https://api.github.com/repos/${githubAcc}/${repo}/contents/${targetFilePath}`;
+            const getRes = await fetch(apiUrl, {
+                headers: { 'Authorization': `token ${token}` }
+            });
+
+            if (!getRes.ok) {
+                throw new Error('Không thể tải file index8.html từ GitHub. Kiểm tra lại Token hoặc đường dẫn.');
+            }
+
+            const fileData = await getRes.json();
+            const currentHtml = decodeURIComponent(escape(atob(fileData.content)));
+            const fileSha = fileData.sha;
+
+            // Đoạn HTML cho ô sách mới
+            const newBookCard = `
+        <article class="book-card">
+            <div>
+                <div class="cover-wrapper">
+                    <img src="${escapeHtml(cover)}" alt="Bìa sách" class="cover-img">
+                </div>
+                <div class="book-info">
+                    <h2 class="book-title">${escapeHtml(title)}</h2>
+                    <div class="book-author">Tác giả: ${escapeHtml(author)}</div>
+                    <span class="book-genre">Thể loại: ${escapeHtml(genre)}</span>
+                    <div class="book-summary">
+                        ${escapeHtml(summary)}
+                    </div>
+                </div>
+            </div>
+            <a href="${escapeHtml(readUrl)}" class="read-btn" target="_blank" rel="noopener">Đọc bản tiếng Việt</a>
+        </article>`;
+
+            // Chèn lên ngay sau thẻ <main id="book-grid">
+            const targetTag = '<main id="book-grid">';
+            if (!currentHtml.includes(targetTag)) {
+                throw new Error('Không tìm thấy thẻ <main id="book-grid"> trong file index8.html');
+            }
+
+            const updatedHtml = currentHtml.replace(targetTag, `${targetTag}\n${newBookCard}`);
+
+            statusMsg.textContent = 'Đang lưu sách mới lên GitHub...';
+
+            const putRes = await fetch(apiUrl, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: `Thêm sách đã dịch: ${title}`,
+                    content: btoa(unescape(encodeURIComponent(updatedHtml))),
+                    sha: fileSha
+                })
+            });
+
+            if (putRes.ok) {
+                statusMsg.style.color = 'green';
+                statusMsg.innerHTML = `Đăng sách thành công!<br><a href="https://${githubAcc.toLowerCase()}.github.io/${targetFilePath}" target="_blank" style="color:#d76a03;">Xem trang index8.html</a>`;
+                
+                document.getElementById('bookTitle').value = '';
+                document.getElementById('bookAuthor').value = '';
+                document.getElementById('bookGenre').value = '';
+                document.getElementById('bookCover').value = '';
+                document.getElementById('bookSummary').value = '';
+                document.getElementById('bookReadUrl').value = '';
+            } else {
+                throw new Error('Không thể ghi đè file index8.html lên GitHub.');
+            }
+
+        } catch (err) {
+            statusMsg.style.color = 'red';
+            statusMsg.textContent = 'Lỗi: ' + err.message;
+        } finally {
+            btnSubmit.disabled = false;
+            btnSubmit.textContent = 'Cập Nhật Lên Index8.html';
+        }
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+</script>
+
+</body>
+</html>
