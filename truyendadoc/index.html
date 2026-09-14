@@ -31,8 +31,8 @@
     margin-top: 30px;            /* Khoảng cách đẩy phía trên (cách nội dung) */
     margin-bottom: 25px;         /* Khoảng cách đẩy phía dưới (cách nút đăng) */
     border-top: 1px solid var(--border-dash, #a89f91); /* Đường line liền nét mỏng ở trên */
-    border-bottom: 1.5px dotted #e2d9cc;               /* Đường đứt khúc (dotted) màu nhạt ở dưới */
-    height: 6px;                 /* Khoảng cách giữa 2 đường line */
+    border-bottom: 1.5px dotted #e2d9cc;                /* Đường đứt khúc (dotted) màu nhạt ở dưới */
+    height: 6px;                  /* Khoảng cách giữa 2 đường line */
 }
 .create-post-btn {
     display: inline-block;
@@ -88,8 +88,16 @@
             text-align: center;
             color: var(--text-muted);
             font-style: italic;
-            margin-bottom: 35px;
+            margin-bottom: 15px;
             font-size: 0.9rem;
+        }
+
+        .story-counter-info {
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 35px;
         }
 
         .search-container {
@@ -220,6 +228,7 @@
 <div class="main-wrapper">
     <h1>✿ GIỚI THIỆU ĐAM MỸ SỦNG CÔNG EDIT HOÀN ✿</h1>
     <div class="subtitle">đu các nhà edit / sáng tác đam mỹ hstc, sủng công công khống</div>
+    <div class="story-counter-info">Tổng cộng có <span id="storyCount" style="color: var(--earth-orange);">0</span> truyện sủng công edit hoàn được giới thiệu</div>
     
     <div class="search-container">
         <input type="text" id="searchBar" class="search-input" placeholder="Tìm tên truyện, tác giả, nhà edit...">
@@ -595,6 +604,10 @@
         grid.innerHTML = '';
         
         const validData = data.filter(item => item && item.ten);
+        
+        // TỰ ĐỘNG CẬP NHẬT SỐ LƯỢNG TRUYỆN ĐẾM ĐƯỢC
+        const countElem = document.getElementById('storyCount');
+        if (countElem) countElem.textContent = validData.length;
         
         if (validData.length === 0) {
             grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#999; padding: 40px;">Không thấy bài review cần tìm rồi nàng ơi...</div>`;
