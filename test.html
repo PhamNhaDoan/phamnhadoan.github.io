@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sổ tay đam mỹ sủng công</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600&family=Itim&display=swap" rel="stylesheet">
+<style>
+/* ============ MÀU SẮC — sửa ở đây ============ */
+:root{
+  --cam:#e8814f;        /* cam caro */
+  --cam-nhat:#f6c9ad;
+  --giay:#fffdf8;       /* giấy sổ */
+  --den:#232323;
+  --vang:#d9a441;       /* sao vàng */
+  --tim:#6b4a8c;
+  --xam:#8a93a0;
+  --chu:#3a3a3a;
+}
+*{box-sizing:border-box;margin:0}
+body{
+  font-family:'Mali','Itim',cursive;
+  color:var(--chu);
+  padding:24px 12px 60px;
+  background-color:#fbf1e8;
+  /* nền caro cam */
+  background-image:
+    linear-gradient(90deg,rgba(232,129,79,.35) 50%,transparent 50%),
+    linear-gradient(rgba(232,129,79,.35) 50%,transparent 50%);
+  background-size:48px 48px;
+}
+
+/* ============ TRANG SỔ ============ */
+.trang{
+  position:relative;max-width:1000px;margin:0 auto;
+  background:var(--giay);
+  border:3px dashed #e6d3c2;outline:10px solid #f3e3d5;
+  border-radius:6px;
+  padding:34px 28px 40px;
+  overflow:hidden;
+  box-shadow:0 10px 30px rgba(120,70,30,.18);
+}
+/* mảng caro chéo góc trái */
+.trang::before{
+  content:"";position:absolute;left:-120px;top:-60px;width:520px;height:620px;
+  transform:rotate(-8deg);
+  background-image:
+    linear-gradient(90deg,rgba(232,129,79,.55) 50%,transparent 50%),
+    linear-gradient(rgba(232,129,79,.55) 50%,transparent 50%);
+  background-size:44px 44px;
+  clip-path:polygon(0 0,100% 0,0 100%);
+  opacity:.9;z-index:0;
+}
+.trang > *{position:relative;z-index:1}
+
+/* ============ CỜ ĐUÔI NHEO ============ */
+.co{display:flex;gap:4px;margin-bottom:6px;padding-left:20px}
+.co span{width:26px;height:30px;clip-path:polygon(0 0,100% 0,50% 100%);}
+.co span:nth-child(4n+1){background:var(--den)}
+.co span:nth-child(4n+2){background:var(--vang)}
+.co span:nth-child(4n+3){background:#c0563f}
+.co span:nth-child(4n){background:var(--tim)}
+
+/* ============ BỐ CỤC ============ */
+.luoi{
+  display:grid;gap:26px 22px;
+  grid-template-columns:230px 1fr 1fr;
+  grid-template-areas:
+    "nhan loi  khung"
+    "nhan truyen1 khung"
+    "banner banner banner"
+    "truyen2 truyen3 keo"
+    "hang hang hang";
+  align-items:start;
+}
+
+/* ============ NHÃN TIÊU ĐỀ (viền bánh quy đen) ============ */
+.nhan{
+  grid-area:nhan;justify-self:center;
+  width:210px;height:250px;border-radius:50% / 46%;
+  background:var(--den);padding:10px;transform:rotate(-3deg);
+  box-shadow:0 4px 10px rgba(0,0,0,.25);
+}
+.nhan-trong{
+  width:100%;height:100%;border-radius:50% / 46%;
+  background:var(--giay);border:3px dotted #fff;outline:3px solid var(--den);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:10px;
+}
+.nhan h1{font-family:'Itim',cursive;font-weight:400;font-size:1.55rem;line-height:1.15;letter-spacing:.08em;color:var(--den)}
+.nhan small{font-size:.72rem;color:var(--xam);margin-top:6px}
+.meo{font-size:2.2rem;margin-top:4px}
+
+/* ============ LỜI NHẮN VIẾT TAY ============ */
+.ghi{font-size:.92rem;line-height:1.75;}
+.loi{grid-area:loi;padding-top:20px}
+.loi p{margin-bottom:10px}
+.ghi-cam{
+  display:inline-block;background:var(--cam);color:#fff;padding:3px 10px;
+  transform:rotate(2deg);font-size:.82rem;
+}
+.sao-treo{display:flex;gap:26px;margin-bottom:6px}
+.sao-treo i{display:block;width:1px;background:#999;position:relative;font-style:normal}
+.sao-treo i::after{content:"★";position:absolute;bottom:-14px;left:-8px;color:var(--vang);font-size:16px}
+.sao-treo i:nth-child(1){height:30px}.sao-treo i:nth-child(2){height:48px}
+.sao-treo i:nth-child(3){height:24px}.sao-treo i:nth-child(4){height:40px}
+.sao-treo i:nth-child(5){height:28px}
+
+/* ============ KHUNG ẢNH CÓ HOA VĂN (truyện nổi bật) ============ */
+.khung{
+  grid-area:khung;position:relative;
+  background:#e9ecef;border:10px double #aab2bb;padding:16px;
+  box-shadow:0 4px 10px rgba(0,0,0,.15);transform:rotate(1.5deg);
+  background-image:repeating-linear-gradient(0deg,transparent 0 22px,rgba(120,130,140,.12) 22px 23px);
+}
+.khung .chong{text-align:center;line-height:.95;margin-bottom:6px}
+.khung .chong span{display:block}
+.khung .bi1{font-size:2.6rem}.khung .bi2{font-size:3.4rem}.khung .bi3{font-size:4.4rem}
+.khung h2{font-family:'Itim',cursive;font-weight:400;font-size:1.25rem;text-align:center}
+.khung p{font-size:.84rem;line-height:1.6;margin-top:6px}
+.bong{position:absolute;top:-22px;right:8px;font-size:2rem}
+.bong-chat{position:absolute;top:-20px;left:14px;background:var(--den);color:#fff;font-size:.75rem;padding:3px 10px;border-radius:14px}
+
+/* ============ BANNER TRICK OR TREAT ============ */
+.banner{grid-area:banner;text-align:center}
+.banner svg{width:100%;max-width:640px;height:auto;display:inline-block}
+.banner text{font-family:'Itim',cursive;font-size:44px;fill:var(--den);letter-spacing:4px}
+
+/* ============ THẺ TRUYỆN (giấy ghi chú) ============ */
+.giay-ghi{
+  position:relative;background:#fff;padding:20px 16px 16px;
+  box-shadow:0 3px 8px rgba(0,0,0,.14);border-radius:3px;
+}
+.giay-ghi::before{ /* băng dính washi */
+  content:"";position:absolute;top:-10px;left:50%;width:84px;height:20px;
+  transform:translateX(-50%) rotate(-3deg);
+  background:repeating-linear-gradient(45deg,#f6c9ad 0 8px,#fbe3d2 8px 16px);opacity:.9;
+}
+.giay-ghi h3{font-family:'Itim',cursive;font-weight:400;font-size:1.15rem;margin-bottom:2px}
+.tacgia{font-size:.78rem;color:var(--xam);margin-bottom:8px}
+.giay-ghi p{font-size:.85rem;line-height:1.65}
+.the{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0 6px}
+.the b{font-weight:400;font-size:.72rem;padding:2px 9px;border-radius:12px;border:1.5px solid var(--cam);color:#b4552b;background:#fff4ec}
+.sao{color:var(--vang);letter-spacing:2px}
+.truyen1{grid-area:truyen1;transform:rotate(-1.5deg)}
+.truyen2{grid-area:truyen2;transform:rotate(1.2deg)}
+.truyen3{grid-area:truyen3;transform:rotate(-1deg)}
+
+/* ============ KHUNG TRÒN: TRÍCH DẪN + KẸO ============ */
+.keo{
+  grid-area:keo;border-radius:50%;aspect-ratio:1/.9;
+  border:4px double #b9bfc7;outline:2px solid #e3e6ea;outline-offset:6px;
+  background:#fafafa;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:22px;font-size:.82rem;line-height:1.6;
+}
+.keo q{font-style:italic;quotes:"“" "”"}
+.keo .viki{font-size:1.5rem;margin-top:6px}
+
+/* ============ HÀNG NHÂN VẬT ============ */
+.hang{grid-area:hang;display:flex;justify-content:center;gap:34px;flex-wrap:wrap;padding-top:6px;
+  border-bottom:6px solid transparent;border-image:repeating-linear-gradient(90deg,var(--den) 0 2px,transparent 2px 14px) 1}
+.nv{text-align:center;font-size:.8rem;width:110px}
+.nv .mat{font-size:3rem;display:block}
+.nv em{display:block;font-style:normal;color:var(--xam);font-size:.72rem}
+.chaobye{width:100%;text-align:center;font-size:.9rem;color:var(--xam);margin-top:6px}
+
+/* ============ ĐIỆN THOẠI ============ */
+@media (max-width:760px){
+  .luoi{
+    grid-template-columns:1fr;
+    grid-template-areas:"nhan" "loi" "khung" "banner" "truyen1" "truyen2" "truyen3" "keo" "hang";
+  }
+  .keo{max-width:320px;justify-self:center;width:100%}
+  .trang{padding:24px 16px 30px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .meo{display:inline-block;animation:vay 3s ease-in-out infinite;transform-origin:50% 90%}
+  @keyframes vay{50%{transform:rotate(8deg)}}
+}
+</style>
+</head>
+<body>
+<main class="trang">
+
+  <div class="co" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+
+  <div class="luoi">
+
+    <!-- Nhãn tiêu đề -->
+    <div class="nhan">
+      <div class="nhan-trong">
+        <h1>SỦNG<br>CÔNG<br>DECO</h1>
+        <span class="meo" aria-hidden="true">🐈‍⬛</span>
+        <small>sổ tay đam mỹ</small>
+      </div>
+    </div>
+
+    <!-- Lời nhắn -->
+    <section class="loi ghi">
+      <div class="sao-treo" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <p>Chào mọi người~ Đây là góc nhỏ mình ghi lại những bộ đam mỹ <b>sủng công</b> đọc xong là cười suốt cả ngày ♪</p>
+      <p>Mình dùng tông cam – đen cho đúng mood Halloween. Thông tin truyện bên dưới là chữ mẫu, mình sẽ sửa lại sau nhé!</p>
+      <span class="ghi-cam">Đề cử tháng 10</span>
+    </section>
+
+    <!-- Khung truyện nổi bật -->
+    <aside class="khung">
+      <span class="bong-chat">Boo!</span>
+      <span class="bong" aria-hidden="true">👻</span>
+      <div class="chong" aria-hidden="true">
+        <span class="bi1">🐈‍⬛</span>
+        <span class="bi2">🎃</span>
+        <span class="bi3">🎃</span>
+      </div>
+      <h2>Truyện của tháng</h2>
+      <p><strong>Tên truyện nổi bật</strong> — Thụ lạnh lùng ngoài mặt nhưng công lại là người chịu thua mỗi lần thụ nhíu mày. Ngọt, nhẹ, HE.</p>
+    </aside>
+
+    <!-- Truyện 1 (cạnh lời nhắn) -->
+    <article class="giay-ghi truyen1">
+      <h3>Tên truyện số 1</h3>
+      <div class="tacgia">Tác giả: Tên tác giả</div>
+      <p>Công chiều thụ vô điều kiện, từ nấu ăn đến dỗ ngủ. Đọc xong chỉ muốn có một người như vậy.</p>
+      <div class="the"><b>sủng công</b><b>ngọt</b><b>HE</b></div>
+      <div class="sao" aria-label="5 sao">★★★★★</div>
+    </article>
+
+    <!-- Banner cong -->
+    <div class="banner">
+      <svg viewBox="0 0 640 110" role="img" aria-label="Đọc là nghiện">
+        <defs><path id="cong" d="M20,30 Q320,110 620,30"/></defs>
+        <rect x="10" y="8" width="620" height="60" fill="none"/>
+        <text><textPath href="#cong" startOffset="50%" text-anchor="middle">ĐỌC LÀ NGHIỆN ☆ ĐỌC LÀ SỦNG</textPath></text>
+      </svg>
+    </div>
+
+    <!-- Truyện 2 -->
+    <article class="giay-ghi truyen2">
+      <h3>Tên truyện số 2</h3>
+      <div class="tacgia">Tác giả: Tên tác giả</div>
+      <p>Thanh mai trúc mã, công đợi thụ suốt mười năm. Nhiều chi tiết nhỏ khiến tim mềm nhũn.</p>
+      <div class="the"><b>thanh mai trúc mã</b><b>ấm áp</b></div>
+      <div class="sao" aria-label="4 sao">★★★★☆</div>
+    </article>
+
+    <!-- Truyện 3 -->
+    <article class="giay-ghi truyen3">
+      <h3>Tên truyện số 3</h3>
+      <div class="tacgia">Tác giả: Tên tác giả</div>
+      <p>Công là tổng tài ngoài lạnh trong nóng, về nhà là biến thành "chồng quốc dân" chính hiệu.</p>
+      <div class="the"><b>hiện đại</b><b>tổng tài</b><b>ngọt</b></div>
+      <div class="sao" aria-label="5 sao">★★★★★</div>
+    </article>
+
+    <!-- Khung tròn trích dẫn -->
+    <aside class="keo">
+      <q>Em cứ việc làm nũng, còn lại để anh lo.</q>
+      <div>— Câu thoại của công (mẫu)</div>
+      <div class="viki" aria-hidden="true">🍬 🍭</div>
+    </aside>
+
+    <!-- Hàng nhân vật -->
+    <footer class="hang">
+      <div class="nv"><span class="mat" aria-hidden="true">🐱</span>Công A<em>dịu dàng</em></div>
+      <div class="nv"><span class="mat" aria-hidden="true">🐰</span>Công B<em>cuồng vợ</em></div>
+      <div class="nv"><span class="mat" aria-hidden="true">🐶</span>Công C<em>chiều hết nấc</em></div>
+      <p class="chaobye">Have a nice day ✿</p>
+    </footer>
+
+  </div>
+</main>
+</body>
+</html>
