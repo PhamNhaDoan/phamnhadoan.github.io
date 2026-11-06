@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <!-- GtM & Meta Info giữ nguyên bản 100% -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JWE7TQ7DG5"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-JWE7TQ7DG5'); 
+    </script> 
+    <meta name="description" content="[Edit hoàn] Thư viện truyện đam mỹ chủ công, thụ sủng công, công khống, hỗ sủng thiên công, edit bởi các nhà dịch"> 
+    <meta name="keywords" content="thụ sủng công, thụ truy công, công khống, cong khong, chucongconvert, dam my sung cong, convert dam my, thu sung cong, thu truy cong, tra công, nhất công đa thụ, ngược thụ, không ngược công, vạn nhân mê công, đam mỹ QT, dam my convert, truyen QT, truyen convert, tổng công, đổi thụ, truy phu, gk"> 
+    <meta name="google-site-verification" content="pST4o4x4AIh7aJ2DKg7gApDaynndmR4L3R2JFeYNdKY" /> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    
+    <!-- Title giữ nguyên -->
+    <title>Góc Review Truyện Đam Mỹ Thụ Sủng Công, HS Thiên Công, Công Khống</title> 
+    
+    <!-- Phông chữ Aesthetic Journal / Vintage Scrapbook -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Comfortaa:wght@500;700&family=Dancing+Script:wght@700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-paper: #f4efe6;
+            --cream-card: rgba(253, 250, 245, 0.92);
+            --primary-green: #556b2f;
+            --earth-orange: #d97443;
+            --handwriting-red: #c0392b;
+            --text-dark: #2f3542;
+            --text-muted: #747d8c;
+            --border-dash: #a89f91;
+            --border-dotted: #ced6e0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-paper);
+            /* Họa tiết nền trang sổ kẻ ô mờ vintage */
+            background-image: 
+                radial-gradient(var(--border-dash) 1px, transparent 1px),
+                linear-gradient(to right, rgba(168, 159, 145, 0.08) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(168, 159, 145, 0.08) 1px, transparent 1px);
+            background-size: 20px 20px, 20px 20px, 20px 20px;
+            color: var(--text-dark);
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .main-wrapper {
+            max-width: 1050px;
+            margin: 0 auto;
+            background: rgba(255, 253, 249, 0.88);
+            padding: 40px 30px;
+            border-radius: 24px;
+            border: 3px dotted var(--border-dash);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            position: relative;
+        }
+
+        /* HEADER giữ nguyên các class h1 & subtitle */
+        h1 {
+            font-family: 'Comfortaa', cursive;
+            text-align: center;
+            color: var(--primary-green);
+            margin-bottom: 5px;
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 35px;
+            font-size: 0.9rem;
+        }
+
+        /* Thanh phân cách */
+        .separator-divider {
+            margin-top: 25px;
+            margin-bottom: 25px;
+            border-top: 1px solid var(--border-dash);
+            border-bottom: 1.5px dotted #e2d9cc;
+            height: 6px;
+        }
+
+        /* Nút tạo bài đăng giữ nguyên */
+        .create-post-btn {
+            display: inline-block;
+            background-color: var(--earth-orange);
+            color: #ffffff !important;
+            text-decoration: none;
+            padding: 10px 22px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border: 1px solid var(--earth-orange);
+            transform: none !important;
+            transition: background-color 0.2s ease, border-color 0.2s ease !important;
+        }
+
+        .create-post-btn:hover {
+            background-color: #4f6d7a;
+            border-color: #4f6d7a;
+            transform: none !important;
+        }
+
+        /* BỐ CỤC GIAO DIỆN SỔ TAY (JOURNAL GRID) THEO ẢNH ĐÍNH KÈM */
+        .journal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .journal-grid {
+                grid-template-columns: 1fr;
+            }
+            .main-wrapper {
+                padding: 20px 15px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Khung thẻ review kiểu trang nhật ký ghép dán */
+        .journal-card {
+            background: var(--cream-card);
+            border: 2px dashed var(--border-dash);
+            border-radius: 16px;
+            padding: 22px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+            transition: transform 0.2s ease;
+        }
+
+        .journal-card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Nhãn ngày thứ kiểu viết tay (Monday, Friday, Sunday...) */
+        .journal-day-header {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.3rem;
+            color: var(--handwriting-red);
+            margin-bottom: 10px;
+            line-height: 1;
+        }
+
+        /* Khối Banner / Sticker minh họa trong ô nhật ký */
+        .journal-banner {
+            width: 100%;
+            height: 140px;
+            border-radius: 10px;
+            border: 1px dashed var(--border-dash);
+            object-fit: cover;
+            margin-bottom: 12px;
+            background-color: #eee8dc;
+        }
+
+        /* Chữ viết tay quote trang trí */
+        .handwriting-quote {
+            font-family: 'Caveat', cursive;
+            font-size: 1.4rem;
+            color: var(--primary-green);
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        /* Phần review hiển thị text giữ nguyên xuống hàng tự nhiên như lúc nhập */
+        .review-text-content {
+            font-size: 0.98rem;
+            line-height: 1.7;
+            color: var(--text-dark);
+            white-space: pre-line; /* Giữ nguyên xuống dòng */
+            text-align: justify;
+        }
+
+        /* Tag nhãn dán góc (Sardines, Pasta, Dessert...) */
+        .journal-stamp {
+            display: inline-block;
+            background: #2f3542;
+            color: #fff;
+            font-family: 'Comfortaa', cursive;
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        /* FOOTER giữ nguyên */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px dashed var(--border-dash);
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <!-- HEADER NGUYÊN BẢN -->
+    <header>
+        <h1>Góc Review Truyện Đam Mỹ Thụ Sủng Công, HS Thiên Công, Công Khống</h1>
+        <div class="subtitle">Tổng hợp & review cảm nhận các bộ đam mỹ sủng công đã hoàn</div>
+    </header>
+
+    <div class="separator-divider"></div>
+
+    <div style="text-align: center; margin-bottom: 25px;">
+        <a href="#" class="create-post-btn">Soạn bài viết mới</a>
+    </div>
+
+    <!-- KHUNG LƯỚI KHỦNG GIAO DIỆN SỔ TAY NẠP NỘI DUNG (JOURNAL GRID) -->
+    <main class="journal-grid" id="reviewGrid">
+        
+        <!-- Ô Review 1: Style Monday & Flour Stamp -->
+        <article class="journal-card">
+            <div class="journal-day-header">monday</div>
+            <div class="handwriting-quote">"You are my favorite. I want you to come for me."</div>
+            <span class="journal-stamp">FLOUR</span>
+            <div class="review-text-content">
+[Nội dung review truyện sủng công bổ sung tại đây]
+Cấu trúc chữ giữ nguyên xuống dòng mượt mà tự nhiên theo định dạng dòng của bạn.
+            </div>
+        </article>
+
+        <!-- Ô Review 2: Style Friday & Pasta Stamp -->
+        <article class="journal-card">
+            <div class="journal-day-header">friday</div>
+            <div class="handwriting-quote">"Food is a happy memory that can be eaten."</div>
+            <span class="journal-stamp">FARFALLE PASTA</span>
+            <div class="review-text-content">
+[Nội dung review truyện sủng công bổ sung tại đây]
+Dễ dàng chèn danh sách truyện, đánh giá, link đọc mà không làm lệch giao diện vintage sổ tay.
+            </div>
+        </article>
+
+        <!-- Ô Review 3: Style Sunday & Dessert Stamp -->
+        <article class="journal-card">
+            <div class="journal-day-header">sunday</div>
+            <div class="handwriting-quote">"Dessert Heals Everything"</div>
+            <span class="journal-stamp">SARDINES</span>
+            <div class="review-text-content">
+[Nội dung review truyện sủng công bổ sung tại đây]
+            </div>
+        </article>
+
+    </main>
+
+    <!-- FOOTER NGUYÊN BẢN -->
+    <footer>
+        <p>© Góc Review Đam Mỹ Thụ Sủng Công. Giữ nguyên toàn bộ cấu trúc & tiêu đề trang.</p>
+    </footer>
+</div>
+
+</body>
+</html>
