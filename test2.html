@@ -18,22 +18,23 @@
     <!-- Title giữ nguyên -->
     <title>Góc Review Truyện Đam Mỹ Thụ Sủng Công, HS Thiên Công, Công Khống</title> 
     
-    <!-- Phông chữ Aesthetic Journal / Vintage Scrapbook -->
+    <!-- Phông chữ Aesthetic Journal / Hand-written -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Comfortaa:wght@500;700&family=Dancing+Script:wght@700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
+        /* BẢNG MÀU MỚI: XANH LÁ - VÀNG PASTEL - HỒNG DÂU NHẠT */
         :root {
-            --bg-paper: #f4efe6;
-            --cream-card: rgba(253, 250, 245, 0.92);
-            --primary-green: #556b2f;
-            --earth-orange: #d97443;
-            --handwriting-red: #c0392b;
-            --text-dark: #2f3542;
-            --text-muted: #747d8c;
-            --border-dash: #a89f91;
-            --border-dotted: #ced6e0;
+            --bg-page: #f4f8f3;            /* Nền trang xanh mint/xô thơm rất dịu */
+            --card-cream: #ffffff;          /* Thẻ màu trắng mượt */
+            --sage-green: #5b8c5a;          /* Xanh lá xô thơm xinh xắn */
+            --pastel-yellow: #fff3c4;       /* Vàng chanh/bơ pastel */
+            --strawberry-pink: #ff85a1;     /* Hồng dâu tươi tắn */
+            --soft-pink-bg: #fff0f3;        /* Nền hồng nhạt */
+            --text-dark: #3a4a3a;           /* Chữ xanh đen đậm dễ đọc */
+            --text-muted: #7d937d;          /* Chữ phụ nhạt */
+            --border-green: #b2d3b2;        /* Viền kẻ chấm xanh nhạt */
         }
 
         * {
@@ -42,12 +43,12 @@
 
         body {
             font-family: 'Nunito', sans-serif;
-            background-color: var(--bg-paper);
-            /* Họa tiết nền trang sổ kẻ ô mờ vintage */
+            background-color: var(--bg-page);
+            /* Họa tiết nền kẻ caro / chấm bi xanh lá nhạt */
             background-image: 
-                radial-gradient(var(--border-dash) 1px, transparent 1px),
-                linear-gradient(to right, rgba(168, 159, 145, 0.08) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(168, 159, 145, 0.08) 1px, transparent 1px);
+                radial-gradient(var(--border-green) 1.2px, transparent 1.2px),
+                linear-gradient(to right, rgba(178, 211, 178, 0.15) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(178, 211, 178, 0.15) 1px, transparent 1px);
             background-size: 20px 20px, 20px 20px, 20px 20px;
             color: var(--text-dark);
             margin: 0;
@@ -58,11 +59,11 @@
         .main-wrapper {
             max-width: 1050px;
             margin: 0 auto;
-            background: rgba(255, 253, 249, 0.88);
+            background: rgba(255, 255, 255, 0.95);
             padding: 40px 30px;
             border-radius: 24px;
-            border: 3px dotted var(--border-dash);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            border: 3px dotted var(--border-green);
+            box-shadow: 0 10px 30px rgba(91, 140, 90, 0.08);
             position: relative;
         }
 
@@ -70,9 +71,9 @@
         h1 {
             font-family: 'Comfortaa', cursive;
             text-align: center;
-            color: var(--primary-green);
+            color: var(--sage-green);
             margin-bottom: 5px;
-            font-size: 2.2rem;
+            font-size: 2.1rem;
             font-weight: 700;
         }
 
@@ -80,41 +81,42 @@
             text-align: center;
             color: var(--text-muted);
             font-style: italic;
-            margin-bottom: 35px;
-            font-size: 0.9rem;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
         }
 
-        /* Thanh phân cách */
+        /* Thanh phân cách 2 dòng đứt khúc */
         .separator-divider {
             margin-top: 25px;
             margin-bottom: 25px;
-            border-top: 1px solid var(--border-dash);
-            border-bottom: 1.5px dotted #e2d9cc;
+            border-top: 1px solid var(--border-green);
+            border-bottom: 1.5px dotted #d1e7d1;
             height: 6px;
         }
 
-        /* Nút tạo bài đăng giữ nguyên */
+        /* Nút tạo bài đăng giữ nguyên class - Phối màu hồng dâu tươi */
         .create-post-btn {
             display: inline-block;
-            background-color: var(--earth-orange);
+            background-color: var(--strawberry-pink);
             color: #ffffff !important;
             text-decoration: none;
-            padding: 10px 22px;
+            padding: 10px 24px;
             border-radius: 20px;
             font-weight: 700;
             font-size: 0.95rem;
-            border: 1px solid var(--earth-orange);
+            border: 1.5px solid var(--strawberry-pink);
             transform: none !important;
             transition: background-color 0.2s ease, border-color 0.2s ease !important;
+            box-shadow: 0 4px 12px rgba(255, 133, 161, 0.25);
         }
 
         .create-post-btn:hover {
-            background-color: #4f6d7a;
-            border-color: #4f6d7a;
+            background-color: var(--sage-green);
+            border-color: var(--sage-green);
             transform: none !important;
         }
 
-        /* BỐ CỤC GIAO DIỆN SỔ TAY (JOURNAL GRID) THEO ẢNH ĐÍNH KÈM */
+        /* BỐ CỤC LƯỚI 2 CỘT SỔ TAY */
         .journal-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -130,75 +132,72 @@
                 padding: 20px 15px;
             }
             h1 {
-                font-size: 1.8rem;
+                font-size: 1.7rem;
             }
         }
 
-        /* Khung thẻ review kiểu trang nhật ký ghép dán */
+        /* Thẻ nhật ký review với điểm nhấn viền vàng pastel & hồng dâu */
         .journal-card {
-            background: var(--cream-card);
-            border: 2px dashed var(--border-dash);
-            border-radius: 16px;
+            background: var(--card-cream);
+            border: 2px dashed var(--border-green);
+            border-radius: 18px;
             padding: 22px;
             position: relative;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
             transition: transform 0.2s ease;
+        }
+
+        /* Thẻ xen kẽ màu nền hồng nhạt pastel */
+        .journal-card:nth-child(even) {
+            background: var(--soft-pink-bg);
+            border-color: #f7cad0;
         }
 
         .journal-card:hover {
             transform: translateY(-2px);
         }
 
-        /* Nhãn ngày thứ kiểu viết tay (Monday, Friday, Sunday...) */
+        /* Thứ trong tuần chữ viết tay màu hồng dâu */
         .journal-day-header {
             font-family: 'Dancing Script', cursive;
-            font-size: 2.3rem;
-            color: var(--handwriting-red);
-            margin-bottom: 10px;
+            font-size: 2.4rem;
+            color: var(--strawberry-pink);
+            margin-bottom: 8px;
             line-height: 1;
         }
 
-        /* Khối Banner / Sticker minh họa trong ô nhật ký */
-        .journal-banner {
-            width: 100%;
-            height: 140px;
-            border-radius: 10px;
-            border: 1px dashed var(--border-dash);
-            object-fit: cover;
-            margin-bottom: 12px;
-            background-color: #eee8dc;
-        }
-
-        /* Chữ viết tay quote trang trí */
+        /* Câu trích dẫn chữ viết tay màu xanh lá */
         .handwriting-quote {
             font-family: 'Caveat', cursive;
-            font-size: 1.4rem;
-            color: var(--primary-green);
+            font-size: 1.45rem;
+            color: var(--sage-green);
             margin-bottom: 10px;
             line-height: 1.3;
         }
 
-        /* Phần review hiển thị text giữ nguyên xuống hàng tự nhiên như lúc nhập */
-        .review-text-content {
-            font-size: 0.98rem;
-            line-height: 1.7;
-            color: var(--text-dark);
-            white-space: pre-line; /* Giữ nguyên xuống dòng */
-            text-align: justify;
-        }
-
-        /* Tag nhãn dán góc (Sardines, Pasta, Dessert...) */
+        /* Stamp nhãn dán góc màu vàng bơ pastel */
         .journal-stamp {
             display: inline-block;
-            background: #2f3542;
-            color: #fff;
+            background: var(--pastel-yellow);
+            color: #7a6300;
             font-family: 'Comfortaa', cursive;
             font-size: 0.75rem;
-            padding: 3px 8px;
-            border-radius: 4px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid #ffe599;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        /* Nội dung review xuống dòng tự nhiên */
+        .review-text-content {
+            font-size: 0.98rem;
+            line-height: 1.75;
+            color: var(--text-dark);
+            white-space: pre-line;
+            text-align: justify;
         }
 
         /* FOOTER giữ nguyên */
@@ -207,7 +206,7 @@
             margin-top: 40px;
             font-size: 0.85rem;
             color: var(--text-muted);
-            border-top: 1px dashed var(--border-dash);
+            border-top: 1px dashed var(--border-green);
             padding-top: 20px;
         }
     </style>
@@ -215,7 +214,7 @@
 <body>
 
 <div class="main-wrapper">
-    <!-- HEADER NGUYÊN BẢN -->
+    <!-- HEADER NGUYÊN BẢN 100% -->
     <header>
         <h1>Góc Review Truyện Đam Mỹ Thụ Sủng Công, HS Thiên Công, Công Khống</h1>
         <div class="subtitle">Tổng hợp & review cảm nhận các bộ đam mỹ sủng công đã hoàn</div>
@@ -227,36 +226,36 @@
         <a href="#" class="create-post-btn">Soạn bài viết mới</a>
     </div>
 
-    <!-- KHUNG LƯỚI KHỦNG GIAO DIỆN SỔ TAY NẠP NỘI DUNG (JOURNAL GRID) -->
+    <!-- KHUNG LƯỚI KHỦNG REVIEW THIẾT KẾ MÀU XANH LÁ - VÀNG - HỒNG -->
     <main class="journal-grid" id="reviewGrid">
         
-        <!-- Ô Review 1: Style Monday & Flour Stamp -->
+        <!-- Ô Review 1 -->
         <article class="journal-card">
             <div class="journal-day-header">monday</div>
             <div class="handwriting-quote">"You are my favorite. I want you to come for me."</div>
-            <span class="journal-stamp">FLOUR</span>
+            <span class="journal-stamp">SWEET GREEN</span>
             <div class="review-text-content">
 [Nội dung review truyện sủng công bổ sung tại đây]
-Cấu trúc chữ giữ nguyên xuống dòng mượt mà tự nhiên theo định dạng dòng của bạn.
+Cấu trúc chữ xuống dòng tự nhiên theo đoạn nhập của bạn.
             </div>
         </article>
 
-        <!-- Ô Review 2: Style Friday & Pasta Stamp -->
+        <!-- Ô Review 2 (Nền hồng nhạt pastel xen kẽ) -->
         <article class="journal-card">
             <div class="journal-day-header">friday</div>
             <div class="handwriting-quote">"Food is a happy memory that can be eaten."</div>
-            <span class="journal-stamp">FARFALLE PASTA</span>
+            <span class="journal-stamp">STRAWBERRY PINK</span>
             <div class="review-text-content">
 [Nội dung review truyện sủng công bổ sung tại đây]
-Dễ dàng chèn danh sách truyện, đánh giá, link đọc mà không làm lệch giao diện vintage sổ tay.
+Giao diện sáng rạng rỡ, dịu mắt với tông màu tươi tắn.
             </div>
         </article>
 
-        <!-- Ô Review 3: Style Sunday & Dessert Stamp -->
+        <!-- Ô Review 3 -->
         <article class="journal-card">
             <div class="journal-day-header">sunday</div>
             <div class="handwriting-quote">"Dessert Heals Everything"</div>
-            <span class="journal-stamp">SARDINES</span>
+            <span class="journal-stamp">PASTEL YELLOW</span>
             <div class="review-text-content">
 [Nội dung review truyện sủng công bổ sung tại đây]
             </div>
@@ -264,7 +263,7 @@ Dễ dàng chèn danh sách truyện, đánh giá, link đọc mà không làm l
 
     </main>
 
-    <!-- FOOTER NGUYÊN BẢN -->
+    <!-- FOOTER NGUYÊN BẢN 100% -->
     <footer>
         <p>© Góc Review Đam Mỹ Thụ Sủng Công. Giữ nguyên toàn bộ cấu trúc & tiêu đề trang.</p>
     </footer>
