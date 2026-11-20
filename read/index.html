@@ -1412,23 +1412,37 @@ một câu nói giới thiệu tóm tắt: ** kiều thê công X sủng thê th
     </script>
 </body>
   
-<!-- Khung đếm Online & Tổng lượt ghé thăm -->
+<!-- Khung đếm Online & Tổng lượt ghé thăm (Tối thiểu 6.215, Refresh là tăng) -->
 <div style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 6px; width: 100%; margin: 20px auto; text-align: center; font-size: 0.9rem; font-weight: 700; color: #4f6d7a;">
     <span>Đang online:</span>
-    <span id="onlineNum" style="color: #d76a03;">1</span>
+    <span id="onlineNum" style="color: #d76a03;">3</span>
     <span style="margin: 0 6px;">|</span>
     <span>Tổng cộng có</span>
-    <span id="totalVisitNum" style="color: #d76a03;">1</span>
+    <span id="totalVisitNum" style="color: #d76a03;">6.215</span>
     <span>người ghé thăm</span>
 </div>
 
 <script>
-    fetch('https://chucongconvert.gt.tc/read/counter.php')
-        .then(res => res.json())
-        .then(data => {
-            if (data.online) document.getElementById('onlineNum').textContent = data.online;
-            if (data.total) document.getElementById('totalVisitNum').textContent = data.total.toLocaleString('vi-VN');
-        })
-        .catch(() => {});
+    (function() {
+        const BASE_VISITS = 6214; // Cộng thêm lượt đếm từ API để bắt đầu từ 6.215
+
+        // Gọi API tăng lượt truy cập mỗi lần tải/refresh trang
+        fetch('https://api.counterapi.dev/v1/phamnhadoan_read_v2/visits/up')
+            .then(res => res.json())
+            .then(data => {
+                if (data && typeof data.count === 'number') {
+                    const displayTotal = BASE_VISITS + data.count;
+                    document.getElementById('totalVisitNum').textContent = displayTotal.toLocaleString('vi-VN');
+                    
+                    // Tạo số người đang online biến thiên tự nhiên (từ 2 đến 6 người)
+                    const randomOnline = (displayTotal % 5) + 2;
+                    document.getElementById('onlineNum').textContent = randomOnline;
+                }
+            })
+            .catch(() => {
+                // Dự phòng nếu mạng lag: vẫn hiện tối thiểu 6.215
+                document.getElementById('totalVisitNum').textContent = (BASE_VISITS + 1).toLocaleString('vi-VN');
+            });
+    })();
 </script>
 </html>
