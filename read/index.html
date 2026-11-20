@@ -1413,50 +1413,13 @@ một câu nói giới thiệu tóm tắt: ** kiều thê công X sủng thê th
 </body>
   
 <!-- Khung đếm Online & Tổng lượt ghé thăm -->
+    <!-- Khung đếm Online & Tổng lượt ghé thăm (Căn giữa) -->
 <div style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 6px; width: 100%; margin: 20px auto; text-align: center; font-size: 0.9rem; font-weight: 700; color: #4f6d7a;">
     <span>Đang online:</span>
-    <span id="onlineNum" style="color: #d76a03;">3</span>
+    <img src="https://whos.amung.us/widget/chucongconvert.png" alt="Đang online" style="height: 18px; display: inline-block;" />
     <span style="margin: 0 6px;">|</span>
     <span>Tổng cộng có</span>
-    <span id="totalVisitNum" style="color: #d76a03;">6.215</span>
-    <span>người ghé thăm</span>
+   <img src="https://hitwebcounter.com/counter/counter.php?page=21529210&style=0006&nbdigits=6&type=page&initCount=0" alt="Tổng lượt truy cập" style="height: 18px; display: inline-block;" />
+    <span>lượt ghé thăm</span>
 </div>
-
-<script>
-    (function() {
-        const BASE_VISITS = 6214;
-        const STORAGE_KEY = 'phamnhadoan_read_visits';
-
-        // 1. Lấy và tăng số đếm nội bộ (Bất tử trước uBlock Origin & Brave Shields)
-        let localCount = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
-        localCount += 1;
-        localStorage.setItem(STORAGE_KEY, localCount);
-
-        function renderStats(totalCount) {
-            const totalEl = document.getElementById('totalVisitNum');
-            const onlineEl = document.getElementById('onlineNum');
-            if (totalEl) totalEl.textContent = totalCount.toLocaleString('vi-VN');
-            if (onlineEl) onlineEl.textContent = (totalCount % 5) + 2; // Nhảy tự nhiên từ 2-6 người
-        }
-
-        // Hiển thị ngay lập tức số đã tăng (6.215 -> 6.216 -> 6.217...)
-        renderStats(BASE_VISITS + localCount);
-
-        // 2. Đồng thời gọi thêm API công khai (nếu khách không dùng AdBlock thì đồng bộ số chung)
-        fetch('https://api.counterapi.dev/v1/phamnhadoan_read_v2/visits/up')
-            .then(res => res.json())
-            .then(data => {
-                if (data && typeof data.count === 'number') {
-                    const serverTotal = BASE_VISITS + data.count;
-                    // Lấy số lớn hơn giữa server và máy hiện tại để luôn tăng
-                    const finalTotal = Math.max(serverTotal, BASE_VISITS + localCount);
-                    localStorage.setItem(STORAGE_KEY, finalTotal - BASE_VISITS);
-                    renderStats(finalTotal);
-                }
-            })
-            .catch(() => {
-                // Bị uBlock/Brave chặn thì đã có số ở bước 1 hiển thị rồi, không bị đứng ở 6.215 nữa
-            });
-    })();
-</script>
 </html>
