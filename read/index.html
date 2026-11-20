@@ -33,7 +33,7 @@
         /* --- KHU VỰC CÁC NÚT DÀN HÀNG NGANG --- */
         .action-buttons-group {
             display: flex;
-            align-items: center; /* Sửa lỗi lệch hàng tại đây */
+            align-items: center;
             justify-content: center;
             gap: 12px;
             flex-wrap: wrap;
@@ -47,7 +47,6 @@
             align-items: center;
         }
 
-        /* Bổ sung cầu nối ẩn giữ hover không bị biến mất */
         .dropdown-create::after {
             content: "";
             position: absolute;
@@ -57,7 +56,6 @@
             height: 12px;
         }
 
-        /* Nút chính 1 & Nút chính 2: Trang trí xinh yêu đồng bộ */
         .btn-create-main, 
         .create-post-btn {
             display: inline-flex;
@@ -75,15 +73,11 @@
             text-decoration: none;
             box-sizing: border-box;
             
-            /* Viền đôi: nét liền bên ngoài + outline dotted bên trong */
             border: 2px solid var(--coral-border);
             outline: 2px dotted #ffb3a0;
             outline-offset: -5px;
-            
-            /* Shadow đặc (Solid Shadow / Neo-brutalism) không mờ */
             box-shadow: 3px 3px 0px var(--coral-border);
             
-            /* Không bay bay, không chuyển động vị trí */
             transform: none !important;
             transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
         }
@@ -96,7 +90,6 @@
             transform: none !important;
         }
 
-        /* Icon trái tim 2 bên */
         .heart-icon {
             font-size: 0.9rem;
             line-height: 1;
@@ -107,9 +100,8 @@
             margin-left: 2px;
         }
 
-        /* Menu xổ xuống */
         .dropdown-menu {
-            display: none; /* Mặc định ẩn */
+            display: none;
             position: absolute;
             top: calc(100% + 2px);
             left: 50%;
@@ -120,16 +112,12 @@
             padding: 10px;
             z-index: 100;
 
-            /* Viền mỏng ngoài + viền dashed trong */
             border: 2px solid var(--border-line);
             outline: 2px dashed #f0e2d8;
             outline-offset: -6px;
-
-            /* Shadow đặc không mờ */
             box-shadow: 4px 4px 0px var(--border-line);
         }
 
-        /* Hiển thị khi hover hoặc click */
         .dropdown-create:hover .dropdown-menu,
         .dropdown-create.active .dropdown-menu {
             display: flex;
@@ -137,7 +125,6 @@
             gap: 8px;
         }
 
-        /* Các lựa chọn liên kết bên trong */
         .dropdown-item {
             display: flex;
             align-items: center;
@@ -164,13 +151,27 @@
             color: var(--coral-text);
         }
 
-        /* Đường line thẳng nét liền mỏng ở trên + đường đứt khúc màu nhạt ở dưới */
         .separator-divider {
             margin-top: 30px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             border-top: 1px solid var(--border-dash, #a89f91);
             border-bottom: 1.5px dotted #e2d9cc;
             height: 6px;
+        }
+
+        /* --- DÒNG ĐẾM TỔNG SỐ TRUYỆN --- */
+        .total-stories-bar {
+            text-align: center;
+            font-family: 'Comfortaa', cursive;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--warm-brown);
+            margin-bottom: 22px;
+        }
+
+        .total-stories-bar span {
+            color: var(--coral-text);
+            font-size: 1.05rem;
         }
 
         * {
@@ -188,13 +189,11 @@
             flex-direction: column;
             align-items: center;
             padding: 35px 15px;
-            /* Họa tiết chấm bi chìm nhẹ nhàng */
             background-image: radial-gradient(#ecc7b7 1.2px, transparent 1.2px);
             background-size: 24px 24px;
         }
 
         .main-card {
-            /* Nền sọc caro vàng cam nhạt vintage */
             background-color: #fffdf9;
             background-image: 
                 linear-gradient(0deg, rgba(255, 230, 195, 0.55) 1px, transparent 1px),
@@ -211,7 +210,6 @@
             margin-bottom: 40px;
         }
 
-        /* Huy hiệu nhỏ trang trí */
         .badge-cute {
             display: inline-block;
             background: #ffe5d9;
@@ -256,7 +254,6 @@
             transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
 
-        /* Icon tim đơn sắc trùng 100% màu chữ */
         .btn-icon-single {
             display: inline-flex;
             align-items: center;
@@ -275,7 +272,6 @@
             stroke-linejoin: round;
         }
 
-        /* Nút 1: Kho Truyện */
         .btn-khotruyen {
             background-color: var(--coral-bg);
             color: var(--coral-text);
@@ -288,7 +284,6 @@
             border-color: #ff9b85;
         }
 
-        /* Nút 2: Wattpad */
         .btn-wattpad {
             background-color: var(--blue-bg);
             color: var(--blue-text);
@@ -301,7 +296,6 @@
             border-color: #63b3ed;
         }
 
-        /* Nút 3: Inkitt */
         .btn-inkitt {
             background-color: var(--amber-bg);
             color: var(--amber-text);
@@ -346,19 +340,13 @@
             gap: 20px;
         }
 
-        /* Áp dụng cho các lớp khung (.main-card, .story-card, .post-card, .cp-container) */
         .story-card {
             background: var(--card-bg);
             border-radius: 22px;
             padding: 20px;
-            
-            /* 1. Viền nét liền mỏng ở ngoài */
             border: 1.5px solid var(--border-line);
-            
-            /* 2. Viền nét chấm đứt (dotted) ở trong nằm cách viền ngoài một khoảng */
             outline: 2px dotted #f0e2d8;
             outline-offset: -8px;
-
             display: grid;
             grid-template-columns: 120px 1fr;
             gap: 18px;
@@ -434,6 +422,46 @@
             background-color: var(--coral-text);
             color: #ffffff;
         }
+
+        /* --- STYLES PHÂN TRANG TỰ ĐỘNG --- */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 32px;
+            margin-bottom: 15px;
+        }
+
+        .page-btn {
+            min-width: 38px;
+            height: 38px;
+            padding: 0 12px;
+            border-radius: 14px;
+            font-family: 'Comfortaa', cursive;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            background-color: var(--card-bg);
+            color: var(--warm-brown);
+            border: 1.5px solid var(--border-line);
+            box-shadow: 2px 2px 0px var(--border-line);
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .page-btn:hover {
+            background-color: var(--coral-bg);
+            color: var(--coral-text);
+            border-color: var(--coral-border);
+        }
+
+        .page-btn.active {
+            background-color: var(--coral-text);
+            color: #ffffff;
+            border-color: var(--coral-text);
+            box-shadow: 2px 2px 0px var(--coral-border);
+        }
     </style>
 </head>
 <body>
@@ -444,9 +472,8 @@
         <h1>Đọc online</h1>
         <p class="subtitle">Truyện đam mỹ thụ sủng công, hstc, công khống</p>
         <div style="text-align: center; margin-top: 15px;">
-    <img src="https://chucongconvert.gt.tc/image/img_1788854263_4089_0.png" alt="Mô tả ảnh" style="max-width: 100%; height: auto; border-radius: 12px; display: inline-block;">
-</div>
-
+            <img src="https://chucongconvert.gt.tc/image/img_1788854263_4089_0.png" alt="Mô tả ảnh" style="max-width: 100%; height: auto; border-radius: 12px; display: inline-block;">
+        </div>
     </main>
 
     <!-- KHO TRUYỆN MỚI CẬP NHẬT -->
@@ -493,6 +520,11 @@
 
         <!-- Khối đường line nét liền + đường đứt khúc nhạt cách nút đăng truyện -->
         <div class="separator-divider"></div>
+
+        <!-- Phần đếm tổng số truyện tự động -->
+        <div class="total-stories-bar" id="total-stories-bar">
+            Tổng cộng <span id="total-story-count">0</span> truyện
+        </div>
 
         <div id="story-list">
 
@@ -612,7 +644,7 @@ Vạn nhân mê tổng công, nam nữ ăn sạch, công ntr, công xuất quỹ
                 <img src="https://sigende.io.vn/image/img_1794588171_1832_0.png" alt="Bìa truyện" class="cover-img">
             </div>
             <div class="story-info">
-                <h3 class="story-name">[Tổng công] Dựa vào thận công lược cầu sinh trò chơi</h3>
+                <h3 class="story-name">[Tổng công] Dựa vào thận công lược cầu sinh trò chơi</h3>
                 <div class="story-author">Tác giả: Trường Bạch</div>
                 <div class="story-note">cao H, nhược cường, thụ sủng công, tổng công np, đại mỹ nhân công, thụ đều khiết. Quỷ quái mị lực ma X tiểu người bệnh liên tục đại mỹ nhân công × đủ loại quỷ quái, trong lúc sẽ có nhân loại player thụ qua lại
 Thụ sủng công, thụ đều là khiết</div>
@@ -694,7 +726,7 @@ Chính là nam chủ chúng nhưng dính sát vào hắn, không phải hắn kh
                 <h3 class="story-name">(Tổng công nhanh xuyên) Pháo hôi đoạn tình tuyệt dục sau bọn họ biết vậy chẳng làm</h3>
                 <div class="story-author">Tác giả: Nhân Tự</div>
                 <div class="story-note">Độ dài: 243 chương. 1. Chủ công thiên cường công cường thụ thế nhưng phần lớn thế giới công so với thụ nhược công chỉ tinh thần cường đại, nhưng thân thể nhược, không tốt này một cái có thể gỡ mìn
-2. Thụ có song tính cụ thể xem mỗi cái thế giới giả thiết
+2. Thụ có song tính cụ thể xem mỗi cái thế giới giả thiết
 3 có. Thụ truy công hỏa táng tràng, mỗi người đều là cố chấp biến thái, yêu thích đánh tới điên cuồng.</div>
                 <a href="https://chucongconvert.byethost10.com/read/tong-cong-nhanh-xuyen-phao-hoi-doan-tinh-tuyet-duc-sau-bon-ho-biet-vay-chang-lam.html" class="read-now-btn" target="_blank" rel="noopener">Đọc truyện ngay →</a>
             </div>
@@ -709,12 +741,12 @@ Chính là nam chủ chúng nhưng dính sát vào hắn, không phải hắn kh
                 <div class="story-author">Tác giả: Họa Tần Tử</div>
                 <div class="story-note">Độ dài: 169 chương
 Nguyên sang / nam nam / hiện đại / cao H / khôi hài / nhược công cường thụ / mỹ công cường thụ
-Đào Húc là một gã xuất sắc chuyên ngành pháo hôi diễn viên, chính là tổng là yêu thích ở bên trong tiểu thế giới làm kỳ kỳ quái quái thí nghiệm, thế nhưng khuyết điểm không che lấp được ưu điểm, Đào Húc bằng vào chính mình hiệu suất cao thái độ làm việc, thành công trở thành một tên kim bài pháo hôi đóng vai viên, tiếp xúc đến cao đẳng thế giới nhiệm vụ.
-Không thể không nói, cao đẳng thế giới liền là cao đẳng thế giới, thế giới thiên kỳ bách quái, vai chính cũng giống vậy mỗi người có đặc sắc, Đào Húc một bên cẩn trọng đóng vai vạn người ghét pháo hôi, một bên lại không nhịn được ngứa tay nghĩ làm thí nghiệm.
+Đào Húc là một gã xuất sắc chuyên ngành pháo hôi diễn viên, chính là tổng là yêu thích ở bên trong tiểu thế giới làm kỳ kỳ quái quái thí nghiệm, thế nhưng khuyết điểm không che lấp được ưu điểm, Đào Húc bằng vào chính mình hiệu suất cao thái độ làm việc, thành công trở thành một tên kim bài pháo hôi đóng vai viên, tiếp xúc đến cao đẳng thế giới nhiệm vụ.
+Không thể không nói, cao đẳng thế giới liền là cao đẳng thế giới, thế giới thiên kỳ bách quái, vai chính cũng giống vậy mỗi người có đặc sắc, Đào Húc một bên cẩn trọng đóng vai vạn người ghét pháo hôi, một bên lại không nhịn được ngứa tay nghĩ làm thí nghiệm.
 ♂♂ Sinh đôi tâm linh cảm ứng nghiên cứu
 ♂♂ Song tính thân thể người nghiên cứu
 ♂♂ Nhà giàu phụ tử huynh đệ quan hệ nghiên cứu
-♂♂ Tam phong âm hôn hôn thư chi quỷ cũng có thể làm tình sao?</div>
+♂♂ Tam phong âm hôn hôn thư chi quỷ cũng có thể làm tình sao?</div>
                 <a href="https://chucongconvert.byethost10.com/read/tong-cong-van-nhan-me-phao-hoi-dong-vai-phap.html" class="read-now-btn" target="_blank" rel="noopener">Đọc truyện ngay →</a>
             </div>
         </article>
@@ -743,8 +775,10 @@ Thương Tự có một bí mật, ngực hắn rất nhạy cảm!
                 <h3 class="story-name">Chán ghét Ôn Quán Vân</h3>
                 <div class="story-author">Tác giả: Toàn Luật Nhất Thiên Biến</div>
                 <div class="story-note">Độ dài: 66 chương hoàn. Niên hạ, thụ sủng công, mỹ công, tráng thụ, chủ công.
-1. Mễ Dật là công! Công trên giường yếu.
-2. Công đẹp + thụ lực lưỡng.</div>
+Mễ Dật là công! Công trên giường yếu.
+
+Công đẹp + thụ lực lưỡng.</div>
+
                 <a href="https://chucongconvert.byethost10.com/read/chan-ghet-on-quan-van.html" class="read-now-btn" target="_blank" rel="noopener">Đọc truyện ngay →</a>
             </div>
         </article>
@@ -903,7 +937,7 @@ Thụ đều cúc khiết</div>
                 <img src="https://chucongconvert.gt.tc/image/img_1792745085_9108_0.jpg" alt="Bìa truyện" class="cover-img">
             </div>
             <div class="story-info">
-                <h3 class="story-name">(Tổng công) nữ chủ hậu cung lại bị công rồi</h3>
+                <h3 class="story-name">(Tổng công) nữ chủ hậu cung lại bị công rồi</h3>
                 <div class="story-author">Tác giả: Sơn Dụ</div>
                 <div class="story-note">Cao H, chính kịch, nhược công cường thụ, tuấn soái thụ
 Công bề ngoài trắng nõn tuấn nhã, nội tâm hoàng bạo, nhưng có lúc sẽ có chút ngượng ngùng, rất khả ái.
@@ -1119,7 +1153,7 @@ Công lùn hơn thụ.</div>
                 <div class="story-author">Tác giả: Vãn Thập Lục</div>
                 <div class="story-note">① chủ công văn, vai chính khống, cường thụ giả thiết.
 ② ngọt bánh, không BE, so sánh thông thường kịch tình tuyến, thụ truy công thụ sủng công.
-③ tạm định bốn người truy công, Việt Minh Ngọc vì là vai chính thụ.</div>
+③ tạm định bốn người truy công, Việt Minh Ngọc vì là vai chính thụ.</div>
                 <a href="http://chucongconvert.byethost10.com/read/giuong-tren-chung-quy-phai-ta-vo-han-nguc-lam-sao-bay-gio.html" class="read-now-btn" target="_blank" rel="noopener">Đọc truyện ngay →</a>
             </div>
         </article>
@@ -1144,9 +1178,12 @@ Công lùn hơn thụ.</div>
                     <h3 class="story-name">Phi chức nghiệp liếm cẩu thực lục</h3>
                     <div class="story-author">Tác giả: Bán Diệp Đào Hoa</div>
                     <div class="story-note">Nguyên sang / nam nam / không tưởng / nhẹ H / chính kịch / mỹ công cường thụ / hắc hóa thụ
-1. Nhanh xuyên HE
-2. Tiểu bại hoại công
-3. Ba tục máu chó thịnh hành</div>
+Nhanh xuyên HE
+
+Tiểu bại hoại công
+
+Ba tục máu chó thịnh hành</div>
+
                     <a href="https://truyensc.vercel.app/phi-chuc-nghiep-liem-cau-thuc-luc.html" class="read-now-btn" target="_blank" rel="noopener">Đọc truyện ngay →</a>
                 </div>
             </article>
@@ -1275,6 +1312,9 @@ một câu nói giới thiệu tóm tắt: ** kiều thê công X sủng thê th
             </article>
             <!-- CÁC BÀI ĐĂNG TỪ INDEX4 SẼ TỰ ĐỘNG CHÈN LÊN TRÊN ĐÂY -->
         </div>
+
+        <!-- Khu vực nút chuyển trang tự động (1, 2, 3...) -->
+        <div id="pagination" class="pagination-container"></div>
     </section>
 
     <script>
@@ -1289,6 +1329,73 @@ một câu nói giới thiệu tóm tắt: ** kiều thê công X sủng thê th
             if (dropdown && !dropdown.contains(e.target)) {
                 dropdown.classList.remove('active');
             }
+        });
+
+        // --- TỰ ĐỘNG ĐẾM TRUYỆN & PHÂN TRANG (100 TRUYỆN / TRANG) ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const ITEMS_PER_PAGE = 100; // Giới hạn 100 truyện mỗi trang
+            const storyList = document.getElementById('story-list');
+            const countDisplay = document.getElementById('total-story-count');
+            const paginationContainer = document.getElementById('pagination');
+            const topAnchor = document.getElementById('total-stories-bar');
+
+            if (!storyList) return;
+
+            // Lấy toàn bộ thẻ truyện theo thứ tự từ trên xuống (truyện mới nhất nằm đầu)
+            const allCards = Array.from(storyList.querySelectorAll('.story-card'));
+            const totalStories = allCards.length;
+
+            // Cập nhật con số tổng cộng truyện
+            if (countDisplay) {
+                countDisplay.textContent = totalStories;
+            }
+
+            const totalPages = Math.ceil(totalStories / ITEMS_PER_PAGE);
+            let currentPage = 1;
+
+            function renderPage(page, shouldScroll = false) {
+                currentPage = page;
+                const startIndex = (page - 1) * ITEMS_PER_PAGE;
+                const endIndex = startIndex + ITEMS_PER_PAGE;
+
+                allCards.forEach((card, index) => {
+                    if (index >= startIndex && index < endIndex) {
+                        card.style.display = ''; // Giữ nguyên kiểu hiển thị gốc (grid / block trên mobile)
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                renderPaginationButtons();
+
+                if (shouldScroll && topAnchor) {
+                    topAnchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+
+            function renderPaginationButtons() {
+                if (!paginationContainer) return;
+                paginationContainer.innerHTML = '';
+
+                // Chỉ hiển thị thanh phân trang khi có từ 2 trang trở lên (tức > 100 truyện)
+                if (totalPages <= 1) return;
+
+                for (let i = 1; i <= totalPages; i++) {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+                    btn.textContent = i;
+                    btn.addEventListener('click', function() {
+                        if (currentPage !== i) {
+                            renderPage(i, true);
+                        }
+                    });
+                    paginationContainer.appendChild(btn);
+                }
+            }
+
+            // Khởi chạy trang 1 ngay khi load
+            renderPage(1, false);
         });
     </script>
 </body>
